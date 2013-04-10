@@ -9,6 +9,10 @@ coffeeify = require 'coffeeify'
 
 mkdirp = require 'mkdirp'
 
+copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
+
+james.task 'copy_files', -> james.list('client/images/*').forEach copyFile
+
 BROWSERIFY_OPTS =
   debug: true
 
@@ -34,6 +38,7 @@ transmogrifyStylus = (file) ->
     .transform(stylus)
     .write(file
       .replace('client/stylus', 'public/css')
+      .replace('.stylus', '.css')
       .replace('.styl', '.css'))
 
 james.task 'stylus', ->
@@ -43,6 +48,7 @@ james.task 'actual_watch', ->
   james.watch 'client/coffee/*.coffee', -> james.run 'browserify'
   james.watch 'client/jade/*.jade', (ev, file) -> transmogrifyJade file
   james.watch 'client/stylus/*.styl', (ev, file) -> transmogrifyStylus file
+  james.watch 'client/images/*', (ev, file) -> copyFile file
 
-james.task 'default', ['browserify', 'jade_static', 'stylus']
+james.task 'default', ['browserify', 'jade_static', 'stylus', 'copy_files']
 james.task 'watch', ['default', 'actual_watch']
