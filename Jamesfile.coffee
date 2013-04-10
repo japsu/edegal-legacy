@@ -10,14 +10,17 @@ copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
 
 james.task 'copy_files', -> james.list('client/images/*').forEach copyFile
 
-james.task 'browserify', ->
-  bundle = browserify('./client/coffee/main.coffee')
+transmogrifyCoffee = (debug) ->
+  bundle = james.read browserify('./client/coffee/main.coffee')
     .transform(coffeeify)
-    .bundle()
+    .bundle
+      debug: debug
 
-  james.read(bundle)
-    .transform(uglify)
-    .write('public/js/bundle.js')
+  bundle = bundle.transform(uglify) unless debug
+  bundle.write('public/js/bundle.js')
+
+james.task 'browserify', -> transmogrifyCoffee false
+james.task 'browserify_debug', -> transmogrifyCoffee true
 
 transmogrifyJade = (file) ->
   james.read(file)
@@ -41,10 +44,12 @@ james.task 'stylus', ->
   james.list('client/stylus/*.styl').forEach transmogrifyStylus
 
 james.task 'actual_watch', ->
-  james.watch 'client/coffee/*.coffee', -> james.run 'browserify'
+  james.watch 'client/coffee/*.coffee', -> transmogrifyCoffee true
   james.watch 'client/jade/*.jade', (ev, file) -> transmogrifyJade file
   james.watch 'client/stylus/*.styl', (ev, file) -> transmogrifyStylus file
   james.watch 'client/images/*', (ev, file) -> copyFile file
 
-james.task 'default', ['browserify', 'jade_static', 'stylus', 'copy_files']
-james.task 'watch', ['default', 'actual_watch']
+james.task 'build_debug', ['browserify_debug', 'jade_static', 'stylus', 'copy_files']
+james.task 'build', ['browserify', 'jade_static', 'stylus', 'copy_files']
+james.task 'default', ['build_debug']
+james.task 'watch', ['build_debug', 'actual_watch']
