@@ -1,6 +1,7 @@
 james = require 'james'
 jade = require 'james-jade-static'
 stylus = require 'james-stylus'
+uglify = require 'james-uglify'
 
 browserify = require 'browserify'
 coffeeify = require 'coffeeify'
@@ -14,7 +15,9 @@ james.task 'browserify', ->
     .transform(coffeeify)
     .bundle()
 
-  james.read(bundle).write('public/js/bundle.js')
+  james.read(bundle)
+    .transform(uglify)
+    .write('public/js/bundle.js')
 
 transmogrifyJade = (file) ->
   james.read(file)
