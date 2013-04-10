@@ -7,21 +7,16 @@ stylus = require 'james-stylus'
 browserify = require 'browserify'
 coffeeify = require 'coffeeify'
 
-mkdirp = require 'mkdirp'
-
 copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
 
 james.task 'copy_files', -> james.list('client/images/*').forEach copyFile
 
-BROWSERIFY_OPTS =
-  debug: true
-
 james.task 'browserify', ->
-  browserify('./client/coffee/main.coffee')
+  bundle = browserify('./client/coffee/main.coffee')
     .transform(coffeeify)
-    .bundle BROWSERIFY_OPTS, (err, src) ->
-      mkdirp 'public/js', ->
-        fs.writeFileSync 'public/js/bundle.js', src
+    .bundle()
+
+  james.read(bundle).write('public/js/bundle.js')
 
 transmogrifyJade = (file) ->
   james.read(file)

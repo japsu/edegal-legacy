@@ -7,8 +7,7 @@
       "coffeeify": "0.4.x",
       "james": "0.1.x",
       "james-jade-static": "0.1.x",
-      "james-stylus": "0.1.x",
-      "mkdirp": "0.3.x"
+      "james-stylus": "0.1.x"
    },
    "dependencies": {
       "coffee-script": "1.6.x",
