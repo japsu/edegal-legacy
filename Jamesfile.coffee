@@ -1,5 +1,3 @@
-fs = require 'fs'
-
 james = require 'james'
 jade = require 'james-jade-static'
 stylus = require 'james-stylus'
