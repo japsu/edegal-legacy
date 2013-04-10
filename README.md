@@ -16,7 +16,7 @@
   * coffee
   * jade
   * stylus
-  * images (TBD)
+  * images
 
 ## Getting started
 
