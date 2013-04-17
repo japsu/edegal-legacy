@@ -1,13 +1,20 @@
 # Project template for James.js and Browserify
 
+## Getting started
+
+    npm install
+    james
+    npm start
+    iexplore http://localhost:9001
+
 ## Technology choices
 
 * [James](https://github.com/leonidas/james.js)
 * [Browserify](https://github.com/substack/node-browserify)
 * [CoffeeScript](https://github.com/jashkenas/coffee-script)
-* Static [JADE](https://github.com/visionmedia/jade)
+* Static [Jade](https://github.com/visionmedia/jade) templates
 * [Stylus](https://github.com/learnboost/stylus)
-* Minifier TBD
+* [UglifyJS](https://github.com/mishoo/UglifyJS2)
 
 ## Layout
 
@@ -17,10 +24,3 @@
   * jade
   * stylus
   * images
-
-## Getting started
-
-    npm install
-    james
-    npm start
-    iexplore http://localhost:9001
