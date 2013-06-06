@@ -1,17 +1,17 @@
-james = require 'james'
-jade = require 'james-jade-static'
+james  = require 'james'
+jade   = require 'james-jade-static'
 stylus = require 'james-stylus'
 uglify = require 'james-uglify'
 
 browserify = require 'browserify'
-coffeeify = require 'coffeeify'
+coffeeify  = require 'coffeeify'
 
 copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
 
 james.task 'copy_files', -> james.list('client/images/*').forEach copyFile
 
 transmogrifyCoffee = (debug) ->
-  bundle = james.read browserify('./client/coffee/main.coffee')
+  bundle = james.read browserify('./client/js/main.coffee')
     .transform(coffeeify)
     .bundle
       debug: debug
@@ -26,27 +26,27 @@ transmogrifyJade = (file) ->
   james.read(file)
     .transform(jade)
     .write(file
-      .replace('client/jade', 'public')
+      .replace('client', 'public')
       .replace('.jade', '.html'))
 
 james.task 'jade_static', ->
-  james.list('client/jade/*.jade').forEach transmogrifyJade
+  james.list('client/**/*.jade').forEach transmogrifyJade
 
 transmogrifyStylus = (file) ->
   james.read(file)
     .transform(stylus)
     .write(file
-      .replace('client/stylus', 'public/css')
+      .replace('client', 'public')
       .replace('.stylus', '.css')
       .replace('.styl', '.css'))
 
 james.task 'stylus', ->
-  james.list('client/stylus/*.styl').forEach transmogrifyStylus
+  james.list('client/**/*.styl').forEach transmogrifyStylus
 
 james.task 'actual_watch', ->
-  james.watch 'client/coffee/*.coffee', -> transmogrifyCoffee true
-  james.watch 'client/jade/*.jade', (ev, file) -> transmogrifyJade file
-  james.watch 'client/stylus/*.styl', (ev, file) -> transmogrifyStylus file
+  james.watch 'client/**/*.coffee', -> transmogrifyCoffee true
+  james.watch 'client/**/*.jade', (ev, file) -> transmogrifyJade file
+  james.watch 'client/**/*.styl', (ev, file) -> transmogrifyStylus file
   james.watch 'client/images/*', (ev, file) -> copyFile file
 
 james.task 'build_debug', ['browserify_debug', 'jade_static', 'stylus', 'copy_files']
