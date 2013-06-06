@@ -8,7 +8,14 @@ coffeeify  = require 'coffeeify'
 
 copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
 
-james.task 'copy_files', -> james.list('client/images/*').forEach copyFile
+FILES_TO_COPY = [
+  'client/**/*.css',
+  'client/**/*.jpg',
+  'client/**/*.png',
+  'client/**/*.gif',
+]
+
+james.task 'copy_files', -> FILES_TO_COPY.forEach (glob) -> james.list(glob).forEach copyFile
 
 transmogrifyCoffee = (debug) ->
   bundle = james.read browserify('./client/js/main.coffee')
@@ -47,7 +54,8 @@ james.task 'actual_watch', ->
   james.watch 'client/**/*.coffee', -> transmogrifyCoffee true
   james.watch 'client/**/*.jade', (ev, file) -> transmogrifyJade file
   james.watch 'client/**/*.styl', (ev, file) -> transmogrifyStylus file
-  james.watch 'client/images/*', (ev, file) -> copyFile file
+
+  FILES_TO_COPY.forEach (glob) -> james.watch glob, (ev, file) -> copyFile file
 
 james.task 'build_debug', ['browserify_debug', 'jade_static', 'stylus', 'copy_files']
 james.task 'build', ['browserify', 'jade_static', 'stylus', 'copy_files']
