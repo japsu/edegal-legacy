@@ -1,34 +1,35 @@
+_ = require 'lodash'
+
 express = require 'express'
-_ = require 'underscore'
-{Server, Db} = require 'mongodb'
+
+{albums, albumsUserVisible} = require './db'
 
 exports.app = app = express()
+app.use app.router
 
-server = new Server 'localhost', 27017
-db = new Db 'edegal', server, safe: true
+respondJSON = (res, code, data) ->
+  res.contentType 'application/json'
+  res.send code, JSON.stringify data
 
-respondFromDb = (res, collection, query, fields...) ->
-  db.collection(collection).findOne query, (err, result) ->
+respondFromDb = (res, collection, query, projection) ->
+  collection.findOne query, projection, (err, result) ->
     if result?
-      res.contentType 'application/json'
-      res.send JSON.stringify _.pick result, fields...
+      respondJSON res, 200, _.omit(result, '_id')
     else
-      res.contentType 'application/json'
-      res.send 404, JSON.stringify
+      respondJSON res, 404,
         status: 404
-        message: "Not found"
+        message: 'Not found'
 
-app.get '/v1/', (req, res) ->
-  respondFromDb res, 'sites', {}, 'title', 'categories'
+albumQuery = (path) ->
+  $or: [
+    { path },
+    { 'pictures.path': path }
+  ]
 
-app.get '/v1/:category', (req, res) ->
-  {category} = req.params
-  respondFromDb res, 'categories', {category}, 'category', 'title', 'thumbnail', 'albums'
-
-app.get '/v1/:category/:album', (req, res) ->
-  {category, album} = req.params
-  respondFromDb res, 'albums', {category, album}, 'category', 'album', 'title', 'thumbnail', 'photos'
+app.get /^\/v2(\/[\/a-zA-Z0-9-\/]*)$/, (req, res) ->
+  path = req.params[0]
+  console.log 'album', path
+  respondFromDb res, albums, albumQuery path, albumsUserVisible
 
 if require.main is module
-  db.open ->
-    app.listen 3000
+  app.listen 3000
