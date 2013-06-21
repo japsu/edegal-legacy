@@ -1,6 +1,7 @@
 Backbone = require 'backbone'
+require 'backbone-relational'
 
-class Picture extends Backbone.Model
+class Picture extends Backbone.RelationalModel
 
 class Pictures extends Backbone.Collection
   model: Picture
@@ -9,3 +10,4 @@ class Pictures extends Backbone.Collection
 # Therefore there is no global 'pictures' collection.
 
 module.exports = {Picture, Pictures}
+Backbone.Relational.store.addModelScope module.exports

@@ -1,10 +1,16 @@
 Backbone = require 'backbone'
+require 'transparency'
 
 class AlbumView extends Backbone.View
   el: '#album'
   render: ->
     $('.view').hide()
-    @$('.content').text(JSON.stringify(@model.toJSON()))
-    @$el.show()
+    @$el.show().render @model.toJSON(),
+      subalbums:
+        path:
+          href: -> @path
+      pictures:
+        path:
+          href: -> @path
 
 module.exports = {AlbumView}

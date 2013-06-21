@@ -27,6 +27,17 @@ transmogrifyCoffee = (debug) ->
     transparency:
       path: './components/transparency/dist/transparency.min.js'
       exports: 'Transparency'
+      depends: 
+        jquery: '$'
+        underscore: '_'
+
+    'backbone-relational':
+      path: './components/backbone-relational/backbone-relational.js'
+      exports: 'Backbone'
+      depends: 
+        jquery: '$'
+        underscore: '_'
+        backbone: 'Backbone'
 
   bundle = james.read shim(browserify(), libs)
     .require('./client/js/main.coffee', entry: true)

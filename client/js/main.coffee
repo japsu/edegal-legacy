@@ -1,6 +1,5 @@
 $ = require 'jquery'
-Backbone = require 'backbone'
-require 'transparency'
+window.Backbone = Backbone = require 'backbone' # XXX
 
 {Album, albums} = require './models/album.coffee'
 {AlbumView} = require './views/album_view.coffee'
@@ -24,11 +23,21 @@ class Router extends Backbone.Router
       view = albumView = new AlbumView model: album
 
       unless album.get('path') == path
-        picture = album.pictures.findWhere path: path
+        picture = album.get('pictures').findWhere path: path
         view = pictureView = new PictureView model: picture, parentView: albumView
 
       view.render()
 
 $ ->
   router = new Router
+
+  $(document).on 'click', 'a, area', ->
+    href = $(this).attr 'href'
+    # XXX FUGLY
+    if href[0] == '/' and href[1] != '/'
+      router.navigate href.substr(1), trigger: true
+      return false
+    else
+      return true
+
   Backbone.history.start pushState: true
