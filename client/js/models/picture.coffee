@@ -2,12 +2,12 @@ Backbone = require 'backbone'
 require 'backbone-relational'
 
 class Picture extends Backbone.RelationalModel
+  idAttribute: 'path'
 
 class Pictures extends Backbone.Collection
   model: Picture
 
-# Pictures only exist as subdocuments of ALbum.
-# Therefore there is no global 'pictures' collection.
+pictures = new Pictures
 
-module.exports = {Picture, Pictures}
+module.exports = {Picture, Pictures, pictures}
 Backbone.Relational.store.addModelScope module.exports

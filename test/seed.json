@@ -2,6 +2,7 @@
   {
     "path": "/",
     "title": "Anikin kuva-arkisto",
+    "breadcrumb": [],
     "thumbnail": "http://example.com/thumbnail.jpg",
     "subalbums": [
       {
@@ -16,6 +17,12 @@
   {
     "path": "/desucon2013",
     "title": "Desucon 2013",
+    "breadcrumb": [
+      {
+        "path": "/",
+        "title": "Anikin kuva-arkisto"
+      }
+    ],
     "thumbnail": "http://example.com/thumbnail.jpg",
     "subalbums": [
       {
@@ -30,6 +37,16 @@
   {
     "path": "/desucon2013/japsu",
     "title": "Santtu Pajukanta",
+    "breadcrumb": [
+      {
+        "path": "/",
+        "title": "Anikin kuva-arkisto"
+      },
+      {
+        "path": "/desucon2013",
+        "title": "Desucon 2013"
+      }
+    ],
     "thumbnail": "http://example.com/thumbnail.jpg",
     "subalbums": [],
     "pictures": [

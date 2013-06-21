@@ -4,6 +4,7 @@ window.Backbone = Backbone = require 'backbone' # XXX
 {Album, albums} = require './models/album.coffee'
 {AlbumView} = require './views/album_view.coffee'
 {PictureView} = require './views/picture_view.coffee'
+{getContent} = require './helpers/content_helper.coffee'
 
 class Router extends Backbone.Router
   initialize: ->
@@ -16,14 +17,11 @@ class Router extends Backbone.Router
 
   content: (path='') ->
     path = '/' + path
-    console?.log 'route:content', path
-    album = new Album path: path
-    album.fetch().then ->
-      albums.add album
+    getContent(path).then (results) ->
+      {album, picture} = results
       view = albumView = new AlbumView model: album
 
-      unless album.get('path') == path
-        picture = album.get('pictures').findWhere path: path
+      if picture
         view = pictureView = new PictureView model: picture, parentView: albumView
 
       view.render()
@@ -31,13 +29,10 @@ class Router extends Backbone.Router
 $ ->
   router = new Router
 
-  $(document).on 'click', 'a, area', ->
+  $(document).on 'click', 'a, area', (event) ->
+    event.preventDefault()
     href = $(this).attr 'href'
-    # XXX FUGLY
-    if href[0] == '/' and href[1] != '/'
-      router.navigate href.substr(1), trigger: true
-      return false
-    else
-      return true
+    router.navigate href, trigger: true
+    return false
 
   Backbone.history.start pushState: true

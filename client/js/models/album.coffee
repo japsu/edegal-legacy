@@ -8,8 +8,8 @@ class Album extends Backbone.RelationalModel
     {
       type: Backbone.HasMany,
       key: 'subalbums',
-      relatedModel: 'Album',
-      collectionType: 'Albums',
+      relatedModel: 'SubAlbum',
+      collectionType: 'SubAlbums',
       reverseRelation:
         key: 'parentAlbum'
         includeInJSON: false
@@ -25,12 +25,18 @@ class Album extends Backbone.RelationalModel
     }
   ]
   url: -> '/v2' + @get('path')
-  idAttribute: "path"
+  idAttribute: 'path'
 
 class Albums extends Backbone.Collection
   model: Album
 
+class SubAlbum extends Backbone.RelationalModel
+  idAttribute: 'path'
+
+class SubAlbums extends Backbone.Collection
+  model: SubAlbum
+
 albums = new Albums
 
-window.edegalAlbumModels = module.exports = {Album, Albums, albums} 
+window.edegalAlbumModels = module.exports = {Album, Albums, SubAlbum, SubAlbums, albums} 
 Backbone.Relational.store.addModelScope module.exports
