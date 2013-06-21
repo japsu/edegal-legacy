@@ -2,6 +2,7 @@ path = require 'path'
 
 _ = require 'lodash'
 
+connect = require 'connect'
 express = require 'express'
 
 {albums, albumsUserVisible} = require './db'
@@ -42,12 +43,13 @@ albumQuery = (path) ->
   ]
 
 exports.app = app = express()
+#app.use connect.compress()
 app.use app.router
 app.use express.static staticPath
 app.use indexHtmlAnyway
 app.use respond404
 
-app.get /^\/v2(\/[\/a-zA-Z0-9-\/]*)$/, (req, res) ->
+app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   path = req.params[0]
   console.log 'album', path
   respondFromDb req, res, albums, albumQuery path, albumsUserVisible

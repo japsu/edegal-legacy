@@ -2,7 +2,17 @@ doctype 5
 html
   head
     title Hello
-    link(rel='stylesheet', href='css/style.css')
-    script(src='js/bundle.js')
+    link(rel='stylesheet', href='/css/style.css')
+    script(src='/js/bundle.js')
   body
-    h1 Hello
+    #header
+      include partials/header
+
+    #picture.view
+      include partials/picture
+
+    #album.view
+      include partials/album
+
+    #footer
+      include partials/footer

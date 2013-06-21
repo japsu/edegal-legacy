@@ -24,6 +24,10 @@ transmogrifyCoffee = (debug) ->
       path: './components/jquery/jquery.js'
       exports: '$'
 
+    transparency:
+      path: './components/transparency/dist/transparency.min.js'
+      exports: 'Transparency'
+
   bundle = james.read shim(browserify(), libs)
     .require('./client/js/main.coffee', entry: true)
     .transform(coffeeify)
@@ -38,13 +42,13 @@ james.task 'browserify_debug', -> transmogrifyCoffee true
 
 transmogrifyJade = (file) ->
   james.read(file)
-    .transform(jade)
+    .transform(jade(filename: file))
     .write(file
       .replace('client', 'public')
       .replace('.jade', '.html'))
 
 james.task 'jade_static', ->
-  james.list('client/**/*.jade').forEach transmogrifyJade
+  james.list('client/*.jade').forEach transmogrifyJade
 
 transmogrifyStylus = (file) ->
   james.read(file)
@@ -57,9 +61,9 @@ transmogrifyStylus = (file) ->
 james.task 'stylus', ->
   james.list('client/**/*.styl').forEach transmogrifyStylus
 
-james.task 'actual_watch', ->
-  james.watch 'client/**/*.coffee', -> transmogrifyCoffee true
-  james.watch 'client/**/*.jade', (ev, file) -> transmogrifyJade file
+james.task 'watch', ->
+  james.watch 'client/**/*.coffee', -> james.run 'browserify_debug'
+  james.watch 'client/**/*.jade', -> james.run 'jade_static'
   james.watch 'client/**/*.styl', (ev, file) -> transmogrifyStylus file
 
   FILES_TO_COPY.forEach (glob) -> james.watch glob, (ev, file) -> copyFile file
@@ -67,4 +71,3 @@ james.task 'actual_watch', ->
 james.task 'build_debug', ['browserify_debug', 'jade_static', 'stylus', 'copy_files']
 james.task 'build', ['browserify', 'jade_static', 'stylus', 'copy_files']
 james.task 'default', ['build_debug']
-james.task 'watch', ['build_debug', 'actual_watch']
