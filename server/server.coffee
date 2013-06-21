@@ -1,8 +1,12 @@
+path = require 'path'
+
 _ = require 'lodash'
 
 express = require 'express'
 
 {albums, albumsUserVisible} = require './db'
+
+staticPath = path.resolve path.dirname(module.filename), '..', 'public'
 
 respondJSON = (res, code, data) ->
   res.contentType 'application/json'
@@ -32,6 +36,7 @@ albumQuery = (path) ->
 
 exports.app = app = express()
 app.use app.router
+app.use express.static staticPath
 app.use respond404
 
 app.get /^\/v2(\/[\/a-zA-Z0-9-\/]*)$/, (req, res) ->
