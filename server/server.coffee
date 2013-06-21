@@ -7,6 +7,7 @@ express = require 'express'
 {albums, albumsUserVisible} = require './db'
 
 staticPath = path.resolve path.dirname(module.filename), '..', 'public'
+indexHtml = path.resolve staticPath, 'index.html'
 
 respondJSON = (res, code, data) ->
   res.contentType 'application/json'
@@ -28,6 +29,12 @@ respond404 = (req, res) ->
   else
     res.send 404, 'Not found'
 
+indexHtmlAnyway = (req, res, next) ->
+  if req.accepts 'html'
+    res.sendfile indexHtml
+  else
+    next()
+
 albumQuery = (path) ->
   $or: [
     { path },
@@ -37,6 +44,7 @@ albumQuery = (path) ->
 exports.app = app = express()
 app.use app.router
 app.use express.static staticPath
+app.use indexHtmlAnyway
 app.use respond404
 
 app.get /^\/v2(\/[\/a-zA-Z0-9-\/]*)$/, (req, res) ->

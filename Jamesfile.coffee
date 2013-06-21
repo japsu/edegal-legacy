@@ -4,6 +4,7 @@ stylus = require 'james-stylus'
 uglify = require 'james-uglify'
 
 browserify = require 'browserify'
+shim = require 'browserify-shim'
 coffeeify  = require 'coffeeify'
 
 copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
@@ -18,7 +19,13 @@ FILES_TO_COPY = [
 james.task 'copy_files', -> FILES_TO_COPY.forEach (glob) -> james.list(glob).forEach copyFile
 
 transmogrifyCoffee = (debug) ->
-  bundle = james.read browserify('./client/js/main.coffee')
+  libs =
+    jquery:
+      path: './components/jquery/jquery.js'
+      exports: '$'
+
+  bundle = james.read shim(browserify(), libs)
+    .require('./client/js/main.coffee', entry: true)
     .transform(coffeeify)
     .bundle
       debug: debug

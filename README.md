@@ -3,6 +3,7 @@
 ## Getting started
 
     npm install
+    bower install
     james
     npm start
     iexplore http://localhost:9001
