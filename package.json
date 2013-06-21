@@ -1,9 +1,10 @@
 {
-   "name" : "james-browserify-project-template",
-   "version" : "0.1.0",
+   "name" : "edegal-express",
+   "version" : "0.0.0",
    "main" : "./server/server",
    "devDependencies": {
       "browserify": "2.12.x",
+      "browserify-shim": "2.0.x",
       "coffeeify": "0.4.x",
       "james": "0.1.x",
       "james-jade-static": "0.1.x",
