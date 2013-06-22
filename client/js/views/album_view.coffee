@@ -1,11 +1,9 @@
-Backbone = require 'backbone'
-require 'transparency'
+{View} = require './helpers/view_helper.coffee'
 
-class AlbumView extends Backbone.View
+class AlbumView extends View
   el: '#album'
-  render: ->
-    $('.view').hide()
-    @$el.show().render @model.toJSON(),
+  renderContent: ->
+    @$el.render @model.toJSON(),
       subalbums:
         path:
           href: -> @path

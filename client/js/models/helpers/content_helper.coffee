@@ -1,7 +1,7 @@
 Q = require 'q'
 
-{Album, albums} = require '../models/album.coffee'
-{Picture, pictures} = require '../models/picture.coffee'
+{Album, albums} = require '../album.coffee'
+{Picture, pictures} = require '../picture.coffee'
 
 getContent = (path) ->
   picture = pictures.get(path)

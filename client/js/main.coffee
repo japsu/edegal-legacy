@@ -4,7 +4,10 @@ window.Backbone = Backbone = require 'backbone' # XXX
 {Album, albums} = require './models/album.coffee'
 {AlbumView} = require './views/album_view.coffee'
 {PictureView} = require './views/picture_view.coffee'
-{getContent} = require './helpers/content_helper.coffee'
+{getContent} = require './models/helpers/content_helper.coffee'
+
+albumView = null
+pictureView = null
 
 class Router extends Backbone.Router
   initialize: ->
@@ -19,14 +22,17 @@ class Router extends Backbone.Router
     path = '/' + path
     getContent(path).then (results) ->
       {album, picture} = results
-      view = albumView = new AlbumView model: album
 
       if picture
-        view = pictureView = new PictureView model: picture, parentView: albumView
-
-      view.render()
+        pictureView.setModel(picture).render()
+      else
+        albumView.setModel(album).render()
+    .done()
 
 $ ->
+  albumView = new AlbumView
+  pictureView = new PictureView
+
   router = new Router
 
   $(document).on 'click', 'a, area', (event) ->
