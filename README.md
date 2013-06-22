@@ -1,5 +1,7 @@
 # Edegal - A web picture gallery
 
+[![Build Status](https://travis-ci.org/japsu/edegal-express.png)](https://travis-ci.org/japsu/edegal-express)
+
 Edegal is a web picture gallery written in Node.js and designed with performance and scalability in mind.
 
 High performance is achieved through the usage of a dead simple REST JSON API in which most cache misses only result in a single database query that returns a single document.
