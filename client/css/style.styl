@@ -1,5 +1,9 @@
 $background-color = #000
 $background-hilight = #333
+$text-color = #ccc
+$hilight-text-color = #fff
+$muted-text-color = #666
+$muted-hilight-text-color = #999
 
 @import 'nib'
 
@@ -9,23 +13,27 @@ html, body
   margin 0
   padding 0
   height 100%
-  font-family Helvetica, Arial, sans-serif
+  font-family Corbel, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", "DejaVu Sans", "Bitstream Vera Sans", "Liberation Sans", Verdana, "Verdana Ref", sans-serif;
   font-size 16px
   background-color $background-color
-  color #eee
+  color $text-color
 
-a
+a, a:visited, a:active
   text-decoration none
+  color $hilight-text-color
+
+a:hover
+  color white
 
 #header
   background-color $background-hilight
   background linear-gradient(top, $background-hilight 0%, $background-color 95%)
-  color #ddd
+  color $text-color
   padding 15px
   margin-bottom 2px
 
   a
-    color #ddd
+    color $text-color
 
   a:hover
     color white
@@ -35,9 +43,15 @@ a
   background linear-gradient(top, $background-color 5%, $background-hilight 100%)
 
   .copyright
-    font-size 14px
-    color #666
+    font-size 13px
+    color $muted-text-color
     padding 15px 10px 10px 15px
+
+  a
+    color $muted-hilight-text-color
+
+  a:hover
+    color white
 
 #wrap
   min-height 100%
@@ -47,9 +61,6 @@ a
 
 #push, #footer 
   height 45px
-
-#login
-  float right
 
 #breadcrumb
   margin 0
@@ -80,7 +91,7 @@ a
       border-right 3px solid $background-color
       width 357px
       height 240px
-      color #eee
+      color $hilight-text-color
 
       .title-wrap
         position absolute
