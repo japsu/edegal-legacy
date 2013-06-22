@@ -31,6 +31,7 @@ Edegal is a work in progress.
   * [Jade](https://github.com/visionmedia/jade) templates for static HTML
   * [Stylus](https://github.com/learnboost/stylus)
   * [UglifyJS](https://github.com/mishoo/UglifyJS2)
+  * [node-cssmin](https://github.com/jbleuzen/node-cssmin)
   * [Mocha](https://github.com/visionmedia/mocha)
   * [Sinon](https://github.com/cjohansen/Sinon.JS)
 * Backend

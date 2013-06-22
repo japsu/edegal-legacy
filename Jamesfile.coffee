@@ -2,6 +2,7 @@ james  = require 'james'
 jade   = require 'james-jade-static'
 stylus = require 'james-stylus'
 uglify = require 'james-uglify'
+cssmin = require 'james-cssmin'
 
 browserify = require 'browserify'
 shim = require 'browserify-shim'
@@ -14,6 +15,10 @@ FILES_TO_COPY = [
   'client/**/*.jpg',
   'client/**/*.png',
   'client/**/*.gif',
+]
+
+BOWER_CSS = [
+  'components/normalize-css/normalize.css'
 ]
 
 james.task 'copy_files', -> FILES_TO_COPY.forEach (glob) -> james.list(glob).forEach copyFile
@@ -61,24 +66,23 @@ transmogrifyJade = (file) ->
 james.task 'jade_static', ->
   james.list('client/*.jade').forEach transmogrifyJade
 
-transmogrifyStylus = (file) ->
-  james.read(file)
-    .transform(stylus)
-    .write(file
-      .replace('client', 'public')
-      .replace('.stylus', '.css')
-      .replace('.styl', '.css'))
+james.task 'compress_css', ->
+  dest = james.dest 'public/css/bundle.css'
 
-james.task 'stylus', ->
-  james.list('client/**/*.styl').forEach transmogrifyStylus
+  BOWER_CSS.forEach (file) ->
+    james.read(file).transform(cssmin).write(dest)
+  james.list('client/**/*.css').forEach (file) ->
+    james.read(file).transform(cssmin).write(dest)
+  james.list('client/**/*.styl').forEach (file) ->
+    james.read(file).transform(stylus).transform(cssmin).write(dest)
 
 james.task 'watch', ->
-  james.watch 'client/**/*.coffee', -> james.run 'browserify_debug'
-  james.watch 'client/**/*.jade', -> james.run 'jade_static'
-  james.watch 'client/**/*.styl', (ev, file) -> transmogrifyStylus file
+  james.watch 'client/**/*.coffee', ['browserify_debug']
+  james.watch 'client/**/*.jade', ['jade_static']
+  james.watch 'client/**/*.styl', ['compress_css']
 
   FILES_TO_COPY.forEach (glob) -> james.watch glob, (ev, file) -> copyFile file
 
-james.task 'build_debug', ['browserify_debug', 'jade_static', 'stylus', 'copy_files']
-james.task 'build', ['browserify', 'jade_static', 'stylus', 'copy_files']
+james.task 'build_debug', ['browserify_debug', 'jade_static', 'compress_css', 'copy_files']
+james.task 'build', ['browserify', 'jade_static', 'compress_css', 'copy_files']
 james.task 'default', ['build_debug']
