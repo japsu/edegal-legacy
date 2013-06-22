@@ -2,18 +2,27 @@ mysql = require 'mysql'
 Q = require 'q'
 _ = require 'underscore'
 path = require 'path'
+originalSlugify = require 'slug'
 
-{albums} = require '../server/db.coffee'
-
-getAlbum = Q.nbind albums.findOne, albums
-saveAlbum = Q.nbind albums.save, albums
+{albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db.coffee'
 
 connection = mysql.createConnection
   host: 'localhost'
-  user: 'username'
-  database: 'database'
+  port: 10000
+  user: 'coppermine'
+  database: 'coppermine'
   password: 'secret'
   insecureAuth: true
+
+PLACEHOLDER_IMAGE = '/images/example_content_360x240.jpg'
+
+root =
+  path: '/'
+  title: 'Anikin kuva-arkisto'
+  thumbnail: PLACEHOLDER_IMAGE
+  breadcrumb: []
+  subalbums: []
+  pictures: []
 
 connection.connect()
 
@@ -27,10 +36,14 @@ makeBreadcrumb = (parent) ->
   ]
 
 convertCoppermine = ->
-  getAlbum(path: '/').then (root) ->
-    query("SET NAMES 'latin1';").then ->
-      convertSubcategories(0, root, 0).then ->
-        saveAlbum root
+  Q.all([
+    dropAlbums().fail(-> null)
+    query("SET NAMES 'latin1';")
+  ]).then ->
+    convertSubcategories(0, root, 0)
+  .then ->
+    saveAlbum root
+  .then(createIndexes)
 
 indented = (indent, args...) ->
   indentation = new Array(indent + 1).join('  ')
@@ -38,9 +51,11 @@ indented = (indent, args...) ->
 
 indented = ->
 
+slugify = (str) -> originalSlugify(str).toLowerCase()
+
 sanitizeFilename = (filename) ->
   [filename] = filename.split '.', 1
-  filename.replace /[^a-zA-Z0-9-]/g, ''
+  slugify(filename) or _.uniqueId('picture')
 
 convertSubcategories = (categoryId, parent, indent=0) ->
   breadcrumb = makeBreadcrumb parent
@@ -49,11 +64,12 @@ convertSubcategories = (categoryId, parent, indent=0) ->
   query('SELECT cid, name, description FROM cpg11d_categories WHERE parent = ? ORDER BY pos', [categoryId]).spread (categories) ->
     Q.all categories.map (coppermineCategory) ->
       indented indent, "Processing category #{coppermineCategory.name}"
+      slug = slugify(coppermineCategory.name) or "category#{coppermineCategory.cid}"
 
       edegalAlbum =
-        path: path.join(parent.path, "category#{coppermineCategory.cid}")
+        path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
-        thumbnail: 'TODO'
+        thumbnail: PLACEHOLDER_IMAGE
         title: coppermineCategory.name
         description: coppermineCategory.description
         subalbums: []
@@ -74,10 +90,12 @@ convertAlbums = (categoryId, parent, indent=0) ->
   query('SELECT aid, title, description FROM cpg11d_albums WHERE category = ? ORDER BY pos', [categoryId]).spread (albums) ->
     Q.all albums.map (coppermineAlbum) ->
       indented indent, "Processing album '#{coppermineAlbum.title}'"
+      slug = slugify(coppermineAlbum.title) or "album#{coppermineAlbum.aid}"
+
       edegalAlbum =
-        path: path.join(parent.path, "album#{coppermineAlbum.aid}")
+        path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
-        thumbnail: 'TODO'
+        thumbnail: PLACEHOLDER_IMAGE
         title: coppermineAlbum.title
         description: coppermineAlbum.description
         subalbums: []
@@ -95,7 +113,7 @@ convertPictures = (albumId, parent, indent=0) ->
         path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture#{copperminePicture.pid}")
         title: title
         description: copperminePicture.description
-        thumbnail: 'TODO'
+        thumbnail: PLACEHOLDER_IMAGE
         media: [ TODO: true ]
 
 if require.main is module

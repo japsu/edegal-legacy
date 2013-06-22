@@ -45,7 +45,7 @@ albumQuery = (path) ->
 exports.app = app = express()
 #app.use connect.compress()
 app.use app.router
-app.use express.static staticPath
+app.use express.static(staticPath, maxAge: 24*60*60*1000)
 app.use indexHtmlAnyway
 app.use respond404
 
