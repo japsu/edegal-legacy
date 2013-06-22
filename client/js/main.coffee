@@ -3,6 +3,7 @@ window.Backbone = Backbone = require 'backbone' # XXX
 
 {Album, albums} = require './models/album.coffee'
 {AlbumView} = require './views/album_view.coffee'
+{site} = require './models/site.coffee'
 {PictureView} = require './views/picture_view.coffee'
 {getContent} = require './models/helpers/content_helper.coffee'
 
@@ -40,5 +41,18 @@ $ ->
     href = $(this).attr 'href'
     router.navigate href, trigger: true
     return false
+  
+  albums.once 'add', (album) ->
+    console?.log 'updateTitle', album.toJSON()
+    if album.get('path') == '/'
+      title = album.get('title')
+    else
+      title = _.first(album.get('breadcrumb') ? [])?.title
+
+    site.set 'title', title if title
+
+  site.on 'change:title', (site) ->
+    document.title = site.get 'title'
 
   Backbone.history.start pushState: true
+  
