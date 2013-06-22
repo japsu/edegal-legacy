@@ -5,9 +5,15 @@ class AlbumView extends View
   renderContent: ->
     @$el.render @model.toJSON(),
       subalbums:
+        thumb:
+          src: -> @thumbnail
+          alt: -> @title
         link:
           href: -> @path
       pictures:
+        thumb:
+          src: -> @thumbnail
+          alt: -> @title
         link:
           href: -> @path
 

@@ -27,7 +27,7 @@ a:hover
 
 #header
   background-color $background-hilight
-  background linear-gradient(top, $background-hilight 0%, $background-color 95%)
+  background linear-gradient(top, $background-hilight 5%, $background-color 95%)
   color $text-color
   padding 15px
   margin-bottom 2px
@@ -40,7 +40,7 @@ a:hover
 
 #footer
   background-color $background-hilight
-  background linear-gradient(top, $background-color 5%, $background-hilight 100%)
+  background linear-gradient(top, $background-color 5%, $background-hilight 95%)
 
   .copyright
     font-size 13px
@@ -80,15 +80,23 @@ a:hover
 #subalbums, #pictures
   li
     display inline-block
-    border-collapse collapse
-    background url('../images/example_content_360x240.jpg')
+    position relative
+    width 360px
+    height 240px
+    border none
+
+    img
+      width 360px
+      height 240px
 
     a
-      position relative
+      position absolute
+      top 0
+      left 0
       margin 0
       padding 0
       display block
-      border-right 3px solid $background-color
+      border-left 3px solid $background-color
       width 357px
       height 240px
       color $hilight-text-color
