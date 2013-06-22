@@ -43,7 +43,6 @@ $ ->
     return false
   
   albums.once 'add', (album) ->
-    console?.log 'updateTitle', album.toJSON()
     if album.get('path') == '/'
       title = album.get('title')
     else
@@ -52,7 +51,6 @@ $ ->
     site.set 'title', title if title
 
   site.on 'change:title', (site) ->
-    document.title = site.get 'title'
+    $('.site-title').text (document.title = site.get 'title')
 
   Backbone.history.start pushState: true
-  

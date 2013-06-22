@@ -1,3 +1,6 @@
+$background-color = #000
+$background-hilight = #333
+
 @import 'nib'
 
 global-reset()
@@ -5,17 +8,18 @@ global-reset()
 html, body
   margin 0
   padding 0
-  font-family "Roboto", Arial, Geneva, sans-serif
-  font-size 15px
-  background-color #111
+  height 100%
+  font-family Helvetica, Arial, sans-serif
+  font-size 16px
+  background-color $background-color
   color #eee
 
 a
   text-decoration none
 
 #header
-  background-color #444
-  background linear-gradient(top, #444, #333)
+  background-color $background-hilight
+  background linear-gradient(top, $background-hilight 0%, $background-color 95%)
   color #ddd
   padding 15px
   margin-bottom 2px
@@ -26,6 +30,24 @@ a
   a:hover
     color white
 
+#footer
+  background-color $background-hilight
+  background linear-gradient(top, $background-color 5%, $background-hilight 100%)
+
+  .copyright
+    font-size 14px
+    color #666
+    padding 15px 10px 10px 15px
+
+#wrap
+  min-height 100%
+  height auto !important
+  height 100%
+  margin 0 auto -45px
+
+#push, #footer 
+  height 45px
+
 #login
   float right
 
@@ -34,8 +56,8 @@ a
   padding 0
 
   li
-    display: inline-block
-    padding: 2px
+    display inline-block
+    padding 2px
 
   li:first-child
     font-weight bold
@@ -55,7 +77,7 @@ a
       margin 0
       padding 0
       display block
-      border-left 3px solid #111
+      border-right 3px solid $background-color
       width 357px
       height 240px
       color #eee
@@ -66,15 +88,15 @@ a
         left 0
         width 357px
         height 50px
-        background-color rgba(0,0,0,0.8)
+        background-color black
+        background-color rgba(0,0,0,0.6)
+        background linear-gradient(top, transparent 5%, black 95%)
 
         .title
           position absolute
           bottom 10px
-          padding 0 5px 0 5px
+          padding 0 10px 0 15px
 
     a:hover, a:active
       background-color rgba(255,255,255,0.1)
 
-      .title-wrap
-        background-color rgba(16,16,16,0.8)

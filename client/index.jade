@@ -3,18 +3,20 @@ html
   head
     title
     meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
-    link(rel='stylesheet', href='//fonts.googleapis.com/css?family=Roboto')
     link(rel='stylesheet', href='/css/style.css')
     script(src='/js/bundle.js')
   body
-    #header
-      include partials/header
+    #wrap
+      #header
+        include partials/header
 
-    #picture.view
-      include partials/picture
+      #picture.view
+        include partials/picture
 
-    #album.view
-      include partials/album
+      #album.view
+        include partials/album
+
+      #push
 
     #footer
       include partials/footer
