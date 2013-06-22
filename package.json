@@ -5,6 +5,7 @@
    "devDependencies": {
       "backbone": "1.0.x",
       "backbone-relational": "0.8.x",
+      "bower": "0.9.x",
       "browserify": "2.12.x",
       "browserify-shim": "2.0.x",
       "coffeeify": "0.4.x",
@@ -14,8 +15,10 @@
       "james-uglify": "0.1.x",
       "jquery": "1.8.x",
       "mocha": "1.11.x",
+      "nib": "0.9.x",
       "q": "0.9.x",
       "sinon": "1.7.x",
+      "stylus": "0.32.x",
       "should": "1.2.x"
    },
    "dependencies": {
@@ -23,7 +26,8 @@
       "connect": "2.7.x",
       "express": "3.2.x",
       "underscore": "1.4.x",
-      "mongolian": "0.1.x"
+      "mongolian": "0.1.x",
+      "slug": "0.3.x"
    },
    "scripts": {
       "start": "coffee server/server.coffee",

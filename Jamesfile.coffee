@@ -3,6 +3,8 @@ jade   = require 'james-jade-static'
 stylus = require 'james-stylus'
 uglify = require 'james-uglify'
 
+nib = require 'nib'
+
 browserify = require 'browserify'
 shim = require 'browserify-shim'
 coffeeify  = require 'coffeeify'
@@ -63,7 +65,7 @@ james.task 'jade_static', ->
 
 transmogrifyStylus = (file) ->
   james.read(file)
-    .transform(stylus)
+    .transform(stylus(filename: file, use: nib()))
     .write(file
       .replace('client', 'public')
       .replace('.stylus', '.css')

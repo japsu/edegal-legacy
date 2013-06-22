@@ -7,12 +7,15 @@ class PictureView extends View
     # XXX fugly
     album = @model.get('album')
 
-    breadcrumb = album.get('breadcrumb').concat [
-      title: album.get('title')
-      path: album.get('path')
+    album.get('breadcrumb').concat [
+      {
+        title: album.get('title')
+        path: album.get('path')
+      }
+      {
+        title: @model.get('title')
+        path: @model.get('path')
+      }
     ]
-
-    title: @model.get('title')
-    breadcrumb: breadcrumb
 
 module.exports = {PictureView}

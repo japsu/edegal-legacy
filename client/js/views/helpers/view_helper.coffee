@@ -19,14 +19,16 @@ class View extends Backbone.View
     @$el.render @model.toJSON()
 
   getBreadcrumb: ->
-    @model.toJSON()
+    @model.get('breadcrumb').concat [
+      title: @model.get 'title'
+      path: @model.get 'path'
+    ]
 
   updateBreadcrumb: ->
     $('#breadcrumb').render @getBreadcrumb(),
-      breadcrumb:
-        path:
-          href: -> @path
-        title:
-          text: -> @title
+      path:
+        href: -> @path
+      title:
+        text: -> @title
 
 module.exports = {View}
