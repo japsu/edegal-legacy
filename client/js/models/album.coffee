@@ -23,5 +23,5 @@ class Albums extends Backbone.Collection
 
 albums = new Albums
 
-window.edegalAlbumModels = module.exports = {Album, Albums, albums} 
+module.exports = {Album, Albums, albums} 
 Backbone.Relational.store.addModelScope module.exports
