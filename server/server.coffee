@@ -1,6 +1,6 @@
 path = require 'path'
 
-_ = require 'lodash'
+_ = require 'underscore'
 
 connect = require 'connect'
 express = require 'express'
