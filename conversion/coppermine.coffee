@@ -2,7 +2,10 @@ mysql = require 'mysql'
 Q = require 'q'
 _ = require 'underscore'
 path = require 'path'
+
 originalSlugify = require 'slug'
+originalSlugify.charmap['.'] = '-'
+originalSlugify.charmap['_'] = '-'
 
 {albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db.coffee'
 
@@ -19,7 +22,6 @@ PLACEHOLDER_IMAGE = '/images/example_content_360x240.jpg'
 root =
   path: '/'
   title: 'Anikin kuva-arkisto'
-  thumbnail: PLACEHOLDER_IMAGE
   breadcrumb: []
   subalbums: []
   pictures: []
@@ -35,6 +37,13 @@ makeBreadcrumb = (parent) ->
     title: parent.title
   ]
 
+setThumbnail = (album) ->
+  album.thumbnail = 
+    album.thumbnail ?
+    _.first(album.pictures)?.thumbnail ?
+    _.first(album.subalbums)?.thumbnail ?
+    PLACEHOLDER_IMAGE
+
 convertCoppermine = ->
   Q.all([
     dropAlbums().fail(-> null)
@@ -42,6 +51,7 @@ convertCoppermine = ->
   ]).then ->
     convertSubcategories(0, root, 0)
   .then ->
+    setThumbnail root
     saveAlbum root
   .then(createIndexes)
 
@@ -69,20 +79,20 @@ convertSubcategories = (categoryId, parent, indent=0) ->
       edegalAlbum =
         path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
-        thumbnail: PLACEHOLDER_IMAGE
         title: coppermineCategory.name
         description: coppermineCategory.description
         subalbums: []
         pictures: []
-
-      parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
 
       albumWork = [
         convertSubcategories(coppermineCategory.cid, edegalAlbum, indent + 1),
         convertAlbums(coppermineCategory.cid, edegalAlbum, indent + 1)
       ]
 
-      Q.all(albumWork).then -> saveAlbum(edegalAlbum)
+      Q.all(albumWork).then ->
+        setThumbnail edegalAlbum
+        parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
+        saveAlbum(edegalAlbum)
 
 convertAlbums = (categoryId, parent, indent=0) ->
   breadcrumb = makeBreadcrumb parent
@@ -95,14 +105,15 @@ convertAlbums = (categoryId, parent, indent=0) ->
       edegalAlbum =
         path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
-        thumbnail: PLACEHOLDER_IMAGE
         title: coppermineAlbum.title
         description: coppermineAlbum.description
         subalbums: []
         pictures: []
 
-      parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
-      convertPictures(coppermineAlbum.aid, edegalAlbum, indent + 1).then -> saveAlbum(edegalAlbum)
+      convertPictures(coppermineAlbum.aid, edegalAlbum, indent + 1).then ->
+        setThumbnail edegalAlbum
+        parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
+        saveAlbum edegalAlbum
 
 convertPictures = (albumId, parent, indent=0) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY position', [albumId]).spread (pictures) ->
@@ -113,7 +124,7 @@ convertPictures = (albumId, parent, indent=0) ->
         path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture#{copperminePicture.pid}")
         title: title
         description: copperminePicture.description
-        thumbnail: PLACEHOLDER_IMAGE
+        thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}/thumb_#{copperminePicture.filename}"
         media: [ TODO: true ]
 
 if require.main is module
