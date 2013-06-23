@@ -37,4 +37,16 @@ class PictureView extends View
     previous = @model.get 'previous'
     preloadMedia '#preload .previous', previous if previous
 
+$ ->
+  $(document).keydown (event) ->
+    LEFT_ARROW = 37
+    RIGHT_ARROW = 39
+
+    $link = $()
+    $link = $('#picture .next-link:visible') if event.keyCode == RIGHT_ARROW
+    $link = $('#picture .prev-link:visible') if event.keyCode == LEFT_ARROW
+    $link.click()
+
+    return !$link.length
+
 module.exports = {PictureView}
