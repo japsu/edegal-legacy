@@ -13,12 +13,16 @@ originalSlugify.charmap['_'] = '-'
 connection = mysql.createConnection
   host: 'localhost'
   port: 10000
-  user: 'coppermine'
-  database: 'coppermine'
+  user: 'b2_coppermine'
+  database: 'b2_coppermine'
   password: 'secret'
   insecureAuth: true
 
 PLACEHOLDER_IMAGE = '/images/example_content_360x240.jpg'
+CATEGORY_BLACKLIST = [
+  1 # User galleries
+  4 # Anime- ja mangayhteisö Hidoi ry
+]
 
 root =
   path: '/'
@@ -78,6 +82,8 @@ convertSubcategories = (categoryId, parent, indent=0) ->
   # get root category
   query('SELECT cid, name, description FROM cpg11d_categories WHERE parent = ? ORDER BY pos', [categoryId]).spread (categories) ->
     Q.all categories.map (coppermineCategory) ->
+      return null if coppermineCategory.cid in CATEGORY_BLACKLIST
+
       decodeEntities coppermineCategory, 'name', 'description'
       indented indent, "Processing category #{coppermineCategory.name}"
       slug = slugify(coppermineCategory.name) or "category-#{coppermineCategory.cid}"
@@ -132,7 +138,7 @@ convertPictures = (albumId, parent, indent=0) ->
         path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
         title: title ? ''
         description: copperminePicture.caption ? ''
-        thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}thumb_#{copperminePicture.filename}"
+        thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}"
         media: [ 
           {
             src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}",
