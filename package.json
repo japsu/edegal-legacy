@@ -2,6 +2,13 @@
    "name" : "edegal-express",
    "version" : "0.0.0",
    "main" : "./server/server",
+   "author": "Santtu Pajukanta <santtu@pajukanta.fi>",
+   "description": "A web picture gallery",
+   "license": "MIT",
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/japsu/edegal-express"
+   },
    "devDependencies": {
       "backbone": "1.0.x",
       "backbone-relational": "0.8.x",
