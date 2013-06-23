@@ -43,6 +43,7 @@ Edegal is a work in progress.
   * [Backbone](https://github.com/documentcloud/backbone)
   * [Backbone.Relational](https://github.com/PaulUithol/Backbone-relational)
   * [Transparency](https://github.com/leonidas/transparency)
+  * [Hammer.js](https://github.com/EightMedia/hammer.js)
 
 ## Layout
 

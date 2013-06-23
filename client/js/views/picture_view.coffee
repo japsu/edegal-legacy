@@ -1,3 +1,6 @@
+$ = require 'jquery'
+require 'hammer-jquery'
+
 {View} = require './helpers/view_helper.coffee'
 {selectMedia, preloadMedia} = require './helpers/media_helper.coffee'
 
@@ -38,6 +41,11 @@ class PictureView extends View
     preloadMedia '#preload .previous', previous if previous
 
 $ ->
+  # TODO encapsulate this $('#picture .prev-link:visible').click hackery!
+  hammer = $('#picture').hammer()
+  hammer.on 'swiperight', -> $('#picture .prev-link:visible').click()
+  hammer.on 'swipeleft', -> $('#picture .next-link:visible').click()
+
   $(document).keydown (event) ->
     LEFT_ARROW = 37
     RIGHT_ARROW = 39

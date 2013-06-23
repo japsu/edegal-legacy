@@ -41,6 +41,12 @@ transmogrifyCoffee = (debug) ->
         underscore: '_'
         backbone: 'Backbone'
 
+    'hammer-jquery':
+      path: './components/hammerjs/dist/jquery.hammer.js'
+      exports: '$'
+      depends:
+        jquery: '$'
+
   bundle = james.read shim(browserify(), libs)
     .require('./client/js/main.coffee', entry: true)
     .transform(coffeeify)
