@@ -18,7 +18,7 @@ html, body
   background-color $background-color
   color $text-color
 
-a, a:visited, a:active
+a, a:visited, a:focus
   text-decoration none
   color $hilight-text-color
 
@@ -116,7 +116,7 @@ a:hover
           bottom 10px
           padding 0 10px 0 15px
 
-    a:hover, a:active
+    a:hover, a:focus
       background-color rgba(255,255,255,0.1)
 
 #picture
@@ -131,7 +131,7 @@ a:hover
     color transparent
     transition color 0.3s
 
-  .prev-link:hover, .next-link:hover, .prev-link:active, .next-link:active
+  .prev-link:hover, .next-link:hover, .prev-link:focus, .next-link:focus
     color $text-color
 
   .prev-link
