@@ -22,6 +22,9 @@ exports.selectMedia = (picture) ->
   # fall back to the smallest
   _.min media, byWidth
 
+exports.getOriginal = (picture) ->
+  _.find picture.get('media'), (medium) -> medium.original
+
 exports.preloadMedia = (selector, path) ->
   getContent(path).then (content) ->
     {album, picture} = content

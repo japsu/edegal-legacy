@@ -5,6 +5,7 @@ window.Backbone = Backbone = require 'backbone' # XXX
 {AlbumView} = require './views/album_view.coffee'
 {site} = require './models/site.coffee'
 {PictureView} = require './views/picture_view.coffee'
+{applyTranslations} = require './views/helpers/i18n_helper.coffee'
 {getContent} = require './models/helpers/content_helper.coffee'
 
 albumView = null
@@ -35,6 +36,8 @@ $ ->
   pictureView = new PictureView
 
   router = new Router
+
+  applyTranslations()
 
   $(document).on 'click', 'a, area', (event) ->
     # XXX fugly

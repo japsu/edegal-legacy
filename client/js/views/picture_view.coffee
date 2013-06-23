@@ -2,7 +2,7 @@ $ = require 'jquery'
 require 'hammer-jquery'
 
 {View} = require './helpers/view_helper.coffee'
-{selectMedia, preloadMedia} = require './helpers/media_helper.coffee'
+{selectMedia, preloadMedia, getOriginal} = require './helpers/media_helper.coffee'
 
 class PictureView extends View
   el: '#picture'
@@ -33,6 +33,9 @@ class PictureView extends View
       'prev-link':
         href: -> @previous ? ''
         style: -> if @previous then '' else 'display:none'
+      'download-link':
+        href: => getOriginal(@model)?.src ? ''
+        style: => if getOriginal(@model) then '' else 'display:none'
 
     next = @model.get 'next'
     preloadMedia '#preload .next', next if next
