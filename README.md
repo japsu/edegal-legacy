@@ -27,6 +27,7 @@ Edegal is a work in progress.
 ## Technology choices
 
 * Development tools
+  * [Node.js](https://github.com/joyent/node)
   * [James](https://github.com/leonidas/james.js)
   * [Browserify](https://github.com/substack/node-browserify)
   * [CoffeeScript](https://github.com/jashkenas/coffee-script)
@@ -36,6 +37,7 @@ Edegal is a work in progress.
   * [Mocha](https://github.com/visionmedia/mocha)
   * [Sinon](https://github.com/cjohansen/Sinon.JS)
 * Backend
+  * [Node.js](https://github.com/joyent/node)
   * [Express](https://github.com/visionmedia/express)
   * [MongoDB](https://github.com/mongodb/mongo)
   * [nginx](https://github.com/nginx/nginx)
