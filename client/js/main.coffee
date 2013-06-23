@@ -37,10 +37,12 @@ $ ->
   router = new Router
 
   $(document).on 'click', 'a, area', (event) ->
-    event.preventDefault()
+    # XXX fugly
     href = $(this).attr 'href'
-    router.navigate href, trigger: true
-    return false
+    if href[0] == '/' and href[1] != '/'
+      event.preventDefault()
+      router.navigate href, trigger: true
+      return false
   
   albums.once 'add', (album) ->
     if album.get('path') == '/'
