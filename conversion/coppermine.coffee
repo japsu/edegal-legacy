@@ -2,6 +2,7 @@ mysql = require 'mysql'
 Q = require 'q'
 _ = require 'underscore'
 path = require 'path'
+ent = require 'ent'
 
 originalSlugify = require 'slug'
 originalSlugify.charmap['.'] = '-'
@@ -61,11 +62,15 @@ indented = (indent, args...) ->
 
 indented = ->
 
-slugify = (str) -> originalSlugify(str).toLowerCase()
+slugify = (str) -> originalSlugify(str).toLowerCase().replace(/[^a-z0-9-]/g, '')
 
 sanitizeFilename = (filename) ->
   [filename] = filename.split '.', 1
-  slugify(filename) or _.uniqueId('picture')
+  slugify(filename) or _.uniqueId('picture-')
+
+decodeEntities = (obj, fields...) ->
+  for field in fields
+    obj[field] = ent.decode(obj[field] ? '')
 
 convertSubcategories = (categoryId, parent, indent=0) ->
   breadcrumb = makeBreadcrumb parent
@@ -73,8 +78,9 @@ convertSubcategories = (categoryId, parent, indent=0) ->
   # get root category
   query('SELECT cid, name, description FROM cpg11d_categories WHERE parent = ? ORDER BY pos', [categoryId]).spread (categories) ->
     Q.all categories.map (coppermineCategory) ->
+      decodeEntities coppermineCategory, 'name', 'description'
       indented indent, "Processing category #{coppermineCategory.name}"
-      slug = slugify(coppermineCategory.name) or "category#{coppermineCategory.cid}"
+      slug = slugify(coppermineCategory.name) or "category-#{coppermineCategory.cid}"
 
       edegalAlbum =
         path: path.join(parent.path, slug)
@@ -99,8 +105,9 @@ convertAlbums = (categoryId, parent, indent=0) ->
 
   query('SELECT aid, title, description FROM cpg11d_albums WHERE category = ? ORDER BY pos', [categoryId]).spread (albums) ->
     Q.all albums.map (coppermineAlbum) ->
+      decodeEntities coppermineAlbum, 'title', 'description'
       indented indent, "Processing album '#{coppermineAlbum.title}'"
-      slug = slugify(coppermineAlbum.title) or "album#{coppermineAlbum.aid}"
+      slug = slugify(coppermineAlbum.title) or "album-#{coppermineAlbum.aid}"
 
       edegalAlbum =
         path: path.join(parent.path, slug)
@@ -118,12 +125,13 @@ convertAlbums = (categoryId, parent, indent=0) ->
 convertPictures = (albumId, parent, indent=0) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY position', [albumId]).spread (pictures) ->
     pictures.map (copperminePicture) ->
+      decodeEntities copperminePicture, 'title', 'caption'
       title = copperminePicture.title or copperminePicture.filename
       indented indent, "Processing picture '#{title}'"
       parent.pictures.push
-        path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture#{copperminePicture.pid}")
-        title: title
-        description: copperminePicture.description
+        path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
+        title: title ? ''
+        description: copperminePicture.caption ? ''
         thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}/thumb_#{copperminePicture.filename}"
         media: [ TODO: true ]
 

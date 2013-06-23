@@ -16,6 +16,7 @@
       "browserify": "2.12.x",
       "browserify-shim": "2.0.x",
       "coffeeify": "0.4.x",
+      "ent": "0.0.x",
       "james": "0.1.x",
       "james-jade-static": "0.1.x",
       "james-stylus": "0.1.x",
@@ -24,17 +25,17 @@
       "mocha": "1.11.x",
       "nib": "0.9.x",
       "q": "0.9.x",
+      "should": "1.2.x",
       "sinon": "1.7.x",
-      "stylus": "0.32.x",
-      "should": "1.2.x"
+      "stylus": "0.32.x"
    },
    "dependencies": {
       "coffee-script": "1.6.x",
       "connect": "2.7.x",
       "express": "3.2.x",
-      "underscore": "1.4.x",
       "mongolian": "0.1.x",
-      "slug": "0.3.x"
+      "slug": "0.3.x",
+      "underscore": "1.4.x"
    },
    "scripts": {
       "start": "coffee server/server.coffee",
