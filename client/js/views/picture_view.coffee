@@ -1,4 +1,5 @@
 {View} = require './helpers/view_helper.coffee'
+{selectMedia, preloadMedia} = require './helpers/media_helper.coffee'
 
 class PictureView extends View
   el: '#picture'
@@ -19,10 +20,21 @@ class PictureView extends View
     ]
 
   renderContent: ->
-    # XXX better media selection algorithm
     @$el.render @model.toJSON(),
       picture:
-        src: -> _.first(@media)?.src ? ''
+        src: => selectMedia(@model)?.src ? ''
         alt: -> @title
+      'next-link':
+        href: -> @next ? ''
+        style: -> if @next then '' else 'display:none'
+      'prev-link':
+        href: -> @previous ? ''
+        style: -> if @previous then '' else 'display:none'
+
+    next = @model.get 'next'
+    preloadMedia '#preload .next', next if next
+
+    previous = @model.get 'previous'
+    preloadMedia '#preload .previous', previous if previous
 
 module.exports = {PictureView}

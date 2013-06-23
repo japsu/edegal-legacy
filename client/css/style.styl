@@ -120,8 +120,31 @@ a:hover
       background-color rgba(255,255,255,0.1)
 
 #picture
-  img
+  position relative
+
+  .prev-link, .next-link
     display block
-    margin 0 auto
+    height 100%
+    width 50%
+    font-weight bold
+    font-size 144px
+    color transparent
+    transition color 0.3s
 
+  .prev-link:hover, .next-link:hover, .prev-link:active, .next-link:active
+    color $text-color
 
+  .prev-link
+    position absolute
+    left 0
+    padding-left 20px
+
+  .next-link
+    text-align right
+    position absolute
+    right 0
+    padding-right 20px
+
+  .picture
+    display block
+    margin auto
