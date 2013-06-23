@@ -142,13 +142,13 @@ convertPictures = (albumId, parent, indent=0) ->
         media: [ 
           {
             src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}",
-            width: 'TODO'
-            height: 'TODO'
+            width: 600 # TODO
+            height: 400 # TODO
           }
           {
             src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}#{copperminePicture.filename}",
-            width: 'TODO'
-            height: 'TODO'
+            width: 6000 # TODO
+            height: 4000 # TODO
             original: true
           }
         ]
