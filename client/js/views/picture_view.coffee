@@ -47,6 +47,8 @@ $ ->
   hammer.on 'swipeleft', -> $('#picture .next-link:visible').click()
 
   $(document).keydown (event) ->
+    return true if event.altKey or event.ctrlKey or event.metaKey
+
     LEFT_ARROW = 37
     RIGHT_ARROW = 39
 
