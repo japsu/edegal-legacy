@@ -18,4 +18,11 @@ class PictureView extends View
       }
     ]
 
+  renderContent: ->
+    # XXX better media selection algorithm
+    @$el.render @model.toJSON(),
+      picture:
+        src: -> _.first(@media)?.src ? ''
+        alt: -> @title
+
 module.exports = {PictureView}
