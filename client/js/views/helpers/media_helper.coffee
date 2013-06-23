@@ -25,8 +25,7 @@ exports.selectMedia = (picture) ->
 exports.preloadMedia = (selector, path) ->
   getContent(path).then (content) ->
     {album, picture} = content
-    selectedMedia = selectMedia picture
-    return unless selectedMedia and selectedMedia.src
+    selectedMedia = exports.selectMedia picture
     $('<img/>').attr 'src', selectedMedia.src
   .done()
 
