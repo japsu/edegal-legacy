@@ -132,8 +132,20 @@ convertPictures = (albumId, parent, indent=0) ->
         path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
         title: title ? ''
         description: copperminePicture.caption ? ''
-        thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}/thumb_#{copperminePicture.filename}"
-        media: [ TODO: true ]
+        thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}thumb_#{copperminePicture.filename}"
+        media: [ 
+          {
+            src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}",
+            width: 'TODO'
+            height: 'TODO'
+          }
+          {
+            src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}#{copperminePicture.filename}",
+            width: 'TODO'
+            height: 'TODO'
+            original: true
+          }
+        ]
 
 if require.main is module
   convertCoppermine().then ->
