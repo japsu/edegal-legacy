@@ -27,6 +27,7 @@ a:hover
   color white
 
 #header
+  text-align center
   background-color $background-hilight
   background linear-gradient(top, $background-hilight 5%, $background-color 95%)
   color $text-color
@@ -78,9 +79,14 @@ a:hover
 
   li + li:before
     content " » "
+    color $muted-text-color
+    padding 2px 4px
 
 #subalbums, #pictures
+  text-align center
+  
   li
+    text-align left
     display inline-block
     position relative
     height 240px
