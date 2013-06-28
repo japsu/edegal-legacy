@@ -6,7 +6,7 @@ Edegal is a web picture gallery written in Node.js and designed with performance
 
 High performance is achieved through the usage of a dead simple REST JSON API in which most cache misses only result in a single database query that returns a single document.
 
-Edegal is a work in progress.
+Edegal is a work in progress. See a demo at [uusi.kuvat.aniki.fi](http://uusi.kuvat.aniki.fi/).
 
 ## Goals
 
@@ -68,6 +68,7 @@ Development:
 * Backend
   * [Node.js](https://github.com/joyent/node)
   * [Express](https://github.com/visionmedia/express)
+  * [Mongolian DeadBeef](https://github.com/marcello3d/node-mongolian)
   * [MongoDB](https://github.com/mongodb/mongo)
   * [nginx](https://github.com/nginx/nginx)
 * Frontend
