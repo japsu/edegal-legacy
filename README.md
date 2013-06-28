@@ -77,15 +77,6 @@ Development:
   * [Transparency](https://github.com/leonidas/transparency)
   * [Hammer.js](https://github.com/EightMedia/hammer.js)
 
-## Layout
-
-* server: all server-side code
-* client: all client-side code
-  * coffee
-  * jade
-  * stylus
-  * images
-
 ## Testimonials
 
 * "That's mighty fast!"
