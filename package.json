@@ -39,6 +39,8 @@
    },
    "scripts": {
       "start": "coffee server/server.coffee",
+      "prepublish": "bower install && james build",
+      "load-seed": "coffee example/load_seed.coffee",
       "test": "mocha --reporter spec --compilers coffee:coffee-script spec/*_spec.coffee"
    }
 }

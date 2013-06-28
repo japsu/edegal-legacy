@@ -24,27 +24,31 @@ Assuming you have MongoDB installed. If you need to authenticate to MongoDB, edi
     source ~/.nvm/nvm.sh
     nvm install v0.10.12
 
-    # install build tools
-    npm -g install bower james coffee-script
-
-    # install dependencies
+    # install dependencies and build
     npm install
-    bower install
-
-    # build (plain "james" for a debug build)
-    james build
-
-    # run tests
-    npm test
 
     # import some dummy data
-    coffee example/load_seed.coffee
+    npm run-script load-seed
 
     # run server
     npm start
 
     # enjoy
-    iexplore http://localhost:9001
+    iexplore http://localhost:3000
+
+Development:
+
+    # install development tools into PATH
+    npm -g install bower coffee-script james
+
+    # do an un-minified debug build
+    james
+
+    # watch files for changes and rebuild when necessary
+    james watch
+
+    # run tests
+    npm test
 
 ## Technology choices
 
