@@ -17,11 +17,33 @@ Edegal is a work in progress.
 
 ## Getting started
 
+Assuming you have MongoDB installed. If you need to authenticate to MongoDB, edit `server/db.coffee` (look for `new Mongolian`, change url to `mongo://user:password@localhost/edegal`).
+
+    # install node.js (may skip if node -v returns something >= 0.8 already)
+    git clone https://github.com/creationix/nvm ~/.nvm
+    source ~/.nvm/nvm.sh
+    nvm install v0.10.12
+
+    # install build tools
+    npm -g install bower james coffee-script
+
+    # install dependencies
     npm install
     bower install
-    james
+
+    # build (plain "james" for a debug build)
+    james build
+
+    # run tests
     npm test
+
+    # import some dummy data
+    coffee example/load_seed.coffee
+
+    # run server
     npm start
+
+    # enjoy
     iexplore http://localhost:9001
 
 ## Technology choices
@@ -55,3 +77,8 @@ Edegal is a work in progress.
   * jade
   * stylus
   * images
+
+## Testimonials
+
+* "That's mighty fast!"
+* "I don't remember having ever run into another web gallery as nifty as this!"

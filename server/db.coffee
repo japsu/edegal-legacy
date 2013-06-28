@@ -1,8 +1,7 @@
 Q = require 'q'
 Mongolian = require 'mongolian'
-server = new Mongolian
 
-db = server.db 'edegal'
+db = new Mongolian 'mongo://localhost/edegal'
 albums = db.collection 'albums'
 
 ensureIndexOnAlbums = Q.nbind albums.ensureIndex, albums
