@@ -27,6 +27,9 @@ Assuming you have MongoDB installed. If you need to authenticate to MongoDB, edi
     # install dependencies and build
     npm install
 
+    # (NODE v0.8 ONLY: if you are running node v0.8 and not v0.10, npm install won't run prepublish for you)
+    npm run-script prepublish
+
     # import some dummy data
     npm run-script load-seed
 
