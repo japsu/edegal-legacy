@@ -81,3 +81,4 @@ Development:
 
 * "That's mighty fast!"
 * "I don't remember having ever run into another web gallery as nifty as this!"
+* "I find the page load speed of Edegal incredible. But I think I've just grown accustomed to bad galleries."
