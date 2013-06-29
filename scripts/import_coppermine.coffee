@@ -107,12 +107,7 @@ convertPictures = (albumId, parent) ->
         description: copperminePicture.caption ? ''
         media: [ 
           {
-            src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}",
-            width: 600 # TODO
-            height: 400 # TODO
-          }
-          {
-            src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}#{copperminePicture.filename}",
+            src: "/albums/#{copperminePicture.filepath}#{copperminePicture.filename}",
             width: 6000 # TODO
             height: 4000 # TODO
             original: true
