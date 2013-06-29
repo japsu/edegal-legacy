@@ -3,7 +3,7 @@ require 'hammer-jquery'
 
 {View} = require './helpers/view_helper.coffee'
 {selectMedia, preloadMedia, getOriginal} = require './helpers/media_helper.coffee'
-{makeBreadcrumb} = require '../../../shared/helpers/breadcrumb_helper.coffee'
+{makeBreadcrumb} = require '../../../shared/helpers/path_helper.coffee'
 
 class PictureView extends View
   el: '#picture'

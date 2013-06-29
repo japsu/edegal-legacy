@@ -4,12 +4,8 @@ _ = require 'underscore'
 path = require 'path'
 ent = require 'ent'
 
-originalSlugify = require 'slug'
-originalSlugify.charmap['.'] = '-'
-originalSlugify.charmap['_'] = '-'
-
 {albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
-{makeBreadcrumb} = require '../shared/helpers/breadcrumb_helper'
+{slugify, makeBreadcrumb} = require '../shared/helpers/path_helper'
 
 connection = mysql.createConnection
   host: 'localhost'
@@ -59,8 +55,6 @@ indented = (indent, args...) ->
   console?.log indentation, args...
 
 indented = ->
-
-slugify = (str) -> originalSlugify(str).toLowerCase().replace(/[^a-z0-9-]/g, '')
 
 sanitizeFilename = (filename) ->
   [filename] = filename.split '.', 1

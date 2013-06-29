@@ -2,7 +2,7 @@ $ = require 'jquery'
 Backbone = require 'backbone'
 require 'transparency'
 
-{makeBreadcrumb} = require '../../../../shared/helpers/breadcrumb_helper.coffee'
+{makeBreadcrumb} = require '../../../../shared/helpers/path_helper.coffee'
 
 class View extends Backbone.View
   setModel: (newModel) ->
