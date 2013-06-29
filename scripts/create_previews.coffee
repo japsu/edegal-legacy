@@ -35,7 +35,7 @@ mkPath = (first, theRest...) ->
 albumUpdateSemaphore = new Semaphore 1
 
 createPreview = (opts) ->
-  {albumPath, picture, size, root, output} = opts
+  {albumPath, picture, size, root, output, quiet} = opts
   {width, height, quality} = size
 
   dstPathOnServer = path.join '/', output, picture.path, "max#{width}x#{height}q#{quality}.jpg"
@@ -55,9 +55,11 @@ createPreview = (opts) ->
             src: dstPathOnServer
           picture.media = _.sortBy picture.media, (medium) -> medium.width
           saveAlbum(album)
+        .then ->
+          process.stdout.write '.' unless quiet
 
 createPreviews = (opts) ->
-  {albums, sizes, concurrency, root, output} = opts
+  {albums, sizes, concurrency, root, output, quiet} = opts
 
   sem = new Semaphore concurrency
 
@@ -75,6 +77,7 @@ createPreviews = (opts) ->
                 size: size
                 root: root
                 output: output
+                quiet: quiet
             .done()
 
   sem.finished
@@ -87,11 +90,12 @@ if require.main is module
     .options('output', alias: 'o', default: 'previews', 'Output folder for previews, relative to --root')
     .options('root', alias: 'r', default: 'public', 'Document root')
     .options('concurrency', alias: 'j', default: 4, 'Maximum parallel processes')
+    .options('quiet', alias: 'q', boolean: true, "Don't print dots")
     .argv
 
   argv.size = [argv.size] unless _.isArray argv.size
   sizes = argv.size.map parseSize
-  {concurrency, root, output} = argv
+  {concurrency, root, output, quiet} = argv
 
   Q.when null, ->
     if argv.path
@@ -99,7 +103,8 @@ if require.main is module
     else
       albums.find()
   .then (albums) ->
-    createPreviews {albums, sizes, concurrency, root, output}
+    createPreviews {albums, sizes, concurrency, root, output, quiet}
   .then ->
+    process.stdout.write '\n'
     process.exit()
   .done()
