@@ -6,6 +6,7 @@ ent = require 'ent'
 
 {albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
 {slugify, makeBreadcrumb} = require '../shared/helpers/path_helper'
+{getThumbnail} = require '../shared/helpers/media_helper'
 
 connection = mysql.createConnection
   host: 'localhost'
@@ -18,7 +19,7 @@ connection = mysql.createConnection
 PLACEHOLDER_IMAGE = '/images/example_content_360x240.jpg'
 CATEGORY_BLACKLIST = [
   1 # User galleries
-  4 # Anime- ja mangayhteisö Hidoi ry
+  107 # Animeunioni
 ]
 
 root =
@@ -32,11 +33,17 @@ connection.connect()
 
 query = Q.nbind connection.query, connection
 
+getFirstLandscapePicture = (pictures) ->
+  _.find pictures, (picture) ->
+    anyMedia = _.first picture.media
+    anyMedia.width >= anyMedia.height
+
 setThumbnail = (album) ->
-  album.thumbnail = 
-    album.thumbnail ?
-    _.first(album.pictures)?.thumbnail ?
-    _.first(album.subalbums)?.thumbnail ?
+  album.thumbnail = do ->
+    return album.thumbnail if album.thumbnail
+    return pictureThumbnail if (picture = getFirstLandscapePicture album.pictures) and (pictureThumbnail = getThumbnail picture)
+    return pictureThumbnail if (picture = _.first album.pictures) and (pictureThumbnail = getThumbnail picture)
+    return subalbum.thumbnail if (subalbum = _.first album.subalbums) and subalbum.thumbnail
     PLACEHOLDER_IMAGE
 
 convertCoppermine = ->
@@ -44,27 +51,21 @@ convertCoppermine = ->
     dropAlbums().fail(-> null)
     query("SET NAMES 'latin1';")
   ]).then ->
-    convertSubcategories(0, root, 0)
+    convertSubcategories 0, root
   .then ->
     setThumbnail root
     saveAlbum root
   .then(createIndexes)
 
-indented = (indent, args...) ->
-  indentation = new Array(indent + 1).join('  ')
-  console?.log indentation, args...
-
-indented = ->
-
 sanitizeFilename = (filename) ->
   [filename] = filename.split '.', 1
-  slugify(filename) or _.uniqueId('picture-')
+  slugify(filename)
 
 decodeEntities = (obj, fields...) ->
   for field in fields
     obj[field] = ent.decode(obj[field] ? '')
 
-convertSubcategories = (categoryId, parent, indent=0) ->
+convertSubcategories = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
   # get root category
@@ -73,7 +74,6 @@ convertSubcategories = (categoryId, parent, indent=0) ->
       return null if coppermineCategory.cid in CATEGORY_BLACKLIST
 
       decodeEntities coppermineCategory, 'name', 'description'
-      indented indent, "Processing category #{coppermineCategory.name}"
       slug = slugify(coppermineCategory.name) or "category-#{coppermineCategory.cid}"
 
       edegalAlbum =
@@ -84,23 +84,20 @@ convertSubcategories = (categoryId, parent, indent=0) ->
         subalbums: []
         pictures: []
 
-      albumWork = [
-        convertSubcategories(coppermineCategory.cid, edegalAlbum, indent + 1),
-        convertAlbums(coppermineCategory.cid, edegalAlbum, indent + 1)
-      ]
-
-      Q.all(albumWork).then ->
+      Q.all([
+        convertSubcategories(coppermineCategory.cid, edegalAlbum),
+        convertAlbums(coppermineCategory.cid, edegalAlbum)
+      ]).then ->
         setThumbnail edegalAlbum
         parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
         saveAlbum(edegalAlbum)
 
-convertAlbums = (categoryId, parent, indent=0) ->
+convertAlbums = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
   query('SELECT aid, title, description FROM cpg11d_albums WHERE category = ? ORDER BY pos', [categoryId]).spread (albums) ->
     Q.all albums.map (coppermineAlbum) ->
       decodeEntities coppermineAlbum, 'title', 'description'
-      indented indent, "Processing album '#{coppermineAlbum.title}'"
       slug = slugify(coppermineAlbum.title) or "album-#{coppermineAlbum.aid}"
 
       edegalAlbum =
@@ -111,22 +108,20 @@ convertAlbums = (categoryId, parent, indent=0) ->
         subalbums: []
         pictures: []
 
-      convertPictures(coppermineAlbum.aid, edegalAlbum, indent + 1).then ->
+      convertPictures(coppermineAlbum.aid, edegalAlbum).then ->
         setThumbnail edegalAlbum
         parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
         saveAlbum edegalAlbum
 
-convertPictures = (albumId, parent, indent=0) ->
+convertPictures = (albumId, parent) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY position', [albumId]).spread (pictures) ->
     pictures.map (copperminePicture) ->
       decodeEntities copperminePicture, 'title', 'caption'
       title = copperminePicture.title or copperminePicture.filename
-      indented indent, "Processing picture '#{title}'"
       parent.pictures.push
         path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
         title: title ? ''
         description: copperminePicture.caption ? ''
-        thumbnail: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}"
         media: [ 
           {
             src: "http://kuvat.aniki.fi/albums/#{copperminePicture.filepath}normal_#{copperminePicture.filename}",
