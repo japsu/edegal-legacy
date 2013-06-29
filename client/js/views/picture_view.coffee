@@ -2,7 +2,8 @@ $ = require 'jquery'
 require 'hammer-jquery'
 
 {View} = require './helpers/view_helper.coffee'
-{selectMedia, preloadMedia, getOriginal} = require './helpers/media_helper.coffee'
+{selectMedia, preloadMedia} = require './helpers/media_helper.coffee'
+{getOriginal} = require '../../../shared/helpers/media_helper.coffee'
 {makeBreadcrumb} = require '../../../shared/helpers/path_helper.coffee'
 
 class PictureView extends View
