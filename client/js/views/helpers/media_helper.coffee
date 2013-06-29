@@ -7,7 +7,7 @@ WRAP_VERTICAL_UNUSABLE_PX = 50 # account for footer (45px) and add a small epsil
 
 exports.getPictureAreaDimensions = ->
   $wrap = $('#wrap')
-  [$wrap.width, $wrap.height - WRAP_VERTICAL_UNUSABLE_PX]
+  [$wrap.width(), $wrap.height() - WRAP_VERTICAL_UNUSABLE_PX]
 
 exports.selectMedia = (picture) ->
   [maxWidth, maxHeight] = exports.getPictureAreaDimensions()

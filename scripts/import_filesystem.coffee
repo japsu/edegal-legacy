@@ -50,6 +50,7 @@ filesystemImport = (opts) ->
               src: stripPrefix path.resolve(directory, name)
               width: parseInt width
               height: parseInt height
+              original: true
             }
           ]
 
