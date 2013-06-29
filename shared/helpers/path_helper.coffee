@@ -1,10 +1,18 @@
 _ = require 'underscore'
 
-originalSlugify = require 'slug'
-originalSlugify.charmap['.'] = '-'
-originalSlugify.charmap['_'] = '-'
+charMap =
+  'ä': 'a'
+  'å': 'a'
+  'ö': 'o'
+  'ü': 'u'
+  ' ': '-'
+  '_': '-'
+  '.': '-'
 
-exports.slugify = (str) -> originalSlugify(str).toLowerCase().replace(/[^a-z0-9-]/g, '')
+exports.slugify = (str) ->
+  str = str.toLowerCase()
+  str = _.map(str, (c) -> charMap[c] ? c).join('')
+  str.replace(/[^a-z0-9-]/g, '')
 
 exports.makeBreadcrumb = (albumsOrPictures...) ->
   parent = _.first albumsOrPictures

@@ -34,7 +34,6 @@
       "connect": "2.7.x",
       "express": "3.2.x",
       "mongolian": "0.1.x",
-      "slug": "0.3.x",
       "underscore": "1.4.x"
    },
    "scripts": {
