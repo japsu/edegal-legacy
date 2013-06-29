@@ -8,7 +8,8 @@ originalSlugify = require 'slug'
 originalSlugify.charmap['.'] = '-'
 originalSlugify.charmap['_'] = '-'
 
-{albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db.coffee'
+{albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
+{makeBreadcrumb} = require '../shared/helpers/breadcrumb_helper'
 
 connection = mysql.createConnection
   host: 'localhost'
@@ -34,13 +35,6 @@ root =
 connection.connect()
 
 query = Q.nbind connection.query, connection
-
-makeBreadcrumb = (parent) ->
-  breadcrumb = parent.breadcrumb ? []
-  breadcrumb = breadcrumb.concat [
-    path: parent.path
-    title: parent.title
-  ]
 
 setThumbnail = (album) ->
   album.thumbnail = 

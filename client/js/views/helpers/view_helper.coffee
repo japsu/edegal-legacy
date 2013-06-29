@@ -2,6 +2,8 @@ $ = require 'jquery'
 Backbone = require 'backbone'
 require 'transparency'
 
+{makeBreadcrumb} = require '../../../../shared/helpers/breadcrumb_helper.coffee'
+
 class View extends Backbone.View
   setModel: (newModel) ->
     @undelegateEvents()
@@ -15,14 +17,8 @@ class View extends Backbone.View
     @renderContent()
     @$el.show()
 
-  renderContent: ->
-    @$el.render @model.toJSON()
-
-  getBreadcrumb: ->
-    @model.get('breadcrumb').concat [
-      title: @model.get 'title'
-      path: @model.get 'path'
-    ]
+  renderContent: -> @$el.render @model.toJSON()
+  getBreadcrumb: -> makeBreadcrumb @model
 
   updateBreadcrumb: ->
     $('#breadcrumb').render @getBreadcrumb(),

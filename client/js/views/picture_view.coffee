@@ -3,24 +3,12 @@ require 'hammer-jquery'
 
 {View} = require './helpers/view_helper.coffee'
 {selectMedia, preloadMedia, getOriginal} = require './helpers/media_helper.coffee'
+{makeBreadcrumb} = require '../../../shared/helpers/breadcrumb_helper.coffee'
 
 class PictureView extends View
   el: '#picture'
 
-  getBreadcrumb: ->
-    # XXX fugly
-    album = @model.get('album')
-
-    album.get('breadcrumb').concat [
-      {
-        title: album.get('title')
-        path: album.get('path')
-      }
-      {
-        title: @model.get('title')
-        path: @model.get('path')
-      }
-    ]
+  getBreadcrumb: -> makeBreadcrumb @model.get('album'), @model
 
   renderContent: ->
     @$el.render @model.toJSON(),
