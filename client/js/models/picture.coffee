@@ -1,8 +1,17 @@
+_ = require 'underscore'
+
 Backbone = require 'backbone'
 require 'backbone-relational'
 
+{getOriginal, getThumbnail} = require '../../../shared/helpers/media_helper.coffee'
+
 class Picture extends Backbone.RelationalModel
   idAttribute: 'path'
+
+  initialize: ->
+    @on 'reset, change:media', ->
+      @set 'original', getOriginal this
+      @set 'thumbnail', getThumbnail this
 
 class Pictures extends Backbone.Collection
   model: Picture
