@@ -19,6 +19,9 @@ Edegal is a work in progress. See a demo at [uusi.kuvat.aniki.fi](http://uusi.ku
 
 Assuming you have MongoDB installed. If you need to authenticate to MongoDB, edit `server/db.coffee` (look for `new Mongolian`, change url to `mongo://user:password@localhost/edegal`).
 
+    # install imagemagick
+    sudo apt-get install imagemagick
+
     # install node.js (may skip if node -v returns something >= 0.8 already)
     git clone https://github.com/creationix/nvm ~/.nvm
     source ~/.nvm/nvm.sh

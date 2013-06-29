@@ -1,40 +1,76 @@
 path = require 'path'
 fs = require 'fs'
 
+_ = require 'underscore'
 Q = require 'q'
-easyimg = reguire 'easyimage'
+Q.longStackSupport = true
 
-{findAlbum, saveAlbum} = require '../server/db'
-{makeBreadcrumb, slugify} = require '../shared/helpers/path_helper'
+easyimg = require 'easyimage'
 
-readDirectory = Q.nfbind fs.readdir, fs
-getImageInfo = Q.nfbind easyimg.info, easyimg
+{getAlbum, saveAlbum} = require '../server/db'
+{makeBreadcrumb, slugify, sanitizeFilename} = require '../shared/helpers/path_helper'
+{setThumbnail} = require '../shared/helpers/media_helper'
+
+readDirectory = Q.nbind fs.readdir, fs
+getImageInfo = Q.nbind easyimg.info, easyimg
+
+# TODO get the real prefix somewhere
+stripPrefix = (fullPath, prefix='/srv/work/edegal-express/public') ->
+  throw 'Path is outside document root' if fullPath.indexOf(prefix) != 0
+  fullPath[prefix.length..]
 
 filesystemImport = (opts) ->
-  {title, parent: parentPath, description} = opts
+  {title, parent: parentPath, description, directory} = opts
+
+  console?.dir directory
 
   Q.all([
-    findAlbum(parentPath)
+    getAlbum(path: parentPath)
     readDirectory(directory)
   ]).spread (parent, files) ->
-    album =
-      path: path.join(parent.path, slugify(title))
-      title: title
-      description: description
-      breadcrumb: makeBreadcrumb(parent)
-      subalbums: []
-      pictures: []
+    Q.all(files.map((basename) ->
+      fullPath = path.resolve directory, basename
+      getImageInfo(fullPath)
+    )).then (imageInfos) ->
+      albumPath = path.join(parent.path, slugify(title))
 
-    Q.all files.map (file) ->
-      getImageInfo(file).then (imageInfo) ->
-        console?.log imageInfo
-  .done()
+      album =
+        path: albumPath
+        title: title
+        description: description
+        breadcrumb: makeBreadcrumb(parent)
+        subalbums: []
+        pictures: imageInfos.map (imageInfo) ->
+          {name, width, height} = imageInfo[0]
+
+          path: path.join(albumPath, sanitizeFilename(name))
+          title: name
+          media: [
+            {
+              src: stripPrefix path.resolve(directory, name)
+              width: parseInt width
+              height: parseInt height
+            }
+          ]
+
+      setThumbnail album
+      parent.subalbums.push _.pick album, 'path', 'title', 'thumbnail'
+      setThumbnail parent
+
+      # not saved in parallel to prevent zombie album ending up in parent if saving album fails
+      saveAlbum(album)
+    .then ->
+      saveAlbum(parent)
 
 if require.main is module
-  argv = require(optimist)
+  argv = require('optimist')
     .usage('Usage: $0 --title "Album title" --parent / [directory]')
-    .default('description', '')
-    .demand(['title', 'parent'])
+    .options('title', alias: 't', demand: true, describe: 'Album title')
+    .options('description', alias: 'd', default: '', describe: 'Album description')
+    .options('parent', alias: 'p', demand: true, describe: 'Path of the parent album')
+    .options('directory', alias: 'i', demand: true, describe: 'Directory to import')
     .argv
 
-  filesystemImport(argv)
+  filesystemImport(argv).then ->
+    process.exit()
+  .done()

@@ -5,8 +5,8 @@ path = require 'path'
 ent = require 'ent'
 
 {albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
-{slugify, makeBreadcrumb} = require '../shared/helpers/path_helper'
-{getThumbnail} = require '../shared/helpers/media_helper'
+{slugify, makeBreadcrumb, sanitizeFilename} = require '../shared/helpers/path_helper'
+{setThumbnail} = require '../shared/helpers/media_helper'
 
 connection = mysql.createConnection
   host: 'localhost'
@@ -33,19 +33,6 @@ connection.connect()
 
 query = Q.nbind connection.query, connection
 
-getFirstLandscapePicture = (pictures) ->
-  _.find pictures, (picture) ->
-    anyMedia = _.first picture.media
-    anyMedia.width >= anyMedia.height
-
-setThumbnail = (album) ->
-  album.thumbnail = do ->
-    return album.thumbnail if album.thumbnail
-    return pictureThumbnail if (picture = getFirstLandscapePicture album.pictures) and (pictureThumbnail = getThumbnail picture)
-    return pictureThumbnail if (picture = _.first album.pictures) and (pictureThumbnail = getThumbnail picture)
-    return subalbum.thumbnail if (subalbum = _.first album.subalbums) and subalbum.thumbnail
-    PLACEHOLDER_IMAGE
-
 convertCoppermine = ->
   Q.all([
     dropAlbums().fail(-> null)
@@ -56,10 +43,6 @@ convertCoppermine = ->
     setThumbnail root
     saveAlbum root
   .then(createIndexes)
-
-sanitizeFilename = (filename) ->
-  [filename] = filename.split '.', 1
-  slugify(filename)
 
 decodeEntities = (obj, fields...) ->
   for field in fields
