@@ -1,4 +1,5 @@
 {View} = require './helpers/view_helper.coffee'
+{preloadMedia} = require './helpers/media_helper.coffee'
 
 class AlbumView extends View
   el: '#album'
