@@ -15,14 +15,15 @@ readDirectory = Q.nbind fs.readdir, fs
 getImageInfo = Q.nbind easyimg.info, easyimg
 
 # TODO get the real prefix somewhere
-stripPrefix = (fullPath, prefix='/srv/work/edegal-express/public') ->
+stripPrefix = (fullPath, prefix) ->
+  console.log fullPath, prefix
   throw 'Path is outside document root' if fullPath.indexOf(prefix) != 0
   fullPath[prefix.length..]
 
 filesystemImport = (opts) ->
   {title, parent: parentPath, description, directory, root} = opts
 
-  console?.dir directory
+  root = path.resolve root
 
   Q.all([
     getAlbum(path: parentPath)
@@ -47,7 +48,7 @@ filesystemImport = (opts) ->
           title: name
           media: [
             {
-              src: stripPrefix path.resolve(directory, name)
+              src: path.join('/', directory, name)
               width: parseInt width
               height: parseInt height
               original: true
