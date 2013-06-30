@@ -7,5 +7,4 @@ exports.walkAlbumsDepthFirst = (path, visitor) ->
     subalbumVisits = album.subalbums.map (subalbum) -> -> exports.walkAlbumsDepthFirst subalbum.path, visitor
     subalbumVisits.reduce(Q.when, Q()).then ->
       Q.when visitor(album), ->
-        console?.log 'saving', album.path
         saveAlbum album
