@@ -57,6 +57,8 @@ createPreview = (opts) ->
           saveAlbum(album)
         .then ->
           process.stdout.write '.' unless quiet
+    .fail ->
+      console.warn '\nFailed to create thumbnail:', resizeOpts.src
 
 createPreviews = (opts) ->
   {albums, sizes, concurrency, root, output, quiet} = opts
