@@ -20,16 +20,16 @@ stripPrefix = (fullPath, prefix='/srv/work/edegal-express/public') ->
   fullPath[prefix.length..]
 
 filesystemImport = (opts) ->
-  {title, parent: parentPath, description, directory} = opts
+  {title, parent: parentPath, description, directory, root} = opts
 
   console?.dir directory
 
   Q.all([
     getAlbum(path: parentPath)
-    readDirectory(directory)
+    readDirectory(path.resolve(root, directory))
   ]).spread (parent, files) ->
     Q.all(files.map((basename) ->
-      fullPath = path.resolve directory, basename
+      fullPath = path.resolve root, directory, basename
       getImageInfo(fullPath)
     )).then (imageInfos) ->
       albumPath = path.join(parent.path, slugify(title))
@@ -69,7 +69,8 @@ if require.main is module
     .options('title', alias: 't', demand: true, describe: 'Album title')
     .options('description', alias: 'd', default: '', describe: 'Album description')
     .options('parent', alias: 'p', demand: true, describe: 'Path of the parent album')
-    .options('directory', alias: 'i', demand: true, describe: 'Directory to import')
+    .options('directory', alias: 'i', demand: true, describe: 'Directory to import (relative to --root)')
+    .options('root', alias: 'r', default: 'public', describe: 'Document root')
     .argv
 
   filesystemImport(argv).then ->

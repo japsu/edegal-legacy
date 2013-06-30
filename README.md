@@ -56,6 +56,26 @@ Development:
     # run tests
     npm test
 
+## Getting pictures into the gallery
+
+Sorry, this is a bit technical at the moment. There will be a browser-based uploader. Some day. I think.
+
+At this moment you need to import album at a time. First, put the pictures somewhere under the document root. Let's assume `public/pictures/my-new-album`.
+
+    # (If you havent yet created the root album - do this only once)
+    coffee scripts/create_empty_album.coffee --title "My Photo Gallery"
+
+    # Tell Edegal about the new photos (--directory relative to --root)
+    coffee scripts/import_filesystem.coffee --title "My New Album" --parent / --directory pictures/my-new-album
+
+    # Create thumbnails and previews. -s is short for --size.
+    coffee scripts/create_previews.coffee -s 900x240@40 -s 1200x600@85
+
+    # Set album thumbnails from the newly created ones.
+    coffee scripts/rehash_thumbnails.coffee
+
+You're all set!
+
 ## Technology choices
 
 * Development tools
