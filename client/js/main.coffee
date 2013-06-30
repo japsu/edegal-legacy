@@ -40,12 +40,11 @@ $ ->
   applyTranslations()
 
   $(document).on 'click', 'a, area', (event) ->
-    # XXX fugly
-    href = $(this).attr 'href'
-    if href[0] == '/' and href[1] != '/'
-      event.preventDefault()
-      router.navigate href, trigger: true
-      return false
+    $link = $(this)
+    return true if $link.attr 'target'
+    event.preventDefault()
+    router.navigate $link.attr('href'), trigger: true
+    false
   
   albums.once 'add', (album) ->
     if album.get('path') == '/'
