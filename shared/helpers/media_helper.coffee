@@ -10,7 +10,6 @@ exports.getThumbnail = (picture) ->
   media = picture.media ? picture.get 'media'
   _.min media, (medium) -> Math.abs(medium.height - THUMBNAIL_HEIGHT)
 
-
 exports.getFirstLandscapePicture = (pictures) ->
   _.find pictures, (picture) ->
     anyMedia = _.first picture.media

@@ -17,4 +17,7 @@ class AlbumView extends View
         link:
           href: -> @path
 
+    first = @model.get('pictures').first()
+    preloadMedia first if first
+
 module.exports = {AlbumView}

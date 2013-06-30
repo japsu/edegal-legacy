@@ -27,10 +27,10 @@ class PictureView extends View
         style: => if getOriginal(@model) then '' else 'display:none'
 
     next = @model.get 'next'
-    preloadMedia '#preload .next', next if next
+    preloadMedia next if next
 
     previous = @model.get 'previous'
-    preloadMedia '#preload .previous', previous if previous
+    preloadMedia previous if previous
 
 $ ->
   # TODO encapsulate this $('#picture .prev-link:visible').click hackery!
