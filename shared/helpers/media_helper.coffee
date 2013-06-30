@@ -17,7 +17,6 @@ exports.getFirstLandscapePicture = (pictures) ->
     anyMedia.width >= anyMedia.height
 
 exports.selectThumbnail = (album) ->
-  return album.thumbnail if album.thumbnail
   return pictureThumbnail if (picture = exports.getFirstLandscapePicture album.pictures) and (pictureThumbnail = exports.getThumbnail picture)
   return pictureThumbnail if (picture = _.first album.pictures) and (pictureThumbnail = exports.getThumbnail picture)
   return subalbum.thumbnail if (subalbum = _.first album.subalbums) and subalbum.thumbnail

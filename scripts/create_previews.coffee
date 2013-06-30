@@ -68,7 +68,9 @@ createPreviews = (opts) ->
       sizes.forEach (size) ->
         existingPreview = _.find picture.media, (medium) -> medium.width == size.width or medium.height == size.height
 
-        unless existingPreview
+        if existingPreview
+          process.stdout.write '-'
+        else
           do (album, picture, size) ->
             sem.push ->
               createPreview
