@@ -12,7 +12,7 @@ charMap =
 exports.slugify = (str) ->
   str = str.toLowerCase()
   str = _.map(str, (c) -> charMap[c] ? c).join('')
-  str.replace(/[^a-z0-9-]/g, '')
+  str.replace(/[^a-z0-9-]/g, '').replace /-+/g, '-'
 
 exports.makeBreadcrumb = (albumsOrPictures...) ->
   parent = _.first albumsOrPictures

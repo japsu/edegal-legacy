@@ -15,6 +15,10 @@ describe 'Path helpers', ->
     it 'should convert Scandinavic chars to their non-dotty counterparts', ->
       slugify('Yli-Öön mangapäivä').should.equal 'yli-oon-mangapaiva'
 
+    it 'should turn multiple dashes to one', ->
+      slugify('Alvar Aalto - Arkkitehtuuria').should.equal 'alvar-aalto-arkkitehtuuria'
+      slugify('Aa - Bee - Cee').should.equal 'aa-bee-cee'
+
   describe 'makeBreadcrumb', ->
     album =
       path: '/make-breadcrumb',

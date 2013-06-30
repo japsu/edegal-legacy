@@ -1,3 +1,5 @@
+path = require 'path'
+
 _ = require 'underscore'
 Q = require 'q'
 
