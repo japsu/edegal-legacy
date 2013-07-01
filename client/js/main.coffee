@@ -17,9 +17,6 @@ class Router extends Backbone.Router
     @route 'user', 'user'
     @route 'user/:user', 'user'
 
-    if window.ga?
-      @on 'route', -> window.ga 'send', 'pageview'
-
   user: (user) ->
     console?.log 'route:user'
 
@@ -27,6 +24,8 @@ class Router extends Backbone.Router
     path = '/' + path
     getContent(path).then (results) ->
       {album, picture} = results
+
+      window.ga 'send', 'pageview', path if window.ga?
 
       if picture
         pictureView.setModel(picture).render()
