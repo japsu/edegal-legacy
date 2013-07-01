@@ -20,7 +20,7 @@ class Router extends Backbone.Router
     if window.ga?
       @on 'all', ->
         console?.log 'sending pageview'
-        window.ga.send 'pageview'
+        window.ga 'send', 'pageview'
 
   user: (user) ->
     console?.log 'route:user'
