@@ -65,7 +65,9 @@ At this moment you need to import album at a time. First, put the pictures somew
     # Tell Edegal about the new photos (--directory relative to --root)
     coffee scripts/import_filesystem.coffee --title "My New Album" --parent / --directory pictures/my-new-album
 
-    # Create thumbnails and previews. -s is short for --size.
+    # Create thumbnails and previews. -s is short for --size, which specifies the bounding box.
+    # That is, previews will end up smaller in either dimension most of the time.
+    # Hint: Thumbnails are 240 pixels high. You should at least generate 240 high previews.
     coffee scripts/create_previews.coffee -s 900x240@40 -s 1200x600@85
 
     # Set album thumbnails from the newly created ones.
