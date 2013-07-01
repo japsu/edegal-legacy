@@ -14,6 +14,7 @@ class AlbumView extends View
       pictures:
         thumb:
           src: -> @thumbnail.src
+          width: -> @thumbnail.width
           alt: -> @title
         link:
           href: -> @path
