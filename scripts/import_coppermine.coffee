@@ -48,6 +48,9 @@ decodeEntities = (obj, fields...) ->
   for field in fields
     obj[field] = ent.decode(obj[field] ? '')
 
+fixTitle = (title) ->
+  title.replace ' - ', ' – '
+
 convertSubcategories = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
@@ -86,7 +89,7 @@ convertAlbums = (categoryId, parent) ->
       edegalAlbum =
         path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
-        title: coppermineAlbum.title
+        title: fixTitle(coppermineAlbum.title ? '')
         description: coppermineAlbum.description
         subalbums: []
         pictures: []
@@ -97,13 +100,13 @@ convertAlbums = (categoryId, parent) ->
         saveAlbum edegalAlbum
 
 convertPictures = (albumId, parent) ->
-  query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY position', [albumId]).spread (pictures) ->
+  query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY filename', [albumId]).spread (pictures) ->
     pictures.map (copperminePicture) ->
       decodeEntities copperminePicture, 'title', 'caption'
       title = copperminePicture.title or copperminePicture.filename
       parent.pictures.push
         path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
-        title: title ? ''
+        title: fixTitle(title ? '')
         description: copperminePicture.caption ? ''
         media: [ 
           {
