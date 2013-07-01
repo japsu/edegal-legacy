@@ -10,7 +10,7 @@ Edegal is a work in progress. See a demo at [uusi.kuvat.aniki.fi](http://uusi.ku
 
 ## Goals
 
-* Successfully replace Coppermine Image Gallery at http://kuvat.aniki.fi
+* Successfully replace Coppermine Image Gallery at [kuvat.aniki.fi](http://kuvat.aniki.fi)
   * 49,860 files in 619 albums and 110 categories viewed 6,118,935 times over the course of 9 years (as of 22nd June 2013)
 * Drop some jaws with stunning visuals and flawless usability
 * Become the number one choice for a self-hosted image gallery for serious hobbyist photographers
