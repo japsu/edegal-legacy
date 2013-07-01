@@ -25,14 +25,14 @@ class Router extends Backbone.Router
     getContent(path).then (results) ->
       {album, picture} = results
 
-      window.ga 'send', 'pageview', path if window.ga?
-
       if picture
-        window.ga 'send', 'event', 'picture', 'view', path, page: path
         pictureView.setModel(picture).render()
+        window.ga 'send', 'event', 'picture', 'view', path, page: path
       else
-        window.ga 'send', 'event', 'album', 'view', path, page: path
         albumView.setModel(album).render()
+        window.ga 'send', 'event', 'album', 'view', path, page: path
+
+      window.ga 'send', 'pageview', path if window.ga?
     .done()
 
 $ ->
