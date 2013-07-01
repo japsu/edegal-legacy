@@ -8,6 +8,7 @@ class AlbumView extends View
       subalbums:
         thumb:
           src: -> @thumbnail.src
+          width: -> @thumbnail.width
           alt: -> @title
         link:
           href: -> @path
