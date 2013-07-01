@@ -41,12 +41,18 @@ $ ->
   $(document).keydown (event) ->
     return true if event.altKey or event.ctrlKey or event.metaKey
 
-    LEFT_ARROW = 37
-    RIGHT_ARROW = 39
+    PREV_PICTURE_KEYCODES = [
+      37 # left arrow
+      33 # page up
+    ]
+    NEXT_PICTURE_KEYCODES = [
+      39 # right arrow
+      34  # page down
+    ]
 
     $link = $()
-    $link = $('#picture .next-link:visible') if event.keyCode == RIGHT_ARROW
-    $link = $('#picture .prev-link:visible') if event.keyCode == LEFT_ARROW
+    $link = $('#picture .next-link:visible') if event.keyCode in NEXT_PICTURE_KEYCODES
+    $link = $('#picture .prev-link:visible') if event.keyCode in PREV_PICTURE_KEYCODES
     $link.click()
 
     return !$link.length
