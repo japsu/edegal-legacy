@@ -1,4 +1,5 @@
 path = require 'path'
+fs = require 'fs'
 
 _ = require 'underscore'
 Q = require 'q'
@@ -14,6 +15,11 @@ makeDirectories = Q.denodeify mkdirp
 {Semaphore} = require '../shared/helpers/concurrency_helper'
 
 DEFAULT_QUALITY = 60
+
+fileExists = (filename) ->
+  deferred = Q.defer()
+  fs.exists filename, (exists) -> deferred.resolve exists
+  deferred.promise
 
 parseSize = (size) ->
   size = /(\d+)x(\d+)(?:@(\d+))?/.exec size
@@ -44,21 +50,26 @@ createPreview = (opts) ->
     src: mkPath root, getOriginal(picture).src
     dst: mkPath root, dstPathOnServer
 
-  makeDirectories(path.dirname(resizeOpts.dst)).then ->
-    resizeImage(resizeOpts).spread (resized) ->
-      albumUpdateSemaphore.push ->
-        getAlbum(path: albumPath).then (album) ->
-          picture = _.find album.pictures, (pic) -> pic.path == picture.path
-          picture.media.push
-            width: parseInt resized.width
-            height: parseInt resized.height
-            src: dstPathOnServer
-          picture.media = _.sortBy picture.media, (medium) -> medium.width
-          saveAlbum(album)
-        .then ->
-          process.stdout.write '.' unless quiet
-    .fail ->
-      console.warn '\nFailed to create thumbnail:', resizeOpts.src
+  fileExists(resizeOpts.dst).then (exists) ->
+    if exists
+      process.stdout.write '-'
+      return Q.when {}
+
+    makeDirectories(path.dirname(resizeOpts.dst)).then ->
+      resizeImage(resizeOpts).spread (resized) ->
+        albumUpdateSemaphore.push ->
+          getAlbum(path: albumPath).then (album) ->
+            picture = _.find album.pictures, (pic) -> pic.path == picture.path
+            picture.media.push
+              width: parseInt resized.width
+              height: parseInt resized.height
+              src: dstPathOnServer
+            picture.media = _.sortBy picture.media, (medium) -> medium.width
+            saveAlbum(album)
+          .then ->
+            process.stdout.write '.' unless quiet
+      .fail ->
+        console.warn '\nFailed to create thumbnail:', resizeOpts.src
 
 createPreviews = (opts) ->
   {albums, sizes, concurrency, root, output, quiet} = opts
@@ -68,21 +79,16 @@ createPreviews = (opts) ->
   albums.forEach (album) ->
     album.pictures.forEach (picture) ->
       sizes.forEach (size) ->
-        existingPreview = _.find picture.media, (medium) -> medium.width == size.width or medium.height == size.height
-
-        if existingPreview
-          process.stdout.write '-'
-        else
-          do (album, picture, size) ->
-            sem.push ->
-              createPreview
-                albumPath: album.path
-                picture: picture
-                size: size
-                root: root
-                output: output
-                quiet: quiet
-            .done()
+        do (album, picture, size) ->
+          sem.push ->
+            createPreview
+              albumPath: album.path
+              picture: picture
+              size: size
+              root: root
+              output: output
+              quiet: quiet
+          .done()
 
   sem.finished
 
