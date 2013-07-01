@@ -75,6 +75,15 @@ At this moment you need to import album at a time. First, put the pictures somew
 
 You're all set!
 
+## Configuration
+
+There is a configuration file, `configuration.json`. Changing any values there requires recompilation (`james build`).
+
+* `defaultLanguage`: `en` and `fi` supported.
+* `analyticsAccount`: Put your Analytics token here to enable [Google Analytics](https://analytics.google.com) support.
+
+Please don't even think about moving MongoDB configuration into `configuration.json` as it gets `require`'d into `bundle.js`.
+
 ## Technology choices
 
 * Development tools
