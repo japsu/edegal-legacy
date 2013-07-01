@@ -1,4 +1,5 @@
 $ = require 'jquery'
+configuration = require '../../../../configuration.json'
 
 exports.translations =
   fi:
@@ -13,7 +14,7 @@ exports.applyTranslations = ->
   $('*[data-i18n]').each (unusedIndex, el) -> $(el).text exports.t $(el).attr 'data-i18n'
   $('*[data-i18n-html]').each (unusedIndex, el) -> $(el).html exports.t $(el).attr 'data-i18n-html'
 
-exports.currentLanguage = 'fi'
+exports.currentLanguage = configuration.defaultLanguage
 exports.t = (key) -> exports.translations[exports.currentLanguage][key]
 
 window.edegalI18NViewHelper = exports if window?

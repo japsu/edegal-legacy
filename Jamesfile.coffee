@@ -1,5 +1,6 @@
-james  = require 'james'
-jade   = require 'james-jade-static'
+james = require 'james'
+jade = require 'jade'
+compile = require 'james-compile'
 stylus = require 'james-stylus'
 uglify = require 'james-uglify'
 
@@ -8,6 +9,8 @@ nib = require 'nib'
 browserify = require 'browserify'
 shim = require 'browserify-shim'
 coffeeify  = require 'coffeeify'
+
+configuration = require './configuration.json'
 
 copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
 
@@ -61,7 +64,7 @@ james.task 'browserify_debug', -> transmogrifyCoffee true
 
 transmogrifyJade = (file) ->
   james.read(file)
-    .transform(jade(filename: file))
+    .transform(compile(compiler: jade, filename: file, context: configuration))
     .write(file
       .replace('client', 'public')
       .replace('.jade', '.html'))
