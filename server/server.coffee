@@ -1,11 +1,12 @@
 path = require 'path'
 
 _ = require 'underscore'
+Q = require 'q'
 
 connect = require 'connect'
 express = require 'express'
 
-{albums, albumsUserVisible} = require './db'
+{albums, albumsUserVisible, getAlbum, getTag, getPicturesTagged} = require './db'
 
 staticPath = path.resolve path.dirname(module.filename), '..', 'public'
 indexHtml = path.resolve staticPath, 'index.html'
@@ -49,10 +50,32 @@ app.use express.static(staticPath, maxAge: 24*60*60*1000)
 app.use indexHtmlAnyway
 app.use respond404
 
+app.get '/v2/tags', (req, res) ->
+
+app.get /^\/v2\/tagged\/([a-z0-9-]+)$/, (req, res) ->
+  tag = req.params[0]
+  console.log 'tag', tag
+  Q.all([
+    getPicturesTagged(tag)
+    getTag(tag: tag)
+    getAlbum('/')
+  ]).then (picturezy, tagInfo, rootAlbum) ->
+    respondJSON
+      title: "Tagged: #{tag}" # TODO I18N
+      tag: tagInfo,
+      path: "/tagged/#{tag}"
+      breadcrumb: [
+        path: rootAlbum.path # '/'
+        title: rootAlbum.title
+      ]
+      pictures: picturezy.pictures
+
+
 app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   path = req.params[0]
   console.log 'album', path
   respondFromDb req, res, albums, albumQuery path, albumsUserVisible
+
 
 if require.main is module
   app.listen 3000

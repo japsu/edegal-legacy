@@ -26,7 +26,7 @@ filesystemImport = (opts) ->
   root = path.resolve root
 
   Q.all([
-    getAlbum(path: parentPath)
+    getAlbum(parentPath)
     readDirectory(path.resolve(root, directory))
   ]).spread (parent, files) ->
     Q.all(files.map((basename) ->

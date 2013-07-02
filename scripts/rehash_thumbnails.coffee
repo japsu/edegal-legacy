@@ -7,7 +7,7 @@ _ = require 'underscore'
 
 rehashThumbnails = (path='/') ->
   walkAlbumsDepthFirst path, (album) ->
-    Q.all(album.subalbums.map((subalbum) -> getAlbum(path: subalbum.path))).then (subalbums) ->
+    Q.all(album.subalbums.map((subalbum) -> getAlbum(subalbum.path))).then (subalbums) ->
       album.subalbums = _.map subalbums, (subalbum) -> _.pick subalbum, 'path', 'title', 'thumbnail'
       setThumbnail album
 
