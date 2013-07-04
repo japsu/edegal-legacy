@@ -113,3 +113,4 @@ Please don't even think about moving MongoDB configuration into `configuration.j
 * "That's mighty fast!"
 * "I don't remember having ever run into another web gallery as nifty as this!"
 * "I find the page load speed of Edegal incredible. But I think I've just grown accustomed to bad galleries."
+* "Edegal seems exactly what I've been looking for!"
