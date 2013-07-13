@@ -34,7 +34,9 @@ filesystemImport = (opts) ->
   ]).spread (parent, files) ->
     Q.all(files.map((basename) ->
       fullPath = path.resolve root, directory, basename
-      sem.push -> getImageInfo(fullPath)
+      sem.push -> getImageInfo(fullPath).then (imageInfo) ->
+        process.stdout.write '.'
+        imageInfo
     )).then (imageInfos) ->
       albumPath = path.join(parent.path, slugify(title))
 
