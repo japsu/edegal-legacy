@@ -95,18 +95,19 @@ processAlbum = (edegalAlbum, opts) ->
     work.push convertPictures(albumId, edegalAlbum) if albumId and not existingAlbum?
     return null if _.isEmpty work
 
-    Q.all(work).then ->
-      setThumbnail edegalAlbum
+    Q.all(work)
+  .then ->
+    setThumbnail edegalAlbum
 
-      unless _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
-        parent.subalbums.unshift _.pick edegalAlbum, 'path', 'title', 'thumbnail'
+    unless _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
+      parent.subalbums.unshift _.pick edegalAlbum, 'path', 'title', 'thumbnail'
 
-      saveAlbum edegalAlbum
+    saveAlbum edegalAlbum
 
-      if existingAlbum
-        process.stdout.write '-'
-      else
-        process.stdout.write '.'
+    if edegalAlbum._id
+      process.stdout.write '-'
+    else
+      process.stdout.write '.'
 
 convertPictures = (albumId, parent) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY filename', [albumId]).spread (pictures) ->
