@@ -11,7 +11,7 @@ PLACEHOLDER_IMAGE = '/images/example_content_360x240.jpg'
 createEmptyAlbum = (opts) ->
   {title, parent: parentPath, description} = opts
 
-  (if parentPath then getAlbum(path: parentPath) else Q.when(null)).then (parentAlbum) ->
+  (if parentPath then getAlbum( parentPath) else Q.when(null)).then (parentAlbum) ->
     if parentPath and not parentAlbum
       throw 'Parent album not found'
 

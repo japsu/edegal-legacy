@@ -58,7 +58,7 @@ createPreview = (opts) ->
     makeDirectories(path.dirname(resizeOpts.dst)).then ->
       resizeImage(resizeOpts).spread (resized) ->
         albumUpdateSemaphore.push ->
-          getAlbum(path: albumPath).then (album) ->
+          getAlbum( albumPath).then (album) ->
             picture = _.find album.pictures, (pic) -> pic.path == picture.path
             picture.media.push
               width: parseInt resized.width
