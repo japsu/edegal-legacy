@@ -5,7 +5,7 @@ _ = require 'underscore'
 path = require 'path'
 ent = require 'ent'
 
-{albums, createIndexes, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
+{albums, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
 {slugify, makeBreadcrumb, sanitizeFilename} = require '../shared/helpers/path_helper'
 {setThumbnail} = require '../shared/helpers/media_helper'
 
@@ -31,11 +31,9 @@ convertCoppermine = ->
     getAlbum('/')
     query("SET NAMES 'latin1';")
   ]).spread (root) ->
-    convertSubcategories 0, root
-  .then ->
-    setThumbnail root
-    saveAlbum root
-  .then(createIndexes)
+    convertSubcategories(0, root).then ->
+      setThumbnail root
+      saveAlbum root
 
 decodeEntities = (obj, fields...) ->
   for field in fields
