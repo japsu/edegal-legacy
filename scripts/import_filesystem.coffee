@@ -10,6 +10,7 @@ easyimg = require 'easyimage'
 {getAlbum, saveAlbum} = require '../server/db'
 {makeBreadcrumb, slugify, sanitizeFilename} = require '../shared/helpers/path_helper'
 {setThumbnail} = require '../shared/helpers/media_helper'
+{Semaphore} = require '../shared/helpers/concurrency_helper'
 
 readDirectory = Q.nbind fs.readdir, fs
 getImageInfo = Q.nbind easyimg.info, easyimg
