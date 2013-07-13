@@ -16,7 +16,6 @@ connection = mysql.createConnection
   password: 'secret'
   insecureAuth: true
 
-PLACEHOLDER_IMAGE = '/images/example_content_360x240.jpg'
 CATEGORY_BLACKLIST = [
   1 # User galleries
   107 # Animeunioni

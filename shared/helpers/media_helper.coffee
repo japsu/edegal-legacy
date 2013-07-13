@@ -19,6 +19,6 @@ exports.selectThumbnail = (album) ->
   return pictureThumbnail if (picture = exports.getFirstLandscapePicture album.pictures) and (pictureThumbnail = exports.getThumbnail picture)
   return pictureThumbnail if (picture = _.first album.pictures) and (pictureThumbnail = exports.getThumbnail picture)
   return subalbum.thumbnail if (subalbum = _.first album.subalbums) and subalbum.thumbnail
-  { src: PLACEHOLDER_IMAGE, width: 360, height: 240 }
+  null
 
 exports.setThumbnail = (album) -> album.thumbnail = exports.selectThumbnail album
