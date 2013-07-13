@@ -20,10 +20,13 @@ stripPrefix = (fullPath, prefix) ->
   throw 'Path is outside document root' if fullPath.indexOf(prefix) != 0
   fullPath[prefix.length..]
 
+sem = new Semaphore 4
+
 filesystemImport = (opts) ->
-  {title, parent: parentPath, description, directory, root} = opts
+  {title, parent: parentPath, description, directory, root, concurrency} = opts
 
   root = path.resolve root
+  sem = new Semaphore concurrency
 
   Q.all([
     getAlbum(path: parentPath)
@@ -31,7 +34,7 @@ filesystemImport = (opts) ->
   ]).spread (parent, files) ->
     Q.all(files.map((basename) ->
       fullPath = path.resolve root, directory, basename
-      getImageInfo(fullPath)
+      sem.push -> getImageInfo(fullPath)
     )).then (imageInfos) ->
       albumPath = path.join(parent.path, slugify(title))
 
@@ -72,6 +75,7 @@ if require.main is module
     .options('parent', alias: 'p', demand: true, describe: 'Path of the parent album')
     .options('directory', alias: 'i', demand: true, describe: 'Directory to import (relative to --root)')
     .options('root', alias: 'r', default: 'public', describe: 'Document root')
+    .options('concurrency', alias: 'j', default: 4, describe: 'How many identify(1)s to run in parallel')
     .argv
 
   filesystemImport(argv).then ->

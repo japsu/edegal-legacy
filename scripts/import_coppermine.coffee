@@ -70,13 +70,7 @@ convertSubcategories = (categoryId, parent) ->
         subalbums: []
         pictures: []
 
-      Q.all([
-        convertSubcategories(coppermineCategory.cid, edegalAlbum),
-        convertAlbums(coppermineCategory.cid, edegalAlbum)
-      ]).then ->
-        setThumbnail edegalAlbum
-        parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
-        saveAlbum(edegalAlbum)
+      processAlbum edegalAlbum, albumId: coppermineCategory.cid
 
 convertAlbums = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
@@ -94,10 +88,26 @@ convertAlbums = (categoryId, parent) ->
         subalbums: []
         pictures: []
 
-      convertPictures(coppermineAlbum.aid, edegalAlbum).then ->
-        setThumbnail edegalAlbum
-        parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
-        saveAlbum edegalAlbum
+      processAlbum edegalAlbum, albumId: coppermineAlbum.aid, parent: parent
+
+processAlbum = (edegalAlbum, opts) ->
+  {albumId, categoryId} = opts
+
+  getAlbum(edegalAlbum.path).then (existingAlbum) ->
+    edegalAlbum = existingAlbum if existingAlbum?
+
+    # TODO don't double-push subalbums
+    # TODO don't double-push pictures
+
+    work = []
+    work.push convertSubcategories(categoryId, edegalAlbum) if categoryId
+    work.push convertAlbums(categoryId, edegalAlbum) if categoryId
+    work.push convertPictures(albumId, edegalAlbum) if albumId
+    Q.all(work)
+  .then ->
+    setThumbnail edegalAlbum
+    parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail'
+    saveAlbum edegalAlbum
 
 convertPictures = (albumId, parent) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY filename', [albumId]).spread (pictures) ->
