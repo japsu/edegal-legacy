@@ -1,4 +1,4 @@
-{dropAlbums, createIndexes} = require '../server/db'
+{albums, createIndexes} = require '../server/db'
 
 if require.main is module
   argv = require('optimist')
@@ -6,8 +6,7 @@ if require.main is module
     .options('y', alias: 'really', demand: true)
     .argv
 
-  dropAlbums()
-  .fail ->
+  Q.ninvoke(albums, 'drop').fail ->
     null
   .then ->
     createIndexes()
