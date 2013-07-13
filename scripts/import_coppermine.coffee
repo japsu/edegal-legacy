@@ -1,5 +1,6 @@
 mysql = require 'mysql'
 Q = require 'q'
+Q.longStackSupport = true
 _ = require 'underscore'
 path = require 'path'
 ent = require 'ent'
