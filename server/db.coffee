@@ -8,7 +8,6 @@ albums = db.collection 'albums'
 tags = db.collection 'tags'
 picturesByTag = db.collection 'picturesByTag'
 
-ensureIndexOnAlbums = Q.nbind albums.ensureIndex, albums
 getAlbum = (path) -> Q.ninvoke albums, 'findOne', path: path
 saveAlbum = Q.nbind albums.save, albums
 
@@ -72,4 +71,4 @@ albumsUserVisible =
   subalbums: true
   pictures: true
 
-module.exports = {albums, createIndexes, dropAlbums, getAlbum, saveAlbum, albumsUserVisible}
+module.exports = {albums, createIndexes, getAlbum, saveAlbum, albumsUserVisible}
