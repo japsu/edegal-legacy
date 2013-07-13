@@ -21,22 +21,15 @@ CATEGORY_BLACKLIST = [
   107 # Animeunioni
 ]
 
-root =
-  path: '/'
-  title: 'Anikin kuva-arkisto'
-  breadcrumb: []
-  subalbums: []
-  pictures: []
-
 connection.connect()
 
 query = Q.nbind connection.query, connection
 
 convertCoppermine = ->
   Q.all([
-    dropAlbums().fail(-> null)
+    getAlbum('/')
     query("SET NAMES 'latin1';")
-  ]).then ->
+  ]).spread (root) ->
     convertSubcategories 0, root
   .then ->
     setThumbnail root
@@ -69,7 +62,7 @@ convertSubcategories = (categoryId, parent) ->
         subalbums: []
         pictures: []
 
-      processAlbum edegalAlbum, parent: parent, albumId: coppermineCategory.cid
+      processAlbum edegalAlbum, parent: parent, categoryId: coppermineCategory.cid
 
 convertAlbums = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
@@ -87,9 +80,10 @@ convertAlbums = (categoryId, parent) ->
         subalbums: []
         pictures: []
 
-      processAlbum edegalAlbum, parent: parent, albumId: coppermineAlbum.aid, parent: parent
+      processAlbum edegalAlbum, parent: parent, albumId: coppermineAlbum.aid
 
 processAlbum = (edegalAlbum, opts) ->
+  console?.log 'processAlbum', edegalAlbum, opts
   {albumId, categoryId, parent} = opts
 
   getAlbum(edegalAlbum.path).then (existingAlbum) ->
