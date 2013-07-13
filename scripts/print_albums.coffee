@@ -12,4 +12,6 @@ if require.main is module
     .options('path', alias: 'p', default: '/', describe: 'The subtree under which to operate')
     .argv
 
-  printAlbums argv.path
+  printAlbums(argv.path).then ->
+    process.exit()
+  .done()
