@@ -83,7 +83,6 @@ convertAlbums = (categoryId, parent) ->
       processAlbum edegalAlbum, parent: parent, albumId: coppermineAlbum.aid
 
 processAlbum = (edegalAlbum, opts) ->
-  console?.log 'processAlbum', edegalAlbum, opts
   {albumId, categoryId, parent} = opts
 
   getAlbum(edegalAlbum.path).then (existingAlbum) ->
