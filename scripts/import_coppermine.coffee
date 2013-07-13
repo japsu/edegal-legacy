@@ -93,6 +93,8 @@ processAlbum = (edegalAlbum, opts) ->
     work.push convertSubcategories(categoryId, edegalAlbum) if categoryId
     work.push convertAlbums(categoryId, edegalAlbum) if categoryId
     work.push convertPictures(albumId, edegalAlbum) if albumId and not existingAlbum?
+    return null if _.isEmpty work
+
     Q.all(work).then ->
       setThumbnail edegalAlbum
 
