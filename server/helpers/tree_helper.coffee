@@ -3,7 +3,7 @@ Q = require 'q'
 {getAlbum, saveAlbum} = require '../db'
 
 exports.walkAlbumsDepthFirst = (path, visitor, save=true) ->
-  getAlbum( path).then (album) ->
+  getAlbum(path).then (album) ->
     subalbumVisits = album.subalbums.map (subalbum) -> -> exports.walkAlbumsDepthFirst subalbum.path, visitor
     subalbumVisits.reduce(Q.when, Q()).then ->
       Q.when visitor(album), ->
