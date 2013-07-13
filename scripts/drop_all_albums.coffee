@@ -1,3 +1,5 @@
+Q = require 'q'
+
 {albums, createIndexes} = require '../server/db'
 
 if require.main is module
