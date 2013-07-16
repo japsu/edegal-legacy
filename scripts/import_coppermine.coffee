@@ -101,11 +101,16 @@ processAlbum = (edegalAlbum, opts) ->
       parent.subalbums.unshift _.pick edegalAlbum, 'path', 'title', 'thumbnail'
 
     saveAlbum edegalAlbum
-
+  .then ->
     if edegalAlbum._id
+      # already existed, updated
       process.stdout.write '-'
     else
+      # new, created
       process.stdout.write '.'
+
+    edegalAlbum
+
 
 convertPictures = (albumId, parent) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY filename', [albumId]).spread (pictures) ->
