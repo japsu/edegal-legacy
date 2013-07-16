@@ -109,7 +109,10 @@ if require.main is module
 
   Q.when null, ->
     if argv.path
-      albums.find(path: argv.path)
+      albums.find($or: [
+        { path: argv.path},
+        { 'breadcrumb.path': argv.path }
+      ])
     else
       albums.find()
   .then (albums) ->
