@@ -23,6 +23,6 @@ if require.main is module
     .usage('Usage: $0 /path')
     .argv
 
-  argv.map(albumDeletor).reduce(Q.when, Q()).then ->
+  argv._.map(albumDeletor).reduce(Q.when, Q()).then ->
     process.exit()
   .done()
