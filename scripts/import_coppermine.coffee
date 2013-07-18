@@ -87,7 +87,11 @@ processAlbum = (edegalAlbum, opts) ->
   {albumId, categoryId, parent} = opts
 
   getAlbum(edegalAlbum.path).then (existingAlbum) ->
-    edegalAlbum = existingAlbum if existingAlbum?
+    if existingAlbum?
+      process.stdout.write '-'
+      edegalAlbum = existingAlbum
+    else
+      process.stdout.write '.'
 
     work = []
     work.push convertSubcategories(categoryId, edegalAlbum) if categoryId?
@@ -109,13 +113,6 @@ processAlbum = (edegalAlbum, opts) ->
 
     saveAlbum edegalAlbum
   .then ->
-    if edegalAlbum._id
-      # already existed, updated
-      process.stdout.write '-'
-    else
-      # new, created
-      process.stdout.write '.'
-
     edegalAlbum
 
 
