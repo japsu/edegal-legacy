@@ -47,6 +47,10 @@ createPreview = (opts) ->
 
   dstPathOnServer = path.join '/', output, picture.path, "max#{width}x#{height}q#{quality}.jpg"
 
+  if _.find(picture.media, (med) -> med.src == dstPathOnServer)
+    process.stdout.write '+'
+    return Q.when {}
+
   resizeOpts = _.extend {}, size,
     src: mkPath root, getOriginal(picture).src
     dst: mkPath root, dstPathOnServer
