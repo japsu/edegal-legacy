@@ -60,6 +60,8 @@ finalizeAlbum = (edegalAlbum, opts) ->
     .map((subalbum) -> _.omit(subalbum, '_pos'))
     .value()
 
+  delete edegalAlbum._pos
+
   saveAlbum edegalAlbum
 
 decodeEntities = (obj, fields...) ->
@@ -152,12 +154,7 @@ convertPictures = (albumId, parent) ->
         ]
 
 
-cleanupAlbum = (album) ->
-  delete album._pos
-
 if require.main is module
   convertCoppermine().then ->
-    walkAlbumsDepthFirst cleanupAlbum
-  .then ->
     process.exit()
   .done()
