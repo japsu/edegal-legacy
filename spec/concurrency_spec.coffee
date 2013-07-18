@@ -23,13 +23,11 @@ describe 'Semaphore', ->
     
     sem.push(instrumentedDelay).done()
     sem.push(instrumentedDelay).done()
-    sem.push(instrumentedDelay).done()
-
-    sem.slots.should.equal 0
-    instrumentedDelay.numRunning.should.equal 2
-
-    sem.finished.then ->
+    sem.push(instrumentedDelay).then -> 
       instrumentedDelay.numRunning.should.equal 0
       instrumentedDelay.numFinished.should.equal 3
       success()
-    .done()
+    done()
+
+    sem.slots.should.equal 0
+    instrumentedDelay.numRunning.should.equal 2
