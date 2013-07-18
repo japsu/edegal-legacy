@@ -46,7 +46,7 @@ convertSubcategories = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
   # get root category
-  query('SELECT cid, name, description FROM cpg11d_categories WHERE parent = ? ORDER BY pos DESC', [categoryId]).spread (categories) ->
+  query('SELECT cid, name, description FROM cpg11d_categories WHERE parent = ? ORDER BY pos', [categoryId]).spread (categories) ->
     Q.all categories.map (coppermineCategory) ->
       return null if coppermineCategory.cid in CATEGORY_BLACKLIST
 
