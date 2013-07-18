@@ -60,7 +60,7 @@ convertSubcategories = (categoryId, parent) ->
         description: coppermineCategory.description
         subalbums: []
         pictures: []
-        _pos: coppermineAlbum.pos
+        _pos: coppermineCategory.pos
 
       processAlbum edegalAlbum, parent: parent, categoryId: coppermineCategory.cid
 
