@@ -56,16 +56,15 @@ createPreview = (opts) ->
     dst: mkPath root, dstPathOnServer
 
   fileExists(resizeOpts.dst).then (exists) ->
-    magickSemaphore.push ->
-      if exists
-        getImageInfo(resizeOpts.dst).spread (existing) ->
-          process.stdout.write '-' unless quiet
-          existing
-      else
-        makeDirectories(path.dirname(resizeOpts.dst)).then ->
-          resizeImage(resizeOpts).spread (resized) ->
-            process.stdout.write '.' unless quiet
-            resized
+    if exists
+      getImageInfo(resizeOpts.dst).spread (existing) ->
+        process.stdout.write '-' unless quiet
+        existing
+    else
+      makeDirectories(path.dirname(resizeOpts.dst)).then ->
+        resizeImage(resizeOpts).spread (resized) ->
+          process.stdout.write '.' unless quiet
+          resized
   .then (imageInfo) ->
     medium =
       width: parseInt imageInfo.width
@@ -89,13 +88,14 @@ createPreviews = (opts) ->
     Q.all album.pictures.map (picture) ->
       Q.all sizes.map (size) ->
         do (album, picture, size) ->
-          createPreview
-            albumPath: album.path
-            picture: picture
-            size: size
-            root: root
-            output: output
-            quiet: quiet
+          magickSemaphore.push ->
+            createPreview
+              albumPath: album.path
+              picture: picture
+              size: size
+              root: root
+              output: output
+              quiet: quiet
 
 if require.main is module
   argv = require('optimist')
