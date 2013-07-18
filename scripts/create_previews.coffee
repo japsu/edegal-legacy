@@ -99,6 +99,7 @@ createPreviews = (opts) ->
               output: output
               quiet: quiet
 
+  magickSemaphore.push -> Q.delay(500) # XXX avoid finishing early
   magickSemaphore.finished()
 
 if require.main is module

@@ -9,9 +9,7 @@ exports.Semaphore = class Semaphore
   pop: ->
     @slots += 1
     next = @queue.shift()
-
-    if next
-      @enter.apply this, next
+    @enter.apply this, next if next
     
     if @slots == @maxSlots and @_finished?
       _finished = @_finished
