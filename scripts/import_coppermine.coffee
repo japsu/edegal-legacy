@@ -46,7 +46,7 @@ convertSubcategories = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
   # get root category
-  query('SELECT cid, name, description FROM cpg11d_categories WHERE parent = ? ORDER BY pos', [categoryId]).spread (categories) ->
+  query('SELECT cid, name, description, pos FROM cpg11d_categories WHERE parent = ?', [categoryId]).spread (categories) ->
     Q.all categories.map (coppermineCategory) ->
       return null if coppermineCategory.cid in CATEGORY_BLACKLIST
 
@@ -60,13 +60,14 @@ convertSubcategories = (categoryId, parent) ->
         description: coppermineCategory.description
         subalbums: []
         pictures: []
+        _pos: coppermineAlbum.pos
 
       processAlbum edegalAlbum, parent: parent, categoryId: coppermineCategory.cid
 
 convertAlbums = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
-  query('SELECT aid, title, description FROM cpg11d_albums WHERE category = ? ORDER BY pos DESC', [categoryId]).spread (albums) ->
+  query('SELECT aid, title, description, pos FROM cpg11d_albums WHERE category = ?', [categoryId]).spread (albums) ->
     Q.all albums.map (coppermineAlbum) ->
       decodeEntities coppermineAlbum, 'title', 'description'
       slug = slugify(coppermineAlbum.title) or "album-#{coppermineAlbum.aid}"
@@ -78,6 +79,7 @@ convertAlbums = (categoryId, parent) ->
         description: coppermineAlbum.description
         subalbums: []
         pictures: []
+        _pos: coppermineAlbum.pos
 
       processAlbum edegalAlbum, parent: parent, albumId: coppermineAlbum.aid
 
@@ -88,17 +90,22 @@ processAlbum = (edegalAlbum, opts) ->
     edegalAlbum = existingAlbum if existingAlbum?
 
     work = []
-    work.push convertSubcategories(categoryId, edegalAlbum) if categoryId
-    work.push convertAlbums(categoryId, edegalAlbum) if categoryId
-    work.push convertPictures(albumId, edegalAlbum) if albumId and not existingAlbum?
+    work.push convertSubcategories(categoryId, edegalAlbum) if categoryId?
+    work.push convertAlbums(categoryId, edegalAlbum) if categoryId?
+    work.push convertPictures(albumId, edegalAlbum) if albumId? and not existingAlbum?
     return null if _.isEmpty work
 
     Q.all(work)
   .then ->
     setThumbnail edegalAlbum
 
-    unless _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
-      parent.subalbums.unshift _.pick edegalAlbum, 'path', 'title', 'thumbnail'
+    if parent? and not _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
+      parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail', '_pos'
+
+    edegalAlbum.subalbums = _.chain(edegalAlbum.subalbums)
+      .sortBy((subalbum) -> subalbum._pos)
+      .omit('_pos')
+      .value()
 
     saveAlbum edegalAlbum
   .then ->
