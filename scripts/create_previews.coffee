@@ -58,7 +58,7 @@ createPreview = (opts) ->
   fileExists(resizeOpts.dst).then (exists) ->
     magickSemaphore.push ->
       if exists
-        getImageInfo(resizeOpts.dst).then (existing) ->
+        getImageInfo(resizeOpts.dst).spread (existing) ->
           process.stdout.write '-' unless quiet
           existing
       else
@@ -75,7 +75,7 @@ createPreview = (opts) ->
     albumUpdateSemaphore.push ->
       getAlbum(albumPath).then (album) ->
         picture = _.find album.pictures, (pic) -> pic.path == picture.path
-        picture.media.push medium unless _.find(picture.media, (med) -> med.src == medium.src)
+        picture.media.push medium
         picture.media = _.sortBy picture.media, (med) -> medium.width
         saveAlbum album
 
