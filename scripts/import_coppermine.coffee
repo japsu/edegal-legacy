@@ -32,8 +32,20 @@ convertCoppermine = ->
     query("SET NAMES 'latin1';")
   ]).spread (root) ->
     convertSubcategories(0, root).then ->
-      setThumbnail root
-      saveAlbum root
+      finalizeAlbum root
+
+finalizeAlbum = (edegalAlbum, parent) ->
+  setThumbnail edegalAlbum
+
+  if parent? and not _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
+    parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail', '_pos'
+
+  edegalAlbum.subalbums = _.chain(edegalAlbum.subalbums)
+    .sortBy((subalbum) -> subalbum._pos)
+    .map((subalbum) -> _.omit(subalbum, '_pos'))
+    .value()
+
+  saveAlbum edegalAlbum
 
 decodeEntities = (obj, fields...) ->
   for field in fields
@@ -101,17 +113,7 @@ processAlbum = (edegalAlbum, opts) ->
 
     Q.all(work)
   .then ->
-    setThumbnail edegalAlbum
-
-    if parent? and not _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
-      parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail', '_pos'
-
-    edegalAlbum.subalbums = _.chain(edegalAlbum.subalbums)
-      .sortBy((subalbum) -> subalbum._pos)
-      .map((subalbum) -> _.omit(subalbum, '_pos'))
-      .value()
-
-    saveAlbum edegalAlbum
+    finalizeAlbum edegalAlbum, parent
   .then ->
     edegalAlbum
 
