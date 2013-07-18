@@ -104,7 +104,7 @@ processAlbum = (edegalAlbum, opts) ->
 
     edegalAlbum.subalbums = _.chain(edegalAlbum.subalbums)
       .sortBy((subalbum) -> subalbum._pos)
-      .omit('_pos')
+      .map((subalbum) -> _.omit(subalbum, '_pos'))
       .value()
 
     saveAlbum edegalAlbum
