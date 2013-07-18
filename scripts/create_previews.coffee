@@ -6,6 +6,7 @@ Q = require 'q'
 
 easyimg = require 'easyimage'
 resizeImage = Q.nbind easyimg.resize, easyimg
+getImageInfo = Q.nbind easyimg.info, easyimg
 
 mkdirp = require 'mkdirp'
 makeDirectories = Q.denodeify mkdirp
@@ -52,24 +53,29 @@ createPreview = (opts) ->
 
   fileExists(resizeOpts.dst).then (exists) ->
     if exists
-      process.stdout.write '-'
-      return Q.when {}
+      getImageInfo(resizeOpts.dst).then (existing) ->
+        process.stdout.write '-' unless quiet
+        existing
+    else
+      makeDirectories(path.dirname(resizeOpts.dst)).then ->
+        resizeImage(resizeOpts).spread (resized) ->
+          process.stdout.write '.' unless quiet
+          resized
+  .then (imageInfo) ->
+    medium =
+      width: parseInt imageInfo.width
+      height: parseInt imageInfo.height
+      src: dstPathOnServer
 
-    makeDirectories(path.dirname(resizeOpts.dst)).then ->
-      resizeImage(resizeOpts).spread (resized) ->
-        albumUpdateSemaphore.push ->
-          getAlbum(albumPath).then (album) ->
-            picture = _.find album.pictures, (pic) -> pic.path == picture.path
-            picture.media.push
-              width: parseInt resized.width
-              height: parseInt resized.height
-              src: dstPathOnServer
-            picture.media = _.sortBy picture.media, (medium) -> medium.width
-            saveAlbum(album)
-          .then ->
-            process.stdout.write '.' unless quiet
-      .fail ->
-        console.warn '\nFailed to create thumbnail:', resizeOpts.src
+    albumUpdateSemaphore.push ->
+      getAlbum(albumPath).then (album) ->
+        picture = _.find album.pictures, (pic) -> pic.path == picture.path
+        picture.media.push medium unless _.find(picture.media, (med) -> med.src == medium.src)
+        picture.media = _.sortBy picture.media, (med) -> medium.width
+        saveAlbum album
+
+  .fail ->
+    console.warn '\nFailed to create thumbnail:', resizeOpts.src
 
 createPreviews = (opts) ->
   {albums, sizes, concurrency, root, output, quiet} = opts
