@@ -38,7 +38,9 @@ exports.Semaphore = class Semaphore
       reason
 
   finished: ->
-    return Q.when {} if @slots == @maxSlots
+    if @slots == @maxSlots
+      console.log 'Semaphore.finished: finishing early'
+      return Q.when {}
 
     @_finished = Q.defer() unless @_finished
     @_finished.promise

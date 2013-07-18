@@ -82,7 +82,9 @@ createPreview = (opts) ->
     console.warn '\nFailed to create thumbnail:', resizeOpts.src
 
 createPreviews = (opts) ->
-  {albums, sizes, root, output, quiet} = opts
+  {albums, sizes, root, output, quiet, concurrency} = opts
+
+  magickSemaphore = new Semaphore concurrency
 
   albums.forEach (album) ->
     album.pictures.forEach (picture) ->
@@ -113,8 +115,6 @@ if require.main is module
   argv.size = [argv.size] unless _.isArray argv.size
   sizes = argv.size.map parseSize
   {concurrency, root, output, quiet} = argv
-
-  magickSemaphore = new Semaphore concurrency
 
   Q.when null, ->
     if argv.path
