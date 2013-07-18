@@ -56,15 +56,16 @@ createPreview = (opts) ->
     dst: mkPath root, dstPathOnServer
 
   fileExists(resizeOpts.dst).then (exists) ->
-    if exists
-      getImageInfo(resizeOpts.dst).then (existing) ->
-        process.stdout.write '-' unless quiet
-        existing
-    else
-      makeDirectories(path.dirname(resizeOpts.dst)).then ->
-        resizeImage(resizeOpts).spread (resized) ->
-          process.stdout.write '.' unless quiet
-          resized
+    magickSemaphore.push ->
+      if exists
+        getImageInfo(resizeOpts.dst).then (existing) ->
+          process.stdout.write '-' unless quiet
+          existing
+      else
+        makeDirectories(path.dirname(resizeOpts.dst)).then ->
+          resizeImage(resizeOpts).spread (resized) ->
+            process.stdout.write '.' unless quiet
+            resized
   .then (imageInfo) ->
     medium =
       width: parseInt imageInfo.width
@@ -82,25 +83,21 @@ createPreview = (opts) ->
     console.warn '\nFailed to create thumbnail:', resizeOpts.src
 
 createPreviews = (opts) ->
-  {albums, sizes, concurrency, root, output, quiet} = opts
-
-  sem = new Semaphore concurrency
+  {albums, sizes, root, output, quiet} = opts
 
   albums.forEach (album) ->
     album.pictures.forEach (picture) ->
       sizes.forEach (size) ->
         do (album, picture, size) ->
-          sem.push ->
-            createPreview
-              albumPath: album.path
-              picture: picture
-              size: size
-              root: root
-              output: output
-              quiet: quiet
-          .done()
+          createPreview
+            albumPath: album.path
+            picture: picture
+            size: size
+            root: root
+            output: output
+            quiet: quiet
 
-  sem.finished
+  magickSemaphore.finished
 
 if require.main is module
   argv = require('optimist')
@@ -116,6 +113,8 @@ if require.main is module
   argv.size = [argv.size] unless _.isArray argv.size
   sizes = argv.size.map parseSize
   {concurrency, root, output, quiet} = argv
+
+  magickSemaphore = new Semaphore concurrency
 
   Q.when null, ->
     if argv.path
