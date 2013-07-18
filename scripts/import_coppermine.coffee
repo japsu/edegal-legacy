@@ -130,7 +130,7 @@ processAlbum = (edegalAlbum, opts) ->
 
     Q.all(work)
   .then ->
-    finalizeAlbum edegalAlbum, parent
+    finalizeAlbum edegalAlbum, opts
   .then ->
     edegalAlbum
 
