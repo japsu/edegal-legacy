@@ -22,6 +22,10 @@ CATEGORY_BLACKLIST = [
   107 # Animeunioni
 ]
 
+ROOT_CATEGORY_ID = 0
+
+LARGE_NUMBER = 9999999
+
 connection.connect()
 
 query = Q.nbind connection.query, connection
@@ -31,17 +35,28 @@ convertCoppermine = ->
     getAlbum('/')
     query("SET NAMES 'latin1';")
   ]).spread (root) ->
-    convertSubcategories(0, root).then ->
-      finalizeAlbum root
+    convertSubcategories(ROOT_CATEGORY_ID, root).then ->
+      finalizeAlbum root, categoryId: ROOT_CATEGORY_ID
 
-finalizeAlbum = (edegalAlbum, parent) ->
+finalizeAlbum = (edegalAlbum, opts) ->
+  {categoryId, parent} = opts
   setThumbnail edegalAlbum
 
   if parent? and not _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
     parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail', '_pos'
 
+  # XXX FUGLY
+  # We want new categories to get positioned at the top, and new albums at the bottom.
+  # Existing albums won't have _pos, so we use a fallback value to send them at start or end.
+  # We rely on _.sortBy being stable.
+  fallbackPos =
+    if categoryId?
+      LARGE_NUMBER
+    else
+      -LARGE_NUMBER
+
   edegalAlbum.subalbums = _.chain(edegalAlbum.subalbums)
-    .sortBy((subalbum) -> subalbum._pos)
+    .sortBy((subalbum) -> subalbum._pos ? fallbackPos)
     .map((subalbum) -> _.omit(subalbum, '_pos'))
     .value()
 
