@@ -84,9 +84,9 @@ createPreview = (opts) ->
 createPreviews = (opts) ->
   {albums, sizes, root, output, quiet} = opts
 
-  Q.all albums.map (album) ->
-    Q.all album.pictures.map (picture) ->
-      Q.all sizes.map (size) ->
+  albums.forEach (album) ->
+    album.pictures.forEach (picture) ->
+     picture.sizes.forEach (size) ->
         do (album, picture, size) ->
           magickSemaphore.push ->
             createPreview
@@ -96,6 +96,8 @@ createPreviews = (opts) ->
               root: root
               output: output
               quiet: quiet
+
+  magickSemaphore.finished()
 
 if require.main is module
   argv = require('optimist')
@@ -116,12 +118,12 @@ if require.main is module
 
   Q.when null, ->
     if argv.path
-      Q.ninvoke albums.find($or: [
+      albums.find($or: [
         { path: argv.path},
         { 'breadcrumb.path': argv.path }
-      ]), 'toArray'
+      ])
     else
-      Q.ninvoke albums.find(), 'toArray'
+      albums.find()
   .then (albums) ->
     createPreviews {albums, sizes, concurrency, root, output, quiet}
   .then ->

@@ -16,6 +16,9 @@ instrumentedDelay.reset = ->
 describe 'Semaphore', ->
   beforeEach -> instrumentedDelay.reset()
 
+  it 'should be finished when empty', (success) ->
+    new Semaphore(2).finished(success).done()
+
   it 'should allow at most S jobs to run concurrently', (success) ->
     sem = new Semaphore 2
 
@@ -23,11 +26,13 @@ describe 'Semaphore', ->
     
     sem.push(instrumentedDelay).done()
     sem.push(instrumentedDelay).done()
-    sem.push(instrumentedDelay).then -> 
+    sem.push(instrumentedDelay).done()
+
+    sem.finished().then -> 
       instrumentedDelay.numRunning.should.equal 0
       instrumentedDelay.numFinished.should.equal 3
       success()
-    done()
+    .done()
 
     sem.slots.should.equal 0
     instrumentedDelay.numRunning.should.equal 2

@@ -4,6 +4,7 @@ exports.Semaphore = class Semaphore
   constructor: (slots) ->
     @slots = @maxSlots = slots
     @queue = []
+    @_finished = null
 
   pop: ->
     @slots += 1
@@ -12,6 +13,11 @@ exports.Semaphore = class Semaphore
     if next
       @enter.apply this, next
     
+    if @slots == @maxSlots and @_finished?
+      _finished = @_finished
+      @_finished = null
+      _finished.resolve()
+
   push: (func) ->
     if @slots > 0
       @enter func
@@ -30,3 +36,9 @@ exports.Semaphore = class Semaphore
       deferred.reject reason if deferred
       @pop()
       reason
+
+  finished: ->
+    return Q.when {} if @slots == @maxSlots
+
+    @_finished = Q.defer() unless @_finished
+    @_finished.promise
