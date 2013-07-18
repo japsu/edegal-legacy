@@ -17,7 +17,7 @@ describe 'Semaphore', ->
   beforeEach -> instrumentedDelay.reset()
 
   it 'should be finished when empty', (success) ->
-    new Semaphore(2).finished(success).done()
+    new Semaphore(2).finished().then(success).done()
 
   it 'should allow at most S jobs to run concurrently', (success) ->
     sem = new Semaphore 2
