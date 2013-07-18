@@ -88,7 +88,7 @@ createPreviews = (opts) ->
 
   albums.forEach (album) ->
     album.pictures.forEach (picture) ->
-     picture.sizes.forEach (size) ->
+     sizes.forEach (size) ->
         do (album, picture, size) ->
           magickSemaphore.push ->
             createPreview
