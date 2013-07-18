@@ -136,7 +136,13 @@ convertPictures = (albumId, parent) ->
           }
         ]
 
+
+cleanupAlbum = (album) ->
+  delete album._pos
+
 if require.main is module
   convertCoppermine().then ->
+    walkAlbumsDepthFirst cleanupAlbum
+  .then ->
     process.exit()
   .done()
