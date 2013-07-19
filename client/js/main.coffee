@@ -27,10 +27,10 @@ class Router extends Backbone.Router
 
       if picture
         pictureView.setModel(picture).render()
-        window.ga 'send', 'event', 'picture', 'view', path, page: path
+        window.ga 'send', 'event', 'picture', 'view', path, page: path if window.ga?
       else
         albumView.setModel(album).render()
-        window.ga 'send', 'event', 'album', 'view', path, page: path
+        window.ga 'send', 'event', 'album', 'view', path, page: path if window.ga?
 
       window.ga 'send', 'pageview', path if window.ga?
     .done()
