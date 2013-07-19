@@ -3,7 +3,9 @@ Mongolian = require 'mongolian'
 
 {slugify} = require '../shared/helpers/path_helper'
 
-db = new Mongolian 'mongo://localhost/edegal'
+config = require '../server_config.json'
+
+db = new Mongolian config.database
 albums = db.collection 'albums'
 tags = db.collection 'tags'
 picturesByTag = db.collection 'picturesByTag'

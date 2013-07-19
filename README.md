@@ -77,12 +77,20 @@ You're all set!
 
 ## Configuration
 
-There is a configuration file, `configuration.json`. Changing any values there requires recompilation (`james build`).
+There are configuration files for client and server, `client_config.json` and `server_config.json`.
+
+### Client configuration (`client_config.json`)
+
+Changing any values in `client_config.json` requires recompilation (`james build`).
 
 * `defaultLanguage`: `en` and `fi` supported.
 * `analyticsAccount`: Put your Analytics token here to enable [Google Analytics](https://analytics.google.com) support.
 
-Please don't even think about moving MongoDB configuration into `configuration.json` as it gets `require`'d into `bundle.js`.
+### Server configuration (`server_config.json`)
+
+* `database`: as accepted by `new Mongolian`
+* `port`: port number to listen on
+* `hostname`: hostname or IP address to listen on
 
 ## Technology choices
 

@@ -1,5 +1,5 @@
 $ = require 'jquery'
-configuration = require '../../../../configuration.json'
+configuration = require '../../../../client_config.json'
 
 exports.translations =
   fi:

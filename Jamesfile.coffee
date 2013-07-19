@@ -10,7 +10,7 @@ browserify = require 'browserify'
 shim = require 'browserify-shim'
 coffeeify  = require 'coffeeify'
 
-configuration = require './configuration.json'
+configuration = require './client_config.json'
 
 copyFile = (file) -> james.read(file).write(file.replace('client/', 'public/'))
 

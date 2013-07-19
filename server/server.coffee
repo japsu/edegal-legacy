@@ -5,6 +5,7 @@ _ = require 'underscore'
 connect = require 'connect'
 express = require 'express'
 
+config = require '../server_config.json'
 {albums, albumsUserVisible} = require './db'
 
 staticPath = path.resolve path.dirname(module.filename), '..', 'public'
@@ -55,4 +56,4 @@ app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   respondFromDb req, res, albums, albumQuery path, albumsUserVisible
 
 if require.main is module
-  app.listen 3000
+  app.listen config.port, config.host
