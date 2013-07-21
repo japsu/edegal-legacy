@@ -99,7 +99,6 @@ createPreviews = (opts) ->
               output: output
               quiet: quiet
 
-  magickSemaphore.push -> Q.delay(500) # XXX avoid finishing early
   magickSemaphore.finished()
 
 if require.main is module
@@ -119,12 +118,12 @@ if require.main is module
 
   Q.when null, ->
     if argv.path
-      albums.find($or: [
+      Q.ninvoke albums.find($or: [
         { path: argv.path},
         { 'breadcrumb.path': argv.path }
-      ])
+      ]), 'toArray'
     else
-      albums.find()
+      Q.ninvoke albums.find(), 'toArray'
   .then (albums) ->
     createPreviews {albums, sizes, concurrency, root, output, quiet}
   .then ->
