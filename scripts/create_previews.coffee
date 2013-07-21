@@ -78,8 +78,8 @@ createPreview = (opts) ->
         picture.media = _.sortBy picture.media, (med) -> medium.width
         saveAlbum album
 
-  .fail ->
-    console.warn '\nFailed to create thumbnail:', resizeOpts.src
+  .fail (reason) ->
+    console.warn '\nFailed to create thumbnail:', resizeOpts.src, reason
 
 createPreviews = (opts) ->
   {albums, sizes, root, output, quiet, concurrency} = opts
