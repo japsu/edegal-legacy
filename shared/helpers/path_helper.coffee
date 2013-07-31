@@ -26,6 +26,8 @@ exports.makeBreadcrumb = (albumsOrPictures...) ->
 
   breadcrumb
 
+exports.removeExtension = (filename) ->
+  filename.split('.', 1)[0]
+
 exports.sanitizeFilename = (filename) ->
-  [filename] = filename.split '.', 1
-  exports.slugify(filename)
+  exports.slugify exports.removeExtension filename

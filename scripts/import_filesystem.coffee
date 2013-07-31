@@ -8,7 +8,7 @@ Q.longStackSupport = true
 easyimg = require 'easyimage'
 
 {getAlbum, saveAlbum} = require '../server/db'
-{makeBreadcrumb, slugify, sanitizeFilename} = require '../shared/helpers/path_helper'
+{makeBreadcrumb, slugify, sanitizeFilename, removeExtension} = require '../shared/helpers/path_helper'
 {setThumbnail} = require '../shared/helpers/media_helper'
 {Semaphore} = require '../shared/helpers/concurrency_helper'
 
@@ -51,7 +51,7 @@ filesystemImport = (opts) ->
           {name, width, height} = imageInfo[0]
 
           path: path.join(albumPath, sanitizeFilename(name))
-          title: name
+          title: removeExtension(name)
           media: [
             {
               src: path.join('/', directory, name)

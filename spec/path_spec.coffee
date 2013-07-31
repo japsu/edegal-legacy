@@ -2,7 +2,7 @@ should = require 'should'
 _ = require 'underscore'
 
 {Album} = require '../client/js/models/album'
-{makeBreadcrumb, slugify} = require '../shared/helpers/path_helper'
+{makeBreadcrumb, slugify, sanitizeFilename, removeExtension} = require '../shared/helpers/path_helper'
 
 describe 'Path helpers', ->
   describe 'slugify', ->
@@ -100,3 +100,20 @@ describe 'Path helpers', ->
 
       breadcrumb[2].path.should.equal pictureModel.get('path')
       breadcrumb[2].title.should.equal pictureModel.get('title')
+
+  describe 'removeExtension', ->
+    it 'should work for empty string', ->
+      removeExtension('').should.equal ''
+
+    it 'should work without extension', ->
+      removeExtension('IMG_0645').should.equal 'IMG_0645'
+
+    it 'should remove extension', ->
+      removeExtension('IMG_0645.jpg').should.equal 'IMG_0645'
+
+  describe 'sanitizeFilename', ->
+    it 'should work for empty string', ->
+      sanitizeFilename('').should.equal ''
+
+    it 'should sanitize filename', ->
+      sanitizeFilename('IMG_0635.jpg').should.equal 'img-0635'
