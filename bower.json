@@ -2,7 +2,7 @@
   "name": "edegal-express",
   "version": "0.0.0",
   "dependencies": {
-    "jquery": "1.8.x",
+    "jquery": "1.9.x",
     "transparency": "0.9.x",
     "backbone": "1.0.x",
     "backbone-relational": "0.8.x",

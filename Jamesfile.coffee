@@ -26,18 +26,18 @@ james.task 'copy_files', -> FILES_TO_COPY.forEach (glob) -> james.list(glob).for
 transmogrifyCoffee = (debug) ->
   libs =
     jquery:
-      path: './components/jquery/jquery.js'
+      path: './bower_components/jquery/jquery.js'
       exports: '$'
 
     transparency:
-      path: './components/transparency/dist/transparency.min.js'
+      path: './bower_components/transparency/dist/transparency.min.js'
       exports: 'Transparency'
       depends: 
         jquery: '$'
         underscore: '_'
 
     'backbone-relational':
-      path: './components/backbone-relational/backbone-relational.js'
+      path: './bower_components/backbone-relational/backbone-relational.js'
       exports: 'Backbone'
       depends: 
         jquery: '$'
@@ -45,7 +45,7 @@ transmogrifyCoffee = (debug) ->
         backbone: 'Backbone'
 
     'hammer-jquery':
-      path: './components/hammerjs/dist/jquery.hammer.js'
+      path: './bower_components/hammerjs/dist/jquery.hammer.js'
       exports: '$'
       depends:
         jquery: '$'

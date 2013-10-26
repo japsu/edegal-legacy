@@ -50,6 +50,10 @@ app.use express.static(staticPath, maxAge: 24*60*60*1000)
 app.use indexHtmlAnyway
 app.use respond404
 
+app.get /^\/v2\/tags$/, (req, res) -> # TODO
+
+app.get /^\/v2\/tags\/[a-zA-Z0-9-\/]+$/, (req, res) -> # TODO
+
 app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   path = req.params[0]
   console.log 'album', path

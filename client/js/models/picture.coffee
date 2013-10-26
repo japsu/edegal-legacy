@@ -13,6 +13,9 @@ class Picture extends Backbone.RelationalModel
       @set 'original', getOriginal this
       @set 'thumbnail', getThumbnail this
 
+  defaults: ->
+    tags: []
+
 class Pictures extends Backbone.Collection
   model: Picture
 
