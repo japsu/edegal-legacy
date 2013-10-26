@@ -1,3 +1,5 @@
+_ = require 'underscore'
+
 {setThumbnail} = require '../../shared/helpers/media_helper.coffee'
 {walkAncestors} = require '../helpers/tree_helper.coffee'
 

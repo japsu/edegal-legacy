@@ -1,3 +1,5 @@
+Q = require 'q'
+
 {Album} = require '../models/album.coffee'
 {consistentUpdate} = require '../helpers/version_helper.coffee'
 
