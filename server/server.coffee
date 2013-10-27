@@ -1,30 +1,30 @@
-path = require 'path'
-
-_ = require 'underscore'
-
-connect = require 'connect'
-express = require 'express'
-
-config = require '../server_config.json'
-require './db'
-
+_          = require 'underscore'
+path       = require 'path'
+express    = require 'express'
+config     = require '../server_config.json'
 {getAlbum} = require './services/album_service.coffee'
+unusedConn = require './db'
 
 staticPath = path.resolve path.dirname(module.filename), '..', 'public'
-indexHtml = path.resolve staticPath, 'index.html'
+indexHtml  = path.resolve staticPath, 'index.html'
 
-respondJSON = (res, code, data) ->
+respondModel = (res, model) ->
+  return respond404 res unless model
+  respondJSON res, 200, _.omit(model.toObject(), '_id')
+
+respondJSON = (res, code, model) ->
   res.contentType 'application/json'
   res.send code, JSON.stringify data
 
-respond404 = (req, res) ->
-  if req.accepts 'json'
-    respondJSON res, 404,
-      error: 404
-      message: 'Not found'
+respond404 = (res) ->
+  respondJSON res, 404,
+    error: 404
+    message: 'Not found'
 
-  else
-    res.send 404, 'Not found'
+respond500 = (res) ->
+  respond500 res, 500,
+    error: 500
+    message: 'Internal server error'
 
 indexHtmlAnyway = (req, res, next) ->
   if req.accepts 'html'
@@ -32,14 +32,7 @@ indexHtmlAnyway = (req, res, next) ->
   else
     next()
 
-albumQuery = (path) ->
-  $or: [
-    { path },
-    { 'pictures.path': path }
-  ]
-
 exports.app = app = express()
-#app.use connect.compress()
 app.use app.router
 app.use express.static(staticPath, maxAge: 24*60*60*1000)
 app.use indexHtmlAnyway
@@ -54,6 +47,9 @@ app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   console.log 'album', path
   getAlbum(path).then (album) ->
     respondJSON res, 200, album.toObject()
+  .fail (e) ->
+    console?.error e
+    respond500 res
   .done()
 
 if require.main is module
