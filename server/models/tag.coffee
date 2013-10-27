@@ -31,4 +31,4 @@ exports.tagSchema = tagSchema = new Schema
   pictures: [] # TODO
   synonyms: [String]
 
-Tag = mongoose.model 'Tag', tag, 'tags'
+Tag = mongoose.model 'Tag', tagSchema, 'tags'
