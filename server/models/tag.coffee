@@ -1,4 +1,18 @@
-{Schema, model} = require 'mongoose'
+{Schema} = mongoose = require 'mongoose'
+
+exports.tagSpec = tagSpec =
+  path:
+    type: String
+    required: true
+    index: true
+
+  title:
+    type: String
+    required: true
+
+  tag:
+    type: String
+    required: true
 
 exports.tagSchema = tagSchema = new Schema
   path:
@@ -17,4 +31,4 @@ exports.tagSchema = tagSchema = new Schema
   pictures: [] # TODO
   synonyms: [String]
 
-Tag = model 'Tag', tag, 'tags'
+Tag = mongoose.model 'Tag', tag, 'tags'

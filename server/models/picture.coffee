@@ -1,6 +1,7 @@
 {Schema} = require 'mongoose'
 
 {mediaSchema, mediaSpec} = require './media.coffee'
+{tagSpec} = require './tag.coffee'
 
 exports.pictureSchema = pictureSchema = new Schema
   path:
@@ -13,3 +14,6 @@ exports.pictureSchema = pictureSchema = new Schema
 
   media: [mediaSchema]
   thumbnail: mediaSpec
+  tags:
+    type: [tagSpec]
+    'default': -> []
