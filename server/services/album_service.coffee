@@ -1,7 +1,7 @@
 _       = require 'underscore'
 Q       = require 'q'
 path    = require 'path'
-{makeBreadcrumb, slugify} = require '../shared/helpers/path_helper.coffee'
+{makeBreadcrumb, slugify} = require '../../shared/helpers/path_helper.coffee'
 {Album} = require '../models/album.coffee'
 {consistentUpdate, save} = require '../helpers/model_helper.coffee'
 
