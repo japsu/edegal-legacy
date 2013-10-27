@@ -12,7 +12,7 @@ respondModel = (res, model) ->
   return respond404 res unless model
   respondJSON res, 200, _.omit(model.toObject(), '_id')
 
-respondJSON = (res, code, model) ->
+respondJSON = (res, code, data) ->
   res.contentType 'application/json'
   res.send code, JSON.stringify data
 
@@ -46,7 +46,7 @@ app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   path = req.params[0]
   console.log 'album', path
   getAlbum(path).then (album) ->
-    respondJSON res, 200, album.toObject()
+    respondModel res, 200, album.toObject()
   .fail (e) ->
     console?.error e
     respond500 res
