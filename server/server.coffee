@@ -22,7 +22,7 @@ respond404 = (res) ->
     message: 'Not found'
 
 respond500 = (res) ->
-  respond500 res, 500,
+  respondJSON res, 500,
     error: 500
     message: 'Internal server error'
 
@@ -46,7 +46,7 @@ app.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   path = req.params[0]
   console.log 'album', path
   getAlbum(path).then (album) ->
-    respondModel res, 200, album.toObject()
+    respondModel res, album.toObject()
   .fail (e) ->
     console?.error e
     respond500 res
