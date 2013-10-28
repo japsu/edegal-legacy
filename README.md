@@ -107,7 +107,7 @@ Changing any values in `client_config.json` requires recompilation (`james build
 * Backend
   * [Node.js](https://github.com/joyent/node)
   * [Express](https://github.com/visionmedia/express)
-  * [Mongolian DeadBeef](https://github.com/marcello3d/node-mongolian)
+  * [Mongoose](https://github.com/LearnBoost/mongoose)
   * [MongoDB](https://github.com/mongodb/mongo)
   * [nginx](https://github.com/nginx/nginx)
 * Frontend
