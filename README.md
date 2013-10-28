@@ -122,3 +122,4 @@ Changing any values in `client_config.json` requires recompilation (`james build
 * "I don't remember having ever run into another web gallery as nifty as this!"
 * "I find the page load speed of Edegal incredible. But I think I've just grown accustomed to bad galleries."
 * "Edegal seems exactly what I've been looking for!"
+* "Edegal <3"
