@@ -1,5 +1,6 @@
 should       = require 'should'
 Q            = require 'q'
+_            = require 'underscore'
 
 require './helpers/db_helper'
 
@@ -8,6 +9,7 @@ albumService = require '../server/services/album_service'
 
 albums = [
   path: '/'
+  title: 'Root'
   breadcrumb: []
   subalbums: [
     path: '/foo'
@@ -15,6 +17,7 @@ albums = [
   pictures: []
 ,
   path: '/foo'
+  title: 'Foo'
   breadcrumb: [
     path: '/'
   ]
@@ -24,6 +27,7 @@ albums = [
   pictures: []
 ,
   path: '/foo/bar'
+  title: 'Foo Bar'
   breadcrumb: [
     path: '/'
   ,

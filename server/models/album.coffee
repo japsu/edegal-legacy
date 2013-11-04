@@ -39,7 +39,9 @@ exports.albumSchema = albumSchema = new Schema
       type: String
       required: true
 
-    thumbnail: mediaSpec
+    thumbnail:
+      type: mediaSpec
+      required: false
   ]
 
   pictures: [pictureSchema]
