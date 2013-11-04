@@ -3,6 +3,7 @@ Q            = require 'q'
 
 require './helpers/db_helper'
 
+{Album}      = require '../server/models/album'
 albumService = require '../server/services/album_service'
 
 albums = [
@@ -38,16 +39,20 @@ describe 'Album service', ->
   beforeEach (done) ->
     Q.all(albums.map (album) ->
       Q.ninvoke new Album(album), 'save'
-    ).then -> done() 
+    ).then ->
+      done() 
+    .done()
 
   describe 'getAlbum', ->
     it 'should return album by its path', (success) ->
       getAlbum('/').then (album) ->
         album.path.should.equal '/'
+        success()
 
     it 'should return album by the path of one of its pictures', (success) ->
       getAlbum('/foo/bar/quux').then (album) ->
         album.path.should.equal '/foo/bar'
+        success()
 
   describe 'newAlbum', ->
     it 'should create the root album'
@@ -59,4 +64,4 @@ describe 'Album service', ->
 
   describe 'deleteAlbum', ->
     it 'should delete the album and its subalbums'
-    ít 'should remove the deleted album from its parents subalbums'
+    it 'should remove the deleted album from its parents subalbums'
