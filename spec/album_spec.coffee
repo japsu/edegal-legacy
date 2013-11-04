@@ -5,7 +5,7 @@ _            = require 'underscore'
 require './helpers/db_helper'
 
 {Album}      = require '../server/models/album'
-albumService = require '../server/services/album_service'
+{getAlbum, newAlbum, updateAlbum, deleteAlbum} = require '../server/services/album_service'
 
 albums = [
   path: '/'
@@ -45,33 +45,86 @@ albums = [
   ]
 ]
 
-describe 'Album service', ->
-  beforeEach (done) ->
-    Q.all(albums.map (album) ->
-      Q.ninvoke new Album(album), 'save'
-    ).then ->
-      done() 
-    .done()
+createAlbums = (success) ->
+  Q.all(albums.map (album) ->
+    Q.ninvoke new Album(album), 'save'
+  ).then ->
+    success() 
+  .done()
 
+describe 'Album service', ->
   describe 'getAlbum', ->
+    beforeEach createAlbums
+
     it 'should return album by its path', (success) ->
       getAlbum('/').then (album) ->
         album.path.should.equal '/'
         success()
+      .done()
 
     it 'should return album by the path of one of its pictures', (success) ->
       getAlbum('/foo/bar/quux').then (album) ->
         album.path.should.equal '/foo/bar'
         success()
+      .done()
 
   describe 'newAlbum', ->
-    it 'should create the root album'
-    it 'should create a leaf album'
+    it 'should create the root album', (success) ->
+      newAlbum(null, path: '/', title: 'Test').then ->
+        getAlbum('/')
+      .then (album) ->
+        album.title.should.equal 'Test'
+        success()
+      .done()
+
+    it 'should create a leaf album', (success) ->
+      newAlbum(null, path: '/', title: 'Test').then ->
+        newAlbum('/', path: '/foo', title: 'Test Foo')
+      .then ->
+        getAlbum('/foo')
+      .then (album) ->
+        album.title.should.equal 'Test Foo'
+        album.breadcrumb[0].path.should.equal '/'
+        success()
+      .done()
+
+    it 'should update the parents subalbums', (success) ->
+      newAlbum(null, path: '/', title: 'Test').then ->
+        newAlbum('/', path: '/foo', title: 'Test Foo')
+      .then ->
+        getAlbum('/')
+      .then (album) ->
+        album.path.should.equal '/'
+        album.subalbums[0].path.should.equal '/foo'
+        success()
+      .done()
 
   describe 'saveAlbum', ->
-    it 'should increment the album version'
+    beforeEach createAlbums
+
+    xit 'should increment the album version', (success) ->
+      baseVersion = null
+
+      updateAlbum('/', (album) ->
+        album.title = 'New Title'
+        baseVersion = album.version
+        album
+      ).then (album) ->
+        album.version.should.be.above baseVersion
+        success()
+      .done()
+
     it 'should save the album'
 
   describe 'deleteAlbum', ->
-    it 'should delete the album and its subalbums'
+    beforeEach createAlbums
+
+    it 'should delete the album and its subalbums', (success) ->
+      deleteAlbum('/foo').then ->
+        Q.all([getAlbum('/foo/bar/quux'), getAlbum('/foo/bar'), getAlbum('/foo')])
+      .then (nulls) ->
+        should.deepEqual nulls, [null, null, null]
+        success()
+      .done()
+
     it 'should remove the deleted album from its parents subalbums'

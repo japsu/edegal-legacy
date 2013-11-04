@@ -39,14 +39,6 @@ exports.newAlbum = newAlbum = (parentPath, attrs) ->
     attrs = _.defaults {}, attrs,
       path: albumPath
       breadcrumb: breadcrumb
-      subalbums: []
-      pictures: []
-      thumbnail:
-        src: PLACEHOLDER_IMAGE
-        width: 360
-        height: 240
-
-    console?.log JSON.stringify attrs
 
     album = new Album attrs
 
@@ -59,6 +51,8 @@ exports.newAlbum = newAlbum = (parentPath, attrs) ->
           $inc: { version: 1 }
         }
       ) if parentAlbum
+
+      album
 
 exports.deleteAlbum = deleteAlbum = (path) ->
   Q.all [

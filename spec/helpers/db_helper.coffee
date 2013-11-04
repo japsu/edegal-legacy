@@ -12,3 +12,5 @@ emptyDatabase = (done) ->
   ]).then ->
     done()
   .done()
+
+beforeEach emptyDatabase
