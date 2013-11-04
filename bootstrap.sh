@@ -7,4 +7,4 @@ groupadd edegal
 useradd -m -c 'Edegal Image Gallery' -d /srv/edegal -g edegal edegal
 sudo -iu edegal git clone https://github.com/creationix/nvm /srv/edegal/nvm
 sudo -iu edegal /bin/bash -c "source /srv/edegal/nvm/nvm.sh && nvm install v0.10.21 && nvm alias default v0.10.21"
-sudo -iu edegal /bin/bash -c "source /srv/edegal/nvm/nvm.sh && nvm use default && cd /srv/edegal/app && npm install"
+sudo -iu edegal /bin/bash -c "source /srv/edegal/nvm/nvm.sh && nvm use default && cd /vagrant && npm install --no-bin-links"

@@ -1,0 +1,5 @@
+{
+  "database": "mongodb://localhost/edegal_test",
+  "host": "127.0.0.1",
+  "port": 3011
+}
