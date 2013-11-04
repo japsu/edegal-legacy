@@ -13,7 +13,7 @@ exports.pictureSchema = pictureSchema = new Schema
     required: true
 
   media: [mediaSchema]
-  thumbnail: mediaSpec
+
   tags:
     type: [tagSpec]
     'default': -> []
