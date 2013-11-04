@@ -10,11 +10,7 @@ exports.consistentUpdate = (model, query, mutator) ->
     Q.when(mutator(instance)).then ->
       throw new Error 'not found' if _.isNull instance
 
-      console?.log 'versionedQuery', versionedQuery
-      console?.log 'instance', instance
-
       attrs = _.omit instance.toObject(), '_id', 'version'
-      console?.log 'attrs', attrs
 
       update =
         $inc: { version: 1 }

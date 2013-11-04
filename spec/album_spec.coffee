@@ -10,12 +10,10 @@ require './helpers/db_helper'
 albums = [
   path: '/'
   title: 'Root'
-  breadcrumb: []
   subalbums: [
     path: '/foo'
     title: 'Foo'
   ]
-  pictures: []
 ,
   path: '/foo'
   title: 'Foo'
@@ -27,7 +25,6 @@ albums = [
     path: '/foo/bar'
     title: 'Foo Bar'
   ]
-  pictures: []
 ,
   path: '/foo/bar'
   title: 'Foo Bar'
@@ -38,7 +35,6 @@ albums = [
     path: '/foo'
     title: 'Foo'
   ]
-  subalbums: []
   pictures: [
     path: '/foo/bar/quux'
     title: 'Foo Bar Quux'
@@ -115,6 +111,12 @@ describe 'Album service', ->
         success()
       .done()
 
+    it 'should raise on concurrent update', (success) ->
+      updateAlbum('/', -> updateAlbum('/', _.identity)).fail (error) ->
+        error.message.should.equal 'concurrent update'
+        success()
+      .done()
+
   describe 'deleteAlbum', ->
     beforeEach createAlbums
 
@@ -126,10 +128,13 @@ describe 'Album service', ->
         success()
       .done()
 
-    it 'should raise on concurrent update', (success) ->
-      updateAlbum('/', -> updateAlbum('/', _.identity)).fail (error) ->
-        error.message.should.equal 'concurrent update'
+    it 'should remove the deleted album from its parents subalbums', (success) ->
+      getAlbum('/').then (album) ->
+        _.pluck(album.subalbums, 'path').should.include '/foo'
+        deleteAlbum('/foo')
+      .then ->
+        getAlbum('/')
+      .then (album) ->
+        _.pluck(album.subalbums, 'path').should.not.include '/foo'
         success()
       .done()
-
-    it 'should remove the deleted album from its parents subalbums'
