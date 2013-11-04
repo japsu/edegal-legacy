@@ -13,6 +13,7 @@ albums = [
   breadcrumb: []
   subalbums: [
     path: '/foo'
+    title: 'Foo'
   ]
   pictures: []
 ,
@@ -20,9 +21,11 @@ albums = [
   title: 'Foo'
   breadcrumb: [
     path: '/'
+    title: 'Root'
   ]
   subalbums: [
     path: '/foo/bar'
+    title: 'Foo Bar'
   ]
   pictures: []
 ,
@@ -30,12 +33,15 @@ albums = [
   title: 'Foo Bar'
   breadcrumb: [
     path: '/'
+    title: 'Root'
   ,
     path: '/foo'
+    title: 'Foo'
   ]
   subalbums: []
   pictures: [
     path: '/foo/bar/quux'
+    title: 'Foo Bar Quux'
   ]
 ]
 
