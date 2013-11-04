@@ -99,22 +99,21 @@ describe 'Album service', ->
         success()
       .done()
 
-  describe 'saveAlbum', ->
+  describe 'updateAlbum', ->
     beforeEach createAlbums
 
-    xit 'should increment the album version', (success) ->
+    it 'should save the changes and increment the album version', (success) ->
       baseVersion = null
 
       updateAlbum('/', (album) ->
+        album.title.should.equal 'Root'
         album.title = 'New Title'
         baseVersion = album.version
-        album
       ).then (album) ->
+        album.title.should.equal 'New Title'
         album.version.should.be.above baseVersion
         success()
       .done()
-
-    it 'should save the album'
 
   describe 'deleteAlbum', ->
     beforeEach createAlbums
@@ -124,6 +123,12 @@ describe 'Album service', ->
         Q.all([getAlbum('/foo/bar/quux'), getAlbum('/foo/bar'), getAlbum('/foo')])
       .then (nulls) ->
         should.deepEqual nulls, [null, null, null]
+        success()
+      .done()
+
+    it 'should raise on concurrent update', (success) ->
+      updateAlbum('/', -> updateAlbum('/', _.identity)).fail (error) ->
+        error.message.should.equal 'concurrent update'
         success()
       .done()
 
