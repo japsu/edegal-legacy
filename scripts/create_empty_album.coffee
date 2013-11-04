@@ -2,6 +2,7 @@ _          = require 'underscore'
 Q          = require 'q'
 path       = require 'path'
 {newAlbum} = require '../server/services/album_service.coffee'
+unused     = require '../server/db.coffee'
 
 if require.main is module
   argv = require('optimist')
@@ -11,6 +12,8 @@ if require.main is module
     .options('parent', alias: 'p', describe: 'Path of the parent album')
     .argv
 
-  albumService.newAlbum(argv.parent, argv).then ->
+  attrs = _.pick argv, 'title', 'description'
+
+  newAlbum(argv.parent, attrs).then ->
     process.exit()
   .done()

@@ -46,9 +46,38 @@ exports.newAlbum = newAlbum = (parentPath, attrs) ->
         width: 360
         height: 240
 
+    console?.log JSON.stringify attrs
+
     album = new Album attrs
 
     save(album).then ->
-      if parentAlbum
-        updateAlbum parentAlbum.path, (parentAlbum) ->
-          parentAlbum.subalbums.push _.pick album, 'path', 'title', 'thumbnail'
+      # Add album to parent's subalbums
+      Q.ninvoke(Album, 'update',
+        { path: parentAlbum.path },
+        {
+          $push: { subalbums: _.pick(album, 'path', 'title', 'thumbnail')}
+          $inc: { version: 1 }
+        }
+      ) if parentAlbum
+
+exports.deleteAlbum = deleteAlbum = (path) ->
+  Q.all [
+    Q.ninvoke(Album, 'remove',
+      $or: [
+        # Remove the album itself
+        { path: path },
+
+        # Remove all its descendants, too
+        { 'breadcrumb.path': path }
+      ]
+    )
+
+    # Remove the album from parents' subalbums
+    Q.ninvoke(Album, 'update',
+      { 'subalbums.path': path },
+      {
+        $pull: { subalbums: { path: path }}
+        $inc: { version: 1 }
+      }
+    )
+  ]

@@ -45,5 +45,6 @@ exports.albumSchema = albumSchema = new Schema
   pictures: [pictureSchema]
 
 albumSchema.index {'pictures.path': 1}, {unique: true, sparse: true}
+albumSchema.index {'breadcrumb.path': 1}
 
 exports.Album = Album = mongoose.model 'Album', albumSchema, 'albums'
