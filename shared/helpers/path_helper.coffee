@@ -31,3 +31,6 @@ exports.removeExtension = (filename) ->
 
 exports.sanitizeFilename = (filename) ->
   exports.slugify exports.removeExtension filename
+
+exports.stripLastComponent = (path) ->
+  path.replace(/\/[a-z0-9-]+?$/g, '')

@@ -1,3 +1,3 @@
 mongoose = require 'mongoose'
-config = require '../server_config.json'
+config = require './config'
 exports.connection = mongoose.connect config.database

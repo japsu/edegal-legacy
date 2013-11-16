@@ -18,3 +18,6 @@ exports.pictureSchema = pictureSchema = new Schema {
     type: [tagSpec]
     'default': -> []
 }, {_id: false}
+
+pictureSchema.methods.albumPath = () ->
+  stripLastComponent @path

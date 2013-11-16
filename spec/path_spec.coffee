@@ -2,7 +2,13 @@ should = require 'should'
 _ = require 'underscore'
 
 {Album} = require '../client/js/models/album'
-{makeBreadcrumb, slugify, sanitizeFilename, removeExtension} = require '../shared/helpers/path_helper'
+{
+  makeBreadcrumb,
+  slugify,
+  sanitizeFilename,
+  removeExtension,
+  stripLastComponent
+  } = require '../shared/helpers/path_helper'
 
 describe 'Path helpers', ->
   describe 'slugify', ->
@@ -117,3 +123,13 @@ describe 'Path helpers', ->
 
     it 'should sanitize filename', ->
       sanitizeFilename('IMG_0635.jpg').should.equal 'img-0635'
+
+  describe 'stripLastComponent', ->
+    it 'should work for empty string', ->
+      stripLastComponent('').should.equal ''
+
+    it 'should work for the root, returning the root itself', ->
+      stripLastComponent('/').should.equal '/'
+
+    it 'should strip the last path component', ->
+      stripLastComponent('/foo/bar/baz').should.equal '/foo/bar'

@@ -14,6 +14,7 @@ makeDirectories = Q.denodeify mkdirp
 {updateAlbum} = require './album_service'
 {getOriginal} = require '../../shared/helpers/media_helper'
 {Semaphore} = require '../../shared/helpers/concurrency_helper'
+config = require '../config'
 
 DEFAULT_QUALITY = 60
 
@@ -40,10 +41,12 @@ mkPath = (first, theRest...) ->
   path.resolve first, theRest...
 
 exports.createPreview = createPreview = (opts) ->
-  {albumPath, picture, size, root, output} = opts
+  {picture, size} = opts
   {width, height, quality} = size
+  {root, previews} = config.paths
 
-  dstPathOnServer = path.join '/', output, picture.path, "max#{width}x#{height}q#{quality}.jpg"
+  albumPath = picture.albumPath()
+  dstPathOnServer = path.join '/', previews, picture.path, "max#{width}x#{height}q#{quality}.jpg"
 
   if _.find(picture.media, (med) -> med.src == dstPathOnServer)
     return Q.when success: true, result: 'exists'
@@ -91,10 +94,7 @@ exports.createPreviews = createPreviews = (opts) ->
         do (album, picture, size) ->
           magickSemaphore.push ->
             createPreview
-              albumPath: album.path
               picture: picture
               size: size
-              root: root
-              output: output
 
   magickSemaphore.finished()

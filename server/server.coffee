@@ -1,11 +1,11 @@
 _          = require 'underscore'
 path       = require 'path'
 express    = require 'express'
-config     = require '../server_config.json'
+config     = require './config'
 {getAlbum} = require './services/album_service.coffee'
 unusedConn = require './db'
 
-staticPath = path.resolve path.dirname(module.filename), '..', 'public'
+staticPath = config.paths.root
 indexHtml  = path.resolve staticPath, 'index.html'
 
 respondModel = (res, model) ->
