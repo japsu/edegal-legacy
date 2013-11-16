@@ -38,7 +38,8 @@
     "optimist": "~0.6.0",
     "mkdirp": "~0.3.5",
     "james-compile": "~0.3.0",
-    "jade": "~0.32.0"
+    "jade": "~0.32.0",
+    "commander": "~2.0.0"
   },
   "scripts": {
     "start": "coffee server/server.coffee",
