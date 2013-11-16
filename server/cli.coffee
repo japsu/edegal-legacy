@@ -98,8 +98,18 @@ exports.main = ->
 
       switch previewsCommand
         when 'create'
-          # TODO
-          null
+          args = require('optimist')
+            .usage('Usage: $0 [-p /foo]')
+            .options('path', alias: 'p', describe: 'Process only single album (default: all)')
+            .parse(argv)
+
+          albumService.getAlbumTree(args.path).then (albums) ->
+            mediaService.createPreviews(albums)
+          .then ->
+            mediaService.rehashThumbnails(args.path)
+          .then ->
+            process.exit()
+          .done()
         when 'rehash'
           args = require('optimist')
             .usage('Usage: $0 previews rehash [--path /foo]')

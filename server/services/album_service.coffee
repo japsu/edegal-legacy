@@ -15,6 +15,12 @@ albumQuery = (path) ->
 
 exports.getAlbum = getAlbum = (path) -> Q.ninvoke Album, 'findOne', albumQuery(path)
 
+exports.getAlbumTree = getAlbumTree = (path) ->
+  Q.ninvoke Album.find($or: [
+    { path: path },
+    { 'breadcrumb.path': path }
+  ]), 'exec'
+
 exports.updateAlbum = updateAlbum = (path, mutator) ->
   getAlbum(path).then (album) ->
     Q.when(mutator(album)).then ->
