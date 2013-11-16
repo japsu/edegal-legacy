@@ -4,10 +4,12 @@ fs = require 'fs'
 _ = require 'underscore'
 Q = require 'q'
 
+# easyimg wrappers exported for stubbing
 easyimg = require 'easyimage'
 exports.resizeImage = Q.nbind easyimg.resize, easyimg
 exports.getImageInfo = Q.nbind easyimg.info, easyimg
 
+# mkdirp wrapper exported for stubbing
 mkdirp = require 'mkdirp'
 exports.makeDirectories = makeDirectories = Q.denodeify mkdirp
 
@@ -67,15 +69,12 @@ exports.createPreview = createPreview = (opts) ->
           result = 'created'
           resized
   .then (imageInfo) ->
-    medium =
+    media =
       width: parseInt imageInfo.width
       height: parseInt imageInfo.height
       src: dstPathOnServer
 
-    updateAlbum albumPath, (album) ->
-      picture = _.find album.pictures, (pic) -> pic.path == picture.path
-      picture.media.push medium
-      picture.media = _.sortBy picture.media, (med) -> medium.width
+    addMediaToPicture picture.path, media
   .then ->
     success: true
     result: result
@@ -86,8 +85,10 @@ exports.createPreview = createPreview = (opts) ->
     result: 'failed'
     reason: reason
 
-exports.createPreviews = createPreviews = (opts) ->
-  {albums, sizes, root, output, concurrency} = opts
+exports.createPreviews = createPreviews = (albums) ->
+  {concurrency, sizes} = config
+
+  albums = [albums] unless _.isArray albums
 
   magickSemaphore = new Semaphore concurrency
 

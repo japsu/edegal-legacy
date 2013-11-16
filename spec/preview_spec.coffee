@@ -21,11 +21,20 @@ album =
       height: 1200
       original: true
     ]
+  ,
+    path: '/bar'
+    title: 'Bar'
+    media: [
+      src: '/pictures/bar.jp2'
+      width: 1600
+      height: 1200
+      original: true
+    ]
   ]
 
 describe 'Preview service', ->
   beforeEach (done) ->
-    sinon.stub(previewService, 'makeDirectories')
+    sinon.stub(previewService, 'makeDirectories').returns Q.when null
     sinon.stub(previewService, 'resizeImage').returns Q.when [width: 640, height: 640]
 
     newAlbum(null, album).then ->
@@ -51,5 +60,30 @@ describe 'Preview service', ->
         should.deepEqual result,
           result: 'created'
           success: true
+
+        getAlbum('/')
+      .then (album) ->
+        picture = _.first album.pictures
+        picture.media.length.should.equal 2
+
+        _.find(picture.media, (media) -> media.width == 640 and not media.original).should.exist
+        _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist
+
+        success()
+      .done()
+
+  describe 'createPreviews', ->
+    it 'should create previews for an album', (success) ->
+      getAlbum('/').then (album) ->
+        previewService.createPreviews(album)
+      .then ->
+        getAlbum('/')
+      .then (album) ->
+        album.pictures.forEach (picture) ->
+          picture.media.length.should.equal 2
+
+          _.find(picture.media, (media) -> media.width == 640 and not media.original).should.exist
+          _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist     
+
         success()
       .done()

@@ -6,10 +6,11 @@ _ = require 'underscore'
 {updateAlbum} = require './album_service.coffee'
 
 addMediaToPicture = (picturePath, media) ->
-  updateAlbum picturePath, (album) ->
-    picture = _.findWhere album.pictures, path: picturePath
-    picture.media ?= []
-    picture.media = _.union picture.media, [media]
-    picture.media = _.sortBy picture.media, (medium) -> medium.width
-  .then ->
-    walkAncestors picturePath, setThumbnail
+  query =
+    'pictures.path': picturePath
+
+  update =
+    '$push':
+      'pictures.$.media': media
+
+  Album.findAndModify query, update, {'new': true}
