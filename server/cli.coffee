@@ -8,6 +8,7 @@ require './db'
 {Album} = require './models/album'
 siteService = require './services/site_service'
 albumService = require './services/album_service'
+mediaService = require './services/media_service'
 {walkAlbumsBreadthFirst} = require './helpers/tree_helper'
 
 exports.main = ->
@@ -100,7 +101,14 @@ exports.main = ->
           # TODO
           null
         when 'rehash'
-          null
+          args = require('optimist')
+            .usage('Usage: $0 previews rehash [--path /foo]')
+            .options('path', alias: 'p', default: '/', describe: 'The subtree under which to operate')
+            .parse(argv)
+
+          mediaService.rehashThumbnails(args.path).then ->
+            process.exit()
+          .done()
         else
           console.log('Usage: edegal previews <subcommand> [options]')
           console.log('Subcommands: create, rehash')

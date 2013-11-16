@@ -11,7 +11,7 @@ path = require 'path'
 {Semaphore} = require '../../shared/helpers/concurrency_helper'
 {setThumbnail} = require '../../shared/helpers/media_helper'
 {updateAlbum} = require './album_service'
-{walkAncestors} = require '../helpers/tree_helper'
+{walkAncestors, walkAlbumsDepthFirst} = require '../helpers/tree_helper'
 config = require '../config'
 
 exports.getImageInfo = Q.nbind easyimg.info, easyimg
@@ -115,3 +115,9 @@ exports.createPreviews = createPreviews = (albums) ->
               size: size
 
   magickSemaphore.finished()
+
+exports.rehashThumbnails = rehashThumbnails = (path='/') ->
+  walkAlbumsDepthFirst path, (album) ->
+    Q.all(album.subalbums.map((subalbum) -> getAlbum(subalbum.path))).then (subalbums) ->
+      album.subalbums = _.map subalbums, (subalbum) -> _.pick subalbum, 'path', 'title', 'thumbnail'
+      setThumbnail album
