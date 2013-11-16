@@ -25,7 +25,7 @@ exports.walkAlbumsBreadthFirst = (path, visitor, save=true) ->
     albumService.updateAlbum(path, visitor).then processSubalbums
   else
     albumService.getAlbum(path).then (album) ->
-      Q.when(visitor(album)).then processSubalbums
+      Q.when(visitor(album)).then -> processSubalbums album
 
 exports.walkAncestors = (path, visitor, save=true) ->
   promise = if save

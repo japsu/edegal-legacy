@@ -73,7 +73,6 @@ exports.deleteAlbum = deleteAlbum = (path) ->
       { 'subalbums.path': path },
       {
         $pull: { subalbums: { path: path }}
-        $inc: { version: 1 }
       }
     )
   ]
