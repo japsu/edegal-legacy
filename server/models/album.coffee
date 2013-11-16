@@ -54,7 +54,6 @@ exports.albumSchema = albumSchema = new Schema
     type: mediaSpec
     required: false
 
-albumSchema.set 'versionKey', false
 albumSchema.index {'pictures.path': 1}, {unique: true, sparse: true}
 albumSchema.index {'breadcrumb.path': 1}
 

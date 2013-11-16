@@ -15,10 +15,12 @@ albumQuery = (path) ->
 
 exports.getAlbum = getAlbum = (path) -> Q.ninvoke Album, 'findOne', albumQuery(path)
 
-# TODO path/title changes should be reflected in parent subalbums
-# TODO path/title changes should be reflected in subalbum paths/breadcrumbs
 exports.updateAlbum = updateAlbum = (path, mutator) ->
-  consistentUpdate Album, albumQuery(path), mutator
+  getAlbum(path).then (album) ->
+    Q.when(mutator(album)).then ->
+      save album
+    .then ->
+      album
 
 exports.newAlbum = newAlbum = (parentPath, attrs) ->
   {title} = attrs

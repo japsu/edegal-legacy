@@ -98,22 +98,14 @@ describe 'Album service', ->
   describe 'updateAlbum', ->
     beforeEach createAlbums
 
-    it 'should save the changes and increment the album version', (success) ->
+    it 'should save the changes', (success) ->
       baseVersion = null
 
       updateAlbum('/', (album) ->
         album.title.should.equal 'Root'
         album.title = 'New Title'
-        baseVersion = album.version
       ).then (album) ->
         album.title.should.equal 'New Title'
-        album.version.should.be.above baseVersion
-        success()
-      .done()
-
-    it 'should raise on concurrent update', (success) ->
-      updateAlbum('/', -> updateAlbum('/', _.identity)).fail (error) ->
-        error.message.should.equal 'concurrent update'
         success()
       .done()
 

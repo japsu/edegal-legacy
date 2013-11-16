@@ -1,16 +1,21 @@
 _ = require 'underscore'
+Q = require 'q'
 
-{setThumbnail} = require '../../shared/helpers/media_helper.coffee'
-{walkAncestors} = require '../helpers/tree_helper.coffee'
+{setThumbnail} = require '../../shared/helpers/media_helper'
+{walkAncestors} = require '../helpers/tree_helper'
 
-{updateAlbum} = require './album_service.coffee'
+{updateAlbum} = require './album_service'
+{Album} = require '../models/album'
 
-addMediaToPicture = (picturePath, media) ->
+exports.addMediaToPicture = (picturePath, media) ->
+  media = [media] unless _.isArray media
+
   query =
     'pictures.path': picturePath
 
   update =
-    '$push':
-      'pictures.$.media': media
+    $push:
+      'pictures.$.media':
+        '$each': media
 
-  Album.findAndModify query, update, {'new': true}
+  Q.ninvoke Album, 'findOneAndUpdate', query, update, {'new': true}

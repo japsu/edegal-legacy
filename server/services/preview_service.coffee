@@ -13,7 +13,7 @@ exports.getImageInfo = Q.nbind easyimg.info, easyimg
 mkdirp = require 'mkdirp'
 exports.makeDirectories = makeDirectories = Q.denodeify mkdirp
 
-{updateAlbum} = require './album_service'
+{addMediaToPicture} = require './media_service'
 {getOriginal} = require '../../shared/helpers/media_helper'
 {Semaphore} = require '../../shared/helpers/concurrency_helper'
 config = require '../config'

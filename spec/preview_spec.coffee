@@ -80,7 +80,7 @@ describe 'Preview service', ->
         getAlbum('/')
       .then (album) ->
         album.pictures.forEach (picture) ->
-          picture.media.length.should.equal 2
+          picture.media.length.should.equal 5
 
           _.find(picture.media, (media) -> media.width == 640 and not media.original).should.exist
           _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist     
