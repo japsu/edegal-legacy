@@ -33,4 +33,12 @@ exports.sanitizeFilename = (filename) ->
   exports.slugify exports.removeExtension filename
 
 exports.stripLastComponent = (path) ->
-  path.replace(/\/[a-z0-9-]+?$/g, '')
+  components = path.split('/')
+  switch components.length
+    when 1
+      ''
+    when 2
+      '/'
+    else
+      left = components.length - 1
+      components[...left].join('/')

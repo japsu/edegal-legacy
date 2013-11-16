@@ -1,7 +1,8 @@
 {Schema} = require 'mongoose'
 
-{mediaSchema, mediaSpec} = require './media.coffee'
-{tagSpec} = require './tag.coffee'
+{stripLastComponent} = require '../../shared/helpers/path_helper'
+{mediaSchema, mediaSpec} = require './media'
+{tagSpec} = require './tag'
 
 exports.pictureSchema = pictureSchema = new Schema {
   path:

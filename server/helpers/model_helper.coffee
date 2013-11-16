@@ -6,7 +6,10 @@ exports.save = (instance) -> Q.ninvoke instance, 'save'
 # TODO retry if necessary
 exports.consistentUpdate = (model, query, mutator) ->
   Q.ninvoke(model, 'findOne', query).then (instance) ->
-    versionedQuery = _.pick instance, '_id', 'version'
+    versionedQuery =
+      _id: instance._id
+      version: instance.version
+      
     Q.when(mutator(instance)).then ->
       throw new Error 'not found' if _.isNull instance
 

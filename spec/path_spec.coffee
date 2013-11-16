@@ -8,7 +8,7 @@ _ = require 'underscore'
   sanitizeFilename,
   removeExtension,
   stripLastComponent
-  } = require '../shared/helpers/path_helper'
+} = require '../shared/helpers/path_helper'
 
 describe 'Path helpers', ->
   describe 'slugify', ->
@@ -131,5 +131,8 @@ describe 'Path helpers', ->
     it 'should work for the root, returning the root itself', ->
       stripLastComponent('/').should.equal '/'
 
-    it 'should strip the last path component', ->
+    it 'should strip the last path component from a single-component path', ->
+      stripLastComponent('/foo').should.equal '/'
+
+    it 'should strip the last path component from a multi-component path', ->
       stripLastComponent('/foo/bar/baz').should.equal '/foo/bar'

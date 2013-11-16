@@ -5,11 +5,11 @@ _ = require 'underscore'
 Q = require 'q'
 
 easyimg = require 'easyimage'
-resizeImage = Q.nbind easyimg.resize, easyimg
-getImageInfo = Q.nbind easyimg.info, easyimg
+exports.resizeImage = Q.nbind easyimg.resize, easyimg
+exports.getImageInfo = Q.nbind easyimg.info, easyimg
 
 mkdirp = require 'mkdirp'
-makeDirectories = Q.denodeify mkdirp
+exports.makeDirectories = makeDirectories = Q.denodeify mkdirp
 
 {updateAlbum} = require './album_service'
 {getOriginal} = require '../../shared/helpers/media_helper'
@@ -58,12 +58,12 @@ exports.createPreview = createPreview = (opts) ->
   result = null
   fileExists(resizeOpts.dst).then (exists) ->
     if exists
-      getImageInfo(resizeOpts.dst).spread (existing) ->
+      exports.getImageInfo(resizeOpts.dst).spread (existing) ->
         result = 'fileExists'
         existing
     else
       makeDirectories(path.dirname(resizeOpts.dst)).then ->
-        resizeImage(resizeOpts).spread (resized) ->
+        exports.resizeImage(resizeOpts).spread (resized) ->
           result = 'created'
           resized
   .then (imageInfo) ->
@@ -80,8 +80,11 @@ exports.createPreview = createPreview = (opts) ->
     success: true
     result: result
   .fail (reason) ->
+    console.warn reason.stack
+
     success: false
     result: 'failed'
+    reason: reason
 
 exports.createPreviews = createPreviews = (opts) ->
   {albums, sizes, root, output, concurrency} = opts
