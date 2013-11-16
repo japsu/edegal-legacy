@@ -30,8 +30,6 @@ exports.breadcrumbSchema = breadcrumbSchema = new Schema {
 exports.albumSchema = albumSchema = new Schema
   path:
     type: String
-    required: true
-    index: true
 
   title:
     type: String
@@ -54,6 +52,7 @@ exports.albumSchema = albumSchema = new Schema
     type: mediaSpec
     required: false
 
+albumSchema.index {path: 1}, {unique: true}
 albumSchema.index {'pictures.path': 1}, {unique: true, sparse: true}
 albumSchema.index {'breadcrumb.path': 1}
 
