@@ -1,82 +1,89 @@
 should = require 'should'
-sinon = require 'sinon'
+sinon  = require 'sinon'
+Q      = require 'q'
+_      = require 'underscore'
 
-{Picture} = require '../client/js/models/picture.coffee'
-{selectMedia, getOriginal, getThumbnail} = mediaHelper = require '../client/js/views/helpers/media_helper.coffee'
+require './helpers/spec_helper'
+require './helpers/db_helper'
 
-picture = new Picture
-  path: '/selectmedia/picture'
-  media: [
-    {
-      width: 120
-      height: 80
-      src: 'http://example.com/chibi.jpg'
-    }
-    {
-      width: 320
-      height: 240
-      src: 'http://example.com/320x240.jpg'
-    }
-    {
-      width: 800
-      height: 600
-      src: 'http://example.com/800x600.jpg'
-    }
-    {
+{getAlbum, newAlbum} = require '../server/services/album_service'
+mediaService = require '../server/services/media_service'
+
+album =
+  path: '/'
+  title: 'Root'
+  pictures: [
+    path: '/foo'
+    title: 'Foo'
+    media: [
+      src: '/pictures/foo.jp2'
       width: 1600
       height: 1200
-      src: 'http://example.com/1600x1200.jpg'
-    }
-    {
-      width: 640
-      height: 480
-      src: 'http://example.com/640x480.jpg'
-    }
-  ]
-
-pictureWithTooLargeMedia = new Picture
-  path: '/selectmedia/picture-with-too-large-media'
-  media: [
-    {
-      width: 2048
-      height: 1536
-      src: 'http://example.com/2048x1536.jpg'
       original: true
-    }
-    {
+    ]
+  ,
+    path: '/bar'
+    title: 'Bar'
+    media: [
+      src: '/pictures/bar.jp2'
       width: 1600
       height: 1200
-      src: 'http://example.com/1600x1200.jpg'
-    }
+      original: true
+    ]
   ]
 
-describe 'Media helpers', ->
-  describe 'selectMedia', ->
-    getPictureAreaDimensions = null
-    beforeEach -> getPictureAreaDimensions = sinon.stub(mediaHelper, 'getPictureAreaDimensions').returns([1024,768])
-    afterEach -> getPictureAreaDimensions.restore()
+describe 'Preview service', ->
+  beforeEach (done) ->
+    sinon.stub(mediaService, 'makeDirectories').returns Q.when null
+    sinon.stub(mediaService, 'resizeImage').returns Q.when [width: 640, height: 640]
 
-    it 'should check the screen size', ->
-      selectMedia picture
-      getPictureAreaDimensions.calledOnce.should.be.ok
+    newAlbum(null, album).then ->
+      done()
+    .done()
 
-    it 'should return the biggest medium that fits in the usable area', ->
-      medium = selectMedia picture
-      medium.src.should.equal 'http://example.com/800x600.jpg'
+  afterEach ->
+    mediaService.makeDirectories.restore()
+    mediaService.resizeImage.restore()
 
-    it 'should fall back to the smallest medium if none fit', ->
-      medium = selectMedia pictureWithTooLargeMedia
-      medium.src.should.equal 'http://example.com/1600x1200.jpg'
+  describe 'createPreview', ->
+    it 'should create a preview for a photo', (success) ->
+      getAlbum('/').then (album) ->
+        picture = _.first album.pictures
 
-# TODO move original and thumbnail tests to picture_spec.coffee
-describe 'Picture', ->
-  describe 'original', ->
-    it 'should return the original', ->
-      pictureWithTooLargeMedia.get('original').src.should.equal 'http://example.com/2048x1536.jpg'
+        mediaService.createPreview
+          picture: picture
+          size:
+            width: 640
+            height: 480
+            quality: 90
+      .then (result) ->
+        should.deepEqual result,
+          result: 'created'
+          success: true
 
-    it 'should return undefined when there is no original', ->
-      should.not.exist picture.get('original')
+        getAlbum('/')
+      .then (album) ->
+        picture = _.first album.pictures
+        picture.media.length.should.equal 2
 
-  describe 'thumbnail', ->
-    it 'should return the medium whose height is closest to 240px', ->
-      picture.get('thumbnail').src.should.equal 'http://example.com/320x240.jpg'
+        _.find(picture.media, (media) -> media.width == 640 and not media.original).should.exist
+        _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist
+
+        success()
+      .done()
+
+  describe 'createPreviews', ->
+    it 'should create previews for an album', (success) ->
+      getAlbum('/').then (album) ->
+        mediaService.createPreviews(album)
+      .then ->
+        getAlbum('/')
+      .then (album) ->
+        album.pictures.forEach (picture) ->
+          picture.media.length.should.equal 5
+
+          _.find(picture.media, (media) -> media.width == 640 and not media.original).should.exist
+          _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist     
+
+        success()
+      .done()
