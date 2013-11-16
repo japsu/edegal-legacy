@@ -60,18 +60,14 @@ Sorry, this is a bit technical at the moment. There will be a browser-based uplo
 At this moment you need to import album at a time. First, put the pictures somewhere under the document root. Let's assume `public/pictures/my-new-album`.
 
     # (If you havent yet created the root album - do this only once)
-    coffee scripts/create_empty_album.coffee --title "My Photo Gallery"
+    bin/edegal setup --title "My Photo Gallery"
 
     # Tell Edegal about the new photos (--directory relative to --root)
-    coffee scripts/import_filesystem.coffee --title "My New Album" --parent / --directory pictures/my-new-album
+    bin/edegal import filesystem --title "My New Album" --parent / --directory pictures/my-new-album
 
     # Create thumbnails and previews. -s is short for --size, which specifies the bounding box.
     # That is, previews will end up smaller in either dimension most of the time.
-    # Hint: Thumbnails are 240 pixels high. You should at least generate 240 high previews.
-    coffee scripts/create_previews.coffee -s 900x240@40 -s 1200x600@85
-
-    # Set album thumbnails from the newly created ones.
-    coffee scripts/rehash_thumbnails.coffee
+    bin/edegal previews create
 
 You're all set!
 
@@ -91,6 +87,11 @@ Changing any values in `client_config.json` requires recompilation (`james build
 * `database`: as accepted by `new Mongolian`
 * `port`: port number to listen on
 * `hostname`: hostname or IP address to listen on
+* `concurrency`: how many pictures to scale concurrently
+* `sizes`: default preview sizes
+  * `width`
+  * `height`
+  * `quality`
 
 ## Technology choices
 
