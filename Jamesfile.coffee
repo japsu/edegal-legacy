@@ -24,35 +24,8 @@ FILES_TO_COPY = [
 james.task 'copy_files', -> FILES_TO_COPY.forEach (glob) -> james.list(glob).forEach copyFile
 
 transmogrifyCoffee = (debug) ->
-  libs =
-    jquery:
-      path: './bower_components/jquery/jquery.js'
-      exports: '$'
-
-    transparency:
-      path: './bower_components/transparency/dist/transparency.min.js'
-      exports: 'Transparency'
-      depends: 
-        jquery: '$'
-        underscore: '_'
-
-    'backbone-relational':
-      path: './bower_components/backbone-relational/backbone-relational.js'
-      exports: 'Backbone'
-      depends: 
-        jquery: '$'
-        underscore: '_'
-        backbone: 'Backbone'
-
-    'hammer-jquery':
-      path: './bower_components/hammerjs/dist/jquery.hammer.js'
-      exports: '$'
-      depends:
-        jquery: '$'
-
-  bundle = james.read shim(browserify(), libs)
-    .require('./client/js/main.coffee', entry: true)
-    .transform(coffeeify)
+  bundle = james.read browserify()
+    .require(require.resolve('./client/js/main.coffee'), entry: true)
     .bundle
       debug: debug
 

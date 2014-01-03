@@ -6,6 +6,7 @@
     "transparency": "0.9.x",
     "backbone": "1.0.x",
     "backbone-relational": "0.8.x",
-    "hammerjs": "~1.0.5"
+    "hammerjs": "~1.0.5",
+    "bootstrap": "~3.0.3"
   }
 }
