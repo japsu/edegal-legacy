@@ -34,8 +34,8 @@ album =
 
 describe 'Preview service', ->
   beforeEach (done) ->
-    sinon.stub(mediaService, 'makeDirectories').returns Promise.when null
-    sinon.stub(mediaService, 'resizeImage').returns Promise.when [width: 640, height: 640]
+    sinon.stub(mediaService, 'makeDirectories').returns Promise.resolve null
+    sinon.stub(mediaService, 'resizeImage').returns Promise.resolve [width: 640, height: 640]
 
     newAlbum(null, album).then ->
       done()

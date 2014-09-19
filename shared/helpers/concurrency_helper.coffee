@@ -26,7 +26,7 @@ exports.Semaphore = class Semaphore
 
   enter: (func, deferred) ->
     @slots -= 1
-    Promise.when(func()).then (ret) =>
+    Promise.resolve(func()).then (ret) =>
       deferred.resolve ret if deferred
       @pop()
       ret
@@ -38,7 +38,7 @@ exports.Semaphore = class Semaphore
   finished: ->
     if @slots == @maxSlots
       console.log 'Semaphore.finished: finishing early'
-      return Promise.when {}
+      return Promise.resolve {}
 
     @_finished = Promise.defer() unless @_finished
     @_finished.promise

@@ -1,6 +1,3 @@
-Promise    = require 'bluebird'
-Promise.promisifyAll require 'mongoose'
-
 _          = require 'lodash'
 path       = require 'path'
 express    = require 'express'

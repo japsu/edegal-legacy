@@ -38,8 +38,8 @@ describe 'Tree helpers', ->
   updateAlbumStub = null
   paths = null
   beforeEach ->
-    getAlbumStub = sinon.stub albumService, 'getAlbum', (path) -> Promise.when albums[path]
-    updateAlbumStub = sinon.stub albumService, 'updateAlbum', (path, func) -> Promise.when func albums[path]
+    getAlbumStub = sinon.stub albumService, 'getAlbum', (path) -> Promise.resolve albums[path]
+    updateAlbumStub = sinon.stub albumService, 'updateAlbum', (path, func) -> Promise.resolve func albums[path]
     paths = []
   afterEach ->
     getAlbumStub.restore()

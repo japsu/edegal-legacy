@@ -14,9 +14,9 @@ path = require 'path'
 {walkAncestors, walkAlbumsDepthFirst} = require '../helpers/tree_helper'
 config = require '../config'
 
-exports.getImageInfo = Promise.nbind easyimg.info, easyimg
+exports.getImageInfo = Promise.promisify easyimg.info, easyimg
 exports.makeDirectories = makeDirectories = Promise.promisify mkdirp
-exports.resizeImage = Promise.nbind easyimg.resize, easyimg
+exports.resizeImage = Promise.promisify easyimg.resize, easyimg
 
 DEFAULT_QUALITY = 60
 
@@ -64,7 +64,7 @@ exports.createPreview = createPreview = (opts) ->
   dstPathOnServer = path.join '/', previews, picture.path, "max#{width}x#{height}Promise#{quality}.jpg"
 
   if _.find(picture.media, (med) -> med.src == dstPathOnServer)
-    return Promise.when success: true, result: 'exists'
+    return Promise.resolve success: true, result: 'exists'
 
   resizeOpts = _.extend {}, size,
     src: mkPath root, getOriginal(picture).src

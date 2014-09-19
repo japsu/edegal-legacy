@@ -28,7 +28,7 @@ LARGE_NUMBER = 9999999
 
 connection.connect()
 
-query = Promise.nbind connection.query, connection
+query = Promise.promisify connection.query, connection
 
 convertCoppermine = ->
   Promise.all([

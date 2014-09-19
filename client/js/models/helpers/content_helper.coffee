@@ -5,13 +5,13 @@ Promise = require 'bluebird'
 
 getContent = (path) ->
   picture = pictures.get(path)
-  return Promise.when {album: picture.get('album'), picture} if picture
+  return Promise.resolve {album: picture.get('album'), picture} if picture
 
   album = albums.get(path)
-  return Promise.when {album: album, picture: null} if album
+  return Promise.resolve {album: album, picture: null} if album
 
   album = new Album path: path
-  Promise.when album.fetch(), ->
+  Promise.resolve album.fetch(), ->
     albums.add album
     album.get('pictures').forEach (picture) -> pictures.add picture
     picture = album.get('pictures').findWhere path: path

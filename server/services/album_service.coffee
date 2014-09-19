@@ -22,7 +22,7 @@ exports.getAlbumTree = getAlbumTree = (path) ->
 
 exports.updateAlbum = updateAlbum = (path, mutator) ->
   getAlbum(path).then (album) ->
-    Promise.when(mutator(album)).then ->
+    Promise.resolve(mutator(album)).then ->
       album.saveAsync()
     .then ->
       album
@@ -30,7 +30,7 @@ exports.updateAlbum = updateAlbum = (path, mutator) ->
 exports.newAlbum = newAlbum = (parentPath, attrs) ->
   {title} = attrs
 
-  (if parentPath then getAlbum(parentPath) else Promise.when(null)).then (parentAlbum) ->
+  (if parentPath then getAlbum(parentPath) else Promise.resolve(null)).then (parentAlbum) ->
     if parentPath and not parentAlbum
       # TODO exception type
       throw 'Parent album not found'

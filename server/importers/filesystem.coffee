@@ -12,8 +12,8 @@ easyimg = require 'easyimage'
 {setThumbnail} = require '../shared/helpers/media_helper'
 {Semaphore} = require '../shared/helpers/concurrency_helper'
 
-readDirectory = Promise.nbind fs.readdir, fs
-getImageInfo = Promise.nbind easyimg.info, easyimg
+readDirectory = Promise.promisify fs.readdir, fs
+getImageInfo = Promise.promisify easyimg.info, easyimg
 
 # TODO get the real prefix somewhere
 stripPrefix = (fullPath, prefix) ->
