@@ -1,9 +1,9 @@
 path = require 'path'
 fs = require 'fs'
 
-_ = require 'underscore'
-Q = require 'q'
-Q.longStackSupport = true
+_ = require 'lodash'
+Promise = require 'bluebird'
+Promise.longStackSupport = true
 
 easyimg = require 'easyimage'
 
@@ -12,8 +12,8 @@ easyimg = require 'easyimage'
 {setThumbnail} = require '../shared/helpers/media_helper'
 {Semaphore} = require '../shared/helpers/concurrency_helper'
 
-readDirectory = Q.nbind fs.readdir, fs
-getImageInfo = Q.nbind easyimg.info, easyimg
+readDirectory = Promise.nbind fs.readdir, fs
+getImageInfo = Promise.nbind easyimg.info, easyimg
 
 # TODO get the real prefix somewhere
 stripPrefix = (fullPath, prefix) ->
@@ -29,11 +29,11 @@ filesystemImport = (opts) ->
   root = path.resolve root
   sem = new Semaphore concurrency
 
-  Q.all([
+  Promise.all([
     getAlbum(parentPath)
     readDirectory(path.resolve(root, directory))
   ]).spread (parent, files) ->
-    Q.all(files.map((basename) ->
+    Promise.all(files.map((basename) ->
       fullPath = path.resolve root, directory, basename
       sem.push -> getImageInfo(fullPath).then (imageInfo) ->
         process.stdout.write '.'
@@ -83,4 +83,3 @@ if require.main is module
 
   filesystemImport(argv).then ->
     process.exit()
-  .done()

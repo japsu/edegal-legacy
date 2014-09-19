@@ -1,7 +1,7 @@
 mysql = require 'mysql'
-Q = require 'q'
-Q.longStackSupport = true
-_ = require 'underscore'
+Promise = require 'bluebird'
+Promise.longStackSupport = true
+_ = require 'lodash'
 path = require 'path'
 ent = require 'ent'
 
@@ -28,10 +28,10 @@ LARGE_NUMBER = 9999999
 
 connection.connect()
 
-query = Q.nbind connection.query, connection
+query = Promise.nbind connection.query, connection
 
 convertCoppermine = ->
-  Q.all([
+  Promise.all([
     getAlbum('/')
     query("SET NAMES 'latin1';")
   ]).spread (root) ->
@@ -76,7 +76,7 @@ convertSubcategories = (categoryId, parent) ->
 
   # get root category
   query('SELECT cid, name, description, pos FROM cpg11d_categories WHERE parent = ?', [categoryId]).spread (categories) ->
-    Q.all categories.map (coppermineCategory) ->
+    Promise.all categories.map (coppermineCategory) ->
       return null if coppermineCategory.cid in CATEGORY_BLACKLIST
 
       decodeEntities coppermineCategory, 'name', 'description'
@@ -97,7 +97,7 @@ convertAlbums = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
   query('SELECT aid, title, description, pos FROM cpg11d_albums WHERE category = ?', [categoryId]).spread (albums) ->
-    Q.all albums.map (coppermineAlbum) ->
+    Promise.all albums.map (coppermineAlbum) ->
       decodeEntities coppermineAlbum, 'title', 'description'
       slug = slugify(coppermineAlbum.title) or "album-#{coppermineAlbum.aid}"
 
@@ -128,7 +128,7 @@ processAlbum = (edegalAlbum, opts) ->
     work.push convertPictures(albumId, edegalAlbum) if albumId? and not existingAlbum?
     return null if _.isEmpty work
 
-    Q.all(work)
+    Promise.all(work)
   .then ->
     finalizeAlbum edegalAlbum, opts
   .then ->
@@ -157,4 +157,3 @@ convertPictures = (albumId, parent) ->
 if require.main is module
   convertCoppermine().then ->
     process.exit()
-  .done()

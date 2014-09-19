@@ -1,4 +1,4 @@
-Q        = require 'q'
+Promise        = require 'bluebird'
 mongoose = require 'mongoose'
 {Album}  = require '../../server/models/album'
 config   = require './test_config.json'
@@ -7,10 +7,9 @@ config   = require './test_config.json'
 exports.connection = mongoose.connect config.database
 
 emptyDatabase = (done) ->
-  Q.all([
-    Q.ninvoke Album, 'remove', {}
+  Promise.all([
+    Promise.ninvoke Album, 'remove', {}
   ]).then ->
     done()
-  .done()
 
 beforeEach emptyDatabase

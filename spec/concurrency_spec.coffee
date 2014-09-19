@@ -1,11 +1,11 @@
 should = require 'should'
-Q = require 'q'
+Promise = require 'bluebird'
 
 {Semaphore} = require '../shared/helpers/concurrency_helper'
 
 instrumentedDelay = ->
   instrumentedDelay.numRunning += 1
-  Q.delay(10).then ->
+  Promise.delay(10).then ->
     instrumentedDelay.numRunning -= 1
     instrumentedDelay.numFinished += 1
 
@@ -32,7 +32,6 @@ describe 'Semaphore', ->
       instrumentedDelay.numRunning.should.equal 0
       instrumentedDelay.numFinished.should.equal 3
       success()
-    .done()
 
     sem.slots.should.equal 0
     instrumentedDelay.numRunning.should.equal 2

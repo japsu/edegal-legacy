@@ -1,6 +1,6 @@
 should       = require 'should'
-Q            = require 'q'
-_            = require 'underscore'
+Promise            = require 'bluebird'
+_            = require 'lodash'
 
 require './helpers/db_helper'
 
@@ -42,11 +42,10 @@ albums = [
 ]
 
 createAlbums = (success) ->
-  Q.all(albums.map (album) ->
-    Q.ninvoke new Album(album), 'save'
+  Promise.all(albums.map (album) ->
+    Promise.ninvoke new Album(album), 'save'
   ).then ->
     success() 
-  .done()
 
 describe 'Album service', ->
   describe 'getAlbum', ->
@@ -56,13 +55,11 @@ describe 'Album service', ->
       getAlbum('/').then (album) ->
         album.path.should.equal '/'
         success()
-      .done()
 
     it 'should return album by the path of one of its pictures', (success) ->
       getAlbum('/foo/bar/quux').then (album) ->
         album.path.should.equal '/foo/bar'
         success()
-      .done()
 
   describe 'newAlbum', ->
     it 'should create the root album', (success) ->
@@ -71,7 +68,6 @@ describe 'Album service', ->
       .then (album) ->
         album.title.should.equal 'Test'
         success()
-      .done()
 
     it 'should create a leaf album', (success) ->
       newAlbum(null, path: '/', title: 'Test').then ->
@@ -82,7 +78,6 @@ describe 'Album service', ->
         album.title.should.equal 'Test Foo'
         album.breadcrumb[0].path.should.equal '/'
         success()
-      .done()
 
     it 'should update the parents subalbums', (success) ->
       newAlbum(null, path: '/', title: 'Test').then ->
@@ -93,7 +88,6 @@ describe 'Album service', ->
         album.path.should.equal '/'
         album.subalbums[0].path.should.equal '/foo'
         success()
-      .done()
 
   describe 'updateAlbum', ->
     beforeEach createAlbums
@@ -107,18 +101,16 @@ describe 'Album service', ->
       ).then (album) ->
         album.title.should.equal 'New Title'
         success()
-      .done()
 
   describe 'deleteAlbum', ->
     beforeEach createAlbums
 
     it 'should delete the album and its subalbums', (success) ->
       deleteAlbum('/foo').then ->
-        Q.all([getAlbum('/foo/bar/quux'), getAlbum('/foo/bar'), getAlbum('/foo')])
+        Promise.all([getAlbum('/foo/bar/quux'), getAlbum('/foo/bar'), getAlbum('/foo')])
       .then (nulls) ->
         should.deepEqual nulls, [null, null, null]
         success()
-      .done()
 
     it 'should remove the deleted album from its parents subalbums', (success) ->
       getAlbum('/').then (album) ->
@@ -129,4 +121,3 @@ describe 'Album service', ->
       .then (album) ->
         _.pluck(album.subalbums, 'path').should.not.include '/foo'
         success()
-      .done()

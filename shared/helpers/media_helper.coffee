@@ -1,4 +1,4 @@
-_ = require 'underscore'
+_ = require 'lodash'
 
 THUMBNAIL_HEIGHT = 240
 

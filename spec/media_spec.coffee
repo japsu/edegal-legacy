@@ -1,7 +1,7 @@
 should = require 'should'
 sinon  = require 'sinon'
-Q      = require 'q'
-_      = require 'underscore'
+Promise      = require 'bluebird'
+_      = require 'lodash'
 
 require './helpers/spec_helper'
 require './helpers/db_helper'
@@ -34,12 +34,11 @@ album =
 
 describe 'Preview service', ->
   beforeEach (done) ->
-    sinon.stub(mediaService, 'makeDirectories').returns Q.when null
-    sinon.stub(mediaService, 'resizeImage').returns Q.when [width: 640, height: 640]
+    sinon.stub(mediaService, 'makeDirectories').returns Promise.when null
+    sinon.stub(mediaService, 'resizeImage').returns Promise.when [width: 640, height: 640]
 
     newAlbum(null, album).then ->
       done()
-    .done()
 
   afterEach ->
     mediaService.makeDirectories.restore()
@@ -70,7 +69,6 @@ describe 'Preview service', ->
         _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist
 
         success()
-      .done()
 
   describe 'createPreviews', ->
     it 'should create previews for an album', (success) ->
@@ -86,4 +84,3 @@ describe 'Preview service', ->
           _.find(picture.media, (media) -> media.width == 1600 and media.original).should.exist     
 
         success()
-      .done()

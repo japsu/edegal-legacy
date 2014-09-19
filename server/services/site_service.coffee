@@ -1,4 +1,4 @@
-Q = require 'q'
+Promise = require 'bluebird'
 {Album} = require '../models/album'
 
-exports.setup = -> Q.ninvoke Album, 'ensureIndexes'
+exports.setup = -> Promise.ninvoke Album, 'ensureIndexes'

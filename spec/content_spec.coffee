@@ -25,7 +25,6 @@ describe 'getContent', ->
         album.get('path').should.equal '/album1'
 
         callback()
-      .done()
 
     it 'should return a picture and its album when given a path to a cached picture', (callback) ->
       album = new Album
@@ -49,7 +48,6 @@ describe 'getContent', ->
         picture.get('path').should.equal '/album2/pic1'
 
         callback()
-      .done()
 
   describe 'cache misses', ->
     fakeAjax = null
@@ -79,7 +77,6 @@ describe 'getContent', ->
       .then (cachedContent) ->
         checkContent cachedContent
         callback()
-      .done()
 
       checkContent = (content) ->
         {album, picture} = content
@@ -100,7 +97,6 @@ describe 'getContent', ->
       .then (cachedContent) ->
         checkContent cachedContent
         callback()
-      .done()
 
       checkContent = (content) ->
         {album, picture} = content

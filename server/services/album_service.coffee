@@ -1,5 +1,5 @@
-_       = require 'underscore'
-Q       = require 'q'
+_       = require 'lodash'
+Promise       = require 'bluebird'
 path    = require 'path'
 {makeBreadcrumb, slugify} = require '../../shared/helpers/path_helper.coffee'
 {Album} = require '../models/album.coffee'
@@ -13,17 +13,17 @@ albumQuery = (path) ->
     { 'pictures.path': path }
   ]
 
-exports.getAlbum = getAlbum = (path) -> Q.ninvoke Album, 'findOne', albumQuery(path)
+exports.getAlbum = getAlbum = (path) -> Promise.ninvoke Album, 'findOne', albumQuery(path)
 
 exports.getAlbumTree = getAlbumTree = (path) ->
-  Q.ninvoke Album.find($or: [
+  Promise.ninvoke Album.find($or: [
     { path: path },
     { 'breadcrumb.path': path }
   ]), 'exec'
 
 exports.updateAlbum = updateAlbum = (path, mutator) ->
   getAlbum(path).then (album) ->
-    Q.when(mutator(album)).then ->
+    Promise.when(mutator(album)).then ->
       save album
     .then ->
       album
@@ -31,7 +31,7 @@ exports.updateAlbum = updateAlbum = (path, mutator) ->
 exports.newAlbum = newAlbum = (parentPath, attrs) ->
   {title} = attrs
 
-  (if parentPath then getAlbum(parentPath) else Q.when(null)).then (parentAlbum) ->
+  (if parentPath then getAlbum(parentPath) else Promise.when(null)).then (parentAlbum) ->
     if parentPath and not parentAlbum
       # TODO exception type
       throw 'Parent album not found'
@@ -52,7 +52,7 @@ exports.newAlbum = newAlbum = (parentPath, attrs) ->
 
     save(album).then ->
       # Add album to parent's subalbums
-      Q.ninvoke(Album, 'update',
+      Promise.ninvoke(Album, 'update',
         { path: parentAlbum.path },
         {
           $push: { subalbums: _.pick(album, 'path', 'title', 'thumbnail')}
@@ -63,8 +63,8 @@ exports.newAlbum = newAlbum = (parentPath, attrs) ->
       album
 
 exports.deleteAlbum = deleteAlbum = (path) ->
-  Q.all [
-    Q.ninvoke(Album, 'remove',
+  Promise.all [
+    Promise.ninvoke(Album, 'remove',
       $or: [
         # Remove the album itself
         { path: path },
@@ -75,7 +75,7 @@ exports.deleteAlbum = deleteAlbum = (path) ->
     )
 
     # Remove the album from parents' subalbums
-    Q.ninvoke(Album, 'update',
+    Promise.ninvoke(Album, 'update',
       { 'subalbums.path': path },
       {
         $pull: { subalbums: { path: path }}

@@ -1,10 +1,10 @@
 Backbone = require 'backbone'
 sinon = require 'sinon'
-Q = require 'q'
+Promise = require 'bluebird'
 
 fakeBackboneAjax = (mapping) ->
   sinon.stub Backbone, 'ajax', (options) ->
-    Q.nextTick ->
+    Promise.nextTick ->
       data = mapping[options.url]
       options.success data if options.success
       data

@@ -1,5 +1,5 @@
 should = require 'should'
-_ = require 'underscore'
+_ = require 'lodash'
 
 {Album} = require '../client/js/models/album'
 {

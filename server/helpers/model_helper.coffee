@@ -1,4 +1,4 @@
-Q = require 'q'
-_ = require 'underscore'
+Promise = require 'bluebird'
+_ = require 'lodash'
 
-exports.save = (instance) -> Q.ninvoke instance, 'save'
+exports.save = (instance) -> Promise.ninvoke instance, 'save'

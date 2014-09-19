@@ -1,5 +1,5 @@
-Q = require 'q'
-_ = require 'underscore'
+Promise = require 'bluebird'
+_ = require 'lodash'
 
 easyimg = require 'easyimage'
 fs = require 'fs'
@@ -14,9 +14,9 @@ path = require 'path'
 {walkAncestors, walkAlbumsDepthFirst} = require '../helpers/tree_helper'
 config = require '../config'
 
-exports.getImageInfo = Q.nbind easyimg.info, easyimg
-exports.makeDirectories = makeDirectories = Q.denodeify mkdirp
-exports.resizeImage = Q.nbind easyimg.resize, easyimg
+exports.getImageInfo = Promise.nbind easyimg.info, easyimg
+exports.makeDirectories = makeDirectories = Promise.denodeify mkdirp
+exports.resizeImage = Promise.nbind easyimg.resize, easyimg
 
 DEFAULT_QUALITY = 60
 
@@ -31,10 +31,10 @@ exports.addMediaToPicture = addMediaToPicture = (picturePath, media) ->
       'pictures.$.media':
         '$each': media
 
-  Q.ninvoke Album, 'findOneAndUpdate', query, update, {'new': true}
+  Promise.ninvoke Album, 'findOneAndUpdate', query, update, {'new': true}
 
 fileExists = (filename) ->
-  deferred = Q.defer()
+  deferred = Promise.defer()
   fs.exists filename, (exists) -> deferred.resolve exists
   deferred.promise
 
@@ -61,10 +61,10 @@ exports.createPreview = createPreview = (opts) ->
   {root, previews} = config.paths
 
   albumPath = picture.albumPath()
-  dstPathOnServer = path.join '/', previews, picture.path, "max#{width}x#{height}q#{quality}.jpg"
+  dstPathOnServer = path.join '/', previews, picture.path, "max#{width}x#{height}Promise#{quality}.jpg"
 
   if _.find(picture.media, (med) -> med.src == dstPathOnServer)
-    return Q.when success: true, result: 'exists'
+    return Promise.when success: true, result: 'exists'
 
   resizeOpts = _.extend {}, size,
     src: mkPath root, getOriginal(picture).src
@@ -118,6 +118,6 @@ exports.createPreviews = createPreviews = (albums) ->
 
 exports.rehashThumbnails = rehashThumbnails = (path='/') ->
   walkAlbumsDepthFirst path, (album) ->
-    Q.all(album.subalbums.map((subalbum) -> getAlbum(subalbum.path))).then (subalbums) ->
+    Promise.all(album.subalbums.map((subalbum) -> getAlbum(subalbum.path))).then (subalbums) ->
       album.subalbums = _.map subalbums, (subalbum) -> _.pick subalbum, 'path', 'title', 'thumbnail'
       setThumbnail album

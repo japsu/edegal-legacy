@@ -1,5 +1,5 @@
-Q = require 'q'
-_ = require 'underscore'
+Promise = require 'bluebird'
+_ = require 'lodash'
 optimist = require 'optimist'
 
 config = require './config'
@@ -26,7 +26,6 @@ exports.main = ->
         albumService.newAlbum(null, title: args.title)
       .then ->
         process.exit()
-      .done()
 
     when 'album'
       [albumCommand] = argv.splice 0, 1
@@ -40,7 +39,6 @@ exports.main = ->
 
           albumService.newAlbum(args.parentPath, _.pick(args, 'title', 'description')).then ->
             process.exit()
-          .done()
 
         when 'delete'
           opt = optimist
@@ -53,12 +51,11 @@ exports.main = ->
             opt.showHelp()
             process.exit(1)
 
-          Q.all(args._.map((path) ->
+          Promise.all(args._.map((path) ->
             console.log 'delete', path
             albumService.deleteAlbum(path)
           )).then ->
             process.exit()
-          .done()
 
         when 'list'
           args = optimist
@@ -71,7 +68,6 @@ exports.main = ->
 
           printAlbums(args.path).then ->
             process.exit()
-          .done()
 
         else
           console.log('Usage: edegal album <subcommand> [options]')
@@ -109,7 +105,7 @@ exports.main = ->
             mediaService.rehashThumbnails(args.path)
           .then ->
             process.exit()
-          .done()
+
         when 'rehash'
           args = require('optimist')
             .usage('Usage: $0 previews rehash [--path /foo]')
@@ -118,7 +114,6 @@ exports.main = ->
 
           mediaService.rehashThumbnails(args.path).then ->
             process.exit()
-          .done()
         else
           console.log('Usage: edegal previews <subcommand> [options]')
           console.log('Subcommands: create, rehash')
@@ -134,11 +129,10 @@ exports.main = ->
             .options('y', alias: 'really', demand: true)
             .parse(argv)
 
-          Q.ninvoke(Album, 'drop').fail ->
+          Promise.ninvoke(Album, 'drop').fail ->
             null
           .then ->
             process.exit()
-          .done()
         else
           console.log('Usage: edegal database <subcommand> [options]')
           console.log('Subcommands: drop')

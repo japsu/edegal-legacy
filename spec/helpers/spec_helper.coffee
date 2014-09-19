@@ -1,3 +1,3 @@
-Q = require 'q'
+Promise = require 'bluebird'
 
-Q.longStackSupport = true
+Promise.longStackSupport = true

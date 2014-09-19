@@ -1,5 +1,5 @@
 $ = require 'jquery'
-require 'hammer-jquery'
+require 'jquery-hammerjs'
 
 {View} = require './helpers/view_helper.coffee'
 {selectMedia, preloadMedia} = require './helpers/media_helper.coffee'

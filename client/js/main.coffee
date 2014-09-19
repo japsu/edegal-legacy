@@ -8,8 +8,10 @@ window.Backbone = Backbone = require 'backbone' # XXX
 {applyTranslations} = require './views/helpers/i18n_helper.coffee'
 {getContent} = require './models/helpers/content_helper.coffee'
 
+
 albumView = null
 pictureView = null
+
 
 class Router extends Backbone.Router
   initialize: ->
@@ -33,7 +35,7 @@ class Router extends Backbone.Router
         window.ga 'send', 'event', 'album', 'view', path, page: path if window.ga?
 
       window.ga 'send', 'pageview', path if window.ga?
-    .done()
+
 
 $ ->
   albumView = new AlbumView

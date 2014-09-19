@@ -1,4 +1,4 @@
-Q = require 'q'
+Promise = require 'bluebird'
 
 exports.Semaphore = class Semaphore
   constructor: (slots) ->
@@ -20,13 +20,13 @@ exports.Semaphore = class Semaphore
     if @slots > 0
       @enter func
     else
-      deferred = Q.defer()
+      deferred = Promise.defer()
       @queue.push [func, deferred]
       deferred.promise
 
   enter: (func, deferred) ->
     @slots -= 1
-    Q.when(func()).then (ret) =>
+    Promise.when(func()).then (ret) =>
       deferred.resolve ret if deferred
       @pop()
       ret
@@ -38,7 +38,7 @@ exports.Semaphore = class Semaphore
   finished: ->
     if @slots == @maxSlots
       console.log 'Semaphore.finished: finishing early'
-      return Q.when {}
+      return Promise.when {}
 
-    @_finished = Q.defer() unless @_finished
+    @_finished = Promise.defer() unless @_finished
     @_finished.promise

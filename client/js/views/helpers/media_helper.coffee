@@ -1,5 +1,5 @@
 $ = require 'jquery'
-_ = require 'underscore'
+_ = require 'lodash'
 
 {getContent} = require '../../models/helpers/content_helper.coffee'
 
@@ -27,6 +27,5 @@ exports.preloadMedia = (path) ->
     {album, picture} = content
     selectedMedia = exports.selectMedia picture
     $('<img/>').attr 'src', selectedMedia.src
-  .done()
 
 window.edegalViewHelperMedia = exports if window?
