@@ -30,7 +30,7 @@ exports.Semaphore = class Semaphore
       deferred.resolve ret if deferred
       @pop()
       ret
-    .fail (reason) =>
+    .catch (reason) =>
       deferred.reject reason if deferred
       @pop()
       reason

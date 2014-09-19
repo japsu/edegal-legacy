@@ -8,7 +8,7 @@ exports.connection = mongoose.connect config.database
 
 emptyDatabase = (done) ->
   Promise.all([
-    Promise.ninvoke Album, 'remove', {}
+    Album.removeAsync()
   ]).then ->
     done()
 

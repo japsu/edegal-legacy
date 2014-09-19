@@ -15,7 +15,7 @@ path = require 'path'
 config = require '../config'
 
 exports.getImageInfo = Promise.nbind easyimg.info, easyimg
-exports.makeDirectories = makeDirectories = Promise.denodeify mkdirp
+exports.makeDirectories = makeDirectories = Promise.promisify mkdirp
 exports.resizeImage = Promise.nbind easyimg.resize, easyimg
 
 DEFAULT_QUALITY = 60
@@ -31,7 +31,7 @@ exports.addMediaToPicture = addMediaToPicture = (picturePath, media) ->
       'pictures.$.media':
         '$each': media
 
-  Promise.ninvoke Album, 'findOneAndUpdate', query, update, {'new': true}
+  Album.findOneAndUpdateAsync query, update, {'new': true}
 
 fileExists = (filename) ->
   deferred = Promise.defer()
@@ -91,7 +91,7 @@ exports.createPreview = createPreview = (opts) ->
   .then ->
     success: true
     result: result
-  .fail (reason) ->
+  .catch (reason) ->
     console.warn reason.stack
 
     success: false

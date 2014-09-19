@@ -1,3 +1,6 @@
+Promise    = require 'bluebird'
+Promise.promisifyAll require 'mongoose'
+
 _          = require 'lodash'
 path       = require 'path'
 express    = require 'express'
@@ -14,7 +17,7 @@ respondModel = (res, model) ->
 
 respondJSON = (res, code, data) ->
   res.contentType 'application/json'
-  res.send code, JSON.stringify data
+  res.status(code).send JSON.stringify data
 
 respond404 = (res) ->
   respondJSON res, 404,
@@ -28,7 +31,7 @@ respond500 = (res) ->
 
 indexHtmlAnyway = (req, res, next) ->
   if req.accepts 'html'
-    res.sendfile indexHtml
+    res.sendFile indexHtml
   else
     next()
 
@@ -49,7 +52,7 @@ router.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   console.log 'album', path
   getAlbum(path).then (album) ->
     respondModel res, album
-  .fail (e) ->
+  .catch (e) ->
     console?.error e
     respond500 res
 

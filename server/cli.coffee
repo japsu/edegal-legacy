@@ -129,7 +129,7 @@ exports.main = ->
             .options('y', alias: 'really', demand: true)
             .parse(argv)
 
-          Promise.ninvoke(Album, 'drop').fail ->
+          Album.dropReturningPromise().catch ->
             null
           .then ->
             process.exit()

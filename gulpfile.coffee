@@ -30,7 +30,7 @@ paths =
   styles:
     source: './client/css/style.styl'
     watch: './client/css/*.styl'
-    destination: './public/css/'
+    destination: './public/'
   assets:
     source: './client/assets/**/*.*'
     watch: './client/assets/**/*.*'
@@ -54,11 +54,9 @@ gulp.task 'index', ->
 
 gulp.task 'scripts', ->
   bundle = browserify
-    debug: not production    
     entries: [paths.scripts.source]
+    debug: not production    
     extensions: ['.coffee']
-
-  bundle.require 'lodash', expose: 'underscore'
 
   build = bundle.bundle()
     .on 'error', handleError
@@ -92,7 +90,7 @@ gulp.task 'server', ->
   config = require './server_config.json'
   server = require './server/server'
   console?.log "server in #{config.host}:#{config.port}"
-  server.app.listen config.host, config.port
+  server.app.listen config.port, config.host
 
 
 gulp.task 'watch', ->

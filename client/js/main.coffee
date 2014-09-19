@@ -1,4 +1,5 @@
 $ = require 'jquery'
+_ = require 'lodash'
 window.Backbone = Backbone = require 'backbone' # XXX
 
 {Album, albums} = require './models/album.coffee'

@@ -45,6 +45,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "browser": {
+    "underscore": "lodash",
     "jquery": "./bower_components/jquery/dist/jquery.min.js",
     "transparency": "./bower_components/transparency/dist/transparency.min.js",
     "backbone": "./bower_components/backbone/backbone.js",
@@ -57,12 +58,22 @@
     "jquery-hammerjs": {
       "exports": "jQuery",
       "depends": [
-        "jquery:$"
+        "jquery:$",
+        "hammerjs:Hammer"
+      ]
+    },
+    "backbone": {
+      "exports": "Backbone",
+      "depends": [
+        "jquery:$",
+        "lodash:_"
       ]
     },
     "backbone-relational": {
       "exports": "Backbone",
-      "depends": ["backbone:Backbone"]
+      "depends": [
+        "backbone:Backbone"
+      ]
     },
     "transparency": {
       "exports": "Transparency",

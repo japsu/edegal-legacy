@@ -43,7 +43,7 @@ albums = [
 
 createAlbums = (success) ->
   Promise.all(albums.map (album) ->
-    Promise.ninvoke new Album(album), 'save'
+    new Album(album).saveAsync()
   ).then ->
     success() 
 
