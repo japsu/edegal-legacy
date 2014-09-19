@@ -1,8 +1,12 @@
 should = require 'should'
 sinon = require 'sinon'
+proxyquire = require 'proxyquire'
 
 {Picture} = require '../client/js/models/picture.coffee'
-{selectMedia, getOriginal, getThumbnail} = mediaHelper = require '../client/js/views/helpers/media_helper.coffee'
+
+{selectMedia} = mediaHelper = proxyquire '../client/js/views/helpers/media_helper.coffee',
+  'jquery':
+    '@noCallThru': true
 
 picture = new Picture
   path: '/selectmedia/picture'

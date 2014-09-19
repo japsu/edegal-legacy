@@ -1,5 +1,5 @@
 _            = require 'lodash'
-Promise            = require 'bluebird'
+Promise      = require 'bluebird'
 
 should       = require 'should'
 sinon        = require 'sinon'

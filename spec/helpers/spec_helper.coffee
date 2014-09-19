@@ -1,3 +1,2 @@
 Promise = require 'bluebird'
-
-Promise.longStackSupport = true
+Promise.longStackTraces()

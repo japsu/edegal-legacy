@@ -1,5 +1,7 @@
-Promise        = require 'bluebird'
+Promise  = require 'bluebird'
 mongoose = require 'mongoose'
+Promise.promisifyAll mongoose
+
 {Album}  = require '../../server/models/album'
 config   = require './test_config.json'
 

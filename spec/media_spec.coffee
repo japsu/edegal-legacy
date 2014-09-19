@@ -1,7 +1,7 @@
-should = require 'should'
-sinon  = require 'sinon'
-Promise      = require 'bluebird'
-_      = require 'lodash'
+should  = require 'should'
+sinon   = require 'sinon'
+Promise = require 'bluebird'
+_       = require 'lodash'
 
 require './helpers/spec_helper'
 require './helpers/db_helper'

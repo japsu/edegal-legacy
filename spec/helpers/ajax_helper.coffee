@@ -4,7 +4,7 @@ Promise = require 'bluebird'
 
 fakeBackboneAjax = (mapping) ->
   sinon.stub Backbone, 'ajax', (options) ->
-    Promise.nextTick ->
+    Promise.delay(0).then ->
       data = mapping[options.url]
       options.success data if options.success
       data

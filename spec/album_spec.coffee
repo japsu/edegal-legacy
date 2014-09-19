@@ -1,5 +1,5 @@
 should       = require 'should'
-Promise            = require 'bluebird'
+Promise      = require 'bluebird'
 _            = require 'lodash'
 
 require './helpers/db_helper'
@@ -114,10 +114,10 @@ describe 'Album service', ->
 
     it 'should remove the deleted album from its parents subalbums', (success) ->
       getAlbum('/').then (album) ->
-        _.pluck(album.subalbums, 'path').should.include '/foo'
+        _.pluck(album.subalbums, 'path').should.containEql '/foo'
         deleteAlbum('/foo')
       .then ->
         getAlbum('/')
       .then (album) ->
-        _.pluck(album.subalbums, 'path').should.not.include '/foo'
+        _.pluck(album.subalbums, 'path').should.not.containEql '/foo'
         success()

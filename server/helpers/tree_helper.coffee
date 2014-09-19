@@ -3,11 +3,16 @@ _            = require 'lodash'
 
 albumService = require '../services/album_service.coffee'
 
+
+unit = Promise.resolve null
+chain = (promise, fnReturningPromise) -> promise.then fnReturningPromise
+
+
 exports.walkAlbumsDepthFirst = (path, visitor, save=true) ->
   processSubalbums = (album) ->
     subalbumVisits = album.subalbums.map (subalbum) -> ->
       exports.walkAlbumsDepthFirst subalbum.path, visitor, save
-    subalbumVisits.reduce(Promise.resolve, Promise()).then ->
+    subalbumVisits.reduce(chain, unit).then ->
       Promise.resolve visitor(album)
 
   if save
@@ -19,7 +24,7 @@ exports.walkAlbumsBreadthFirst = (path, visitor, save=true) ->
   processSubalbums = (album) ->
     subalbumVisits = album.subalbums.map (subalbum) -> ->
       exports.walkAlbumsBreadthFirst subalbum.path, visitor, save
-    subalbumVisits.reduce(Promise.resolve, Promise())
+    subalbumVisits.reduce(chain, unit)
 
   if save
     albumService.updateAlbum(path, visitor).then processSubalbums
