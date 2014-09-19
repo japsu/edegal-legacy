@@ -7,6 +7,7 @@ fakeBackboneAjax = (mapping) ->
     Promise.delay(0).then ->
       data = mapping[options.url]
       options.success data if options.success
+      console?.log 'ajax returns', data
       data
   Backbone.ajax
 

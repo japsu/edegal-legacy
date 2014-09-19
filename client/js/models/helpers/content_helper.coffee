@@ -11,7 +11,7 @@ getContent = (path) ->
   return Promise.resolve {album: album, picture: null} if album
 
   album = new Album path: path
-  Promise.resolve album.fetch(), ->
+  Promise.resolve(album.fetch()).then ->
     albums.add album
     album.get('pictures').forEach (picture) -> pictures.add picture
     picture = album.get('pictures').findWhere path: path
