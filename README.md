@@ -6,32 +6,31 @@ Edegal is a web picture gallery written in Node.js and designed with performance
 
 High performance is achieved through the usage of a dead simple REST JSON API in which most cache misses only result in a single database query that returns a single document.
 
-Edegal is a work in progress. See a demo at [uusi.kuvat.aniki.fi](http://uusi.kuvat.aniki.fi/).
+Edegal is a work in progress. See a demo at [uusi.kuvat.aniki.fi](http://uusi.kuvat.aniki.fi/) or [gallery.insomnia.fi](http://gallery.insomnia.fi).
 
 ## Goals
 
 * Successfully replace Coppermine Image Gallery at [kuvat.aniki.fi](http://kuvat.aniki.fi)
   * 49,860 files in 619 albums and 110 categories viewed 6,118,935 times over the course of 9 years (as of 22nd June 2013)
+* Provide picture galleries for the members of [Kapsi Internet-käyttäjät ry](http://www.kapsi.fi) requestable via a web self-service portal
 * Drop some jaws with stunning visuals and flawless usability
 * Become the number one choice for a self-hosted image gallery for serious hobbyist photographers
 
 ## Getting started
 
-Assuming you have MongoDB installed. If you need to authenticate to MongoDB, edit `server_config.json`. The format is `mongo://user:password@localhost/edegal`).
+What is assumed:
 
-    # install imagemagick
-    sudo apt-get install imagemagick
+* An UNIX-like operating system such as Ubuntu, CentOS or Mac OS X
+* MongoDB installed and configured.
+  * If you need to authenticate to MongoDB, edit `server_config.json`. The format is `mongo://user:password@localhost/edegal`).
+  * By default, the database names used are `edegal` and `edegal_test` (for running tests).
+* ImageMagick
+* NodeJS (0.10.x) and NPM
 
-    # install node.js (may skip if node -v returns something >= 0.8 already)
-    git clone https://github.com/creationix/nvm ~/.nvm
-    source ~/.nvm/nvm.sh
-    nvm install v0.10.12
+Running a local server:
 
     # install dependencies and build
     npm install
-
-    # (NODE v0.8 ONLY: if you are running node v0.8 and not v0.10, npm install won't run prepublish for you)
-    npm run-script prepublish
 
     # run server
     npm start
@@ -42,13 +41,13 @@ Assuming you have MongoDB installed. If you need to authenticate to MongoDB, edi
 Development:
 
     # install development tools into PATH
-    npm -g install bower coffee-script james
+    npm -g install gulp
 
-    # do an un-minified debug build
-    james
+    # do an un-minified debug build, run a development server and watch for changes
+    gulp
 
-    # watch files for changes and rebuild when necessary
-    james watch
+    # do a minified production build
+    NODE_ENV=production gulp build
 
     # run tests
     npm test
@@ -62,12 +61,11 @@ At this moment you need to import album at a time. First, put the pictures somew
     # (If you havent yet created the root album - do this only once)
     bin/edegal setup --title "My Photo Gallery"
 
-    # Tell Edegal about the new photos (--directory relative to --root)
-    bin/edegal import filesystem --title "My New Album" --parent / --directory pictures/my-new-album
+    # Create an album
+    bin/edegal album create --title "My New Album" --parent /
 
-    # Create thumbnails and previews. -s is short for --size, which specifies the bounding box.
-    # That is, previews will end up smaller in either dimension most of the time.
-    bin/edegal previews create
+    # Import some photos
+    bin/edegal import --move --path /my-new-album /path/to/files/*.jpg
 
 You're all set!
 
@@ -77,14 +75,14 @@ There are configuration files for client and server, `client_config.json` and `s
 
 ### Client configuration (`client_config.json`)
 
-Changing any values in `client_config.json` requires recompilation (`james build`).
+Changing any values in `client_config.json` requires recompilation (`NODE_ENV=production gulp build`).
 
 * `defaultLanguage`: `en` and `fi` supported.
 * `analyticsAccount`: Put your Analytics token here to enable [Google Analytics](https://analytics.google.com) support.
 
 ### Server configuration (`server_config.json`)
 
-* `database`: as accepted by `new Mongolian`
+* `database`: as accepted by `mongoose.connect`
 * `port`: port number to listen on
 * `hostname`: hostname or IP address to listen on
 * `concurrency`: how many pictures to scale concurrently
@@ -97,7 +95,7 @@ Changing any values in `client_config.json` requires recompilation (`james build
 
 * Development tools
   * [Node.js](https://github.com/joyent/node)
-  * [James](https://github.com/leonidas/james.js)
+  * [Gulp](https://github.com/gulp/gulp)
   * [Browserify](https://github.com/substack/node-browserify)
   * [CoffeeScript](https://github.com/jashkenas/coffee-script)
   * [Jade](https://github.com/visionmedia/jade) templates for static HTML

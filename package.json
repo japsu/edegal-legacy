@@ -4,6 +4,7 @@
   "description": "Fast web picture gallery",
   "main": "index.js",
   "scripts": {
+    "prepublish": "bower install && gulp build",
     "start": "coffee server/server.coffee",
     "test": "mocha --reporter spec --compilers coffee:coffee-script/register spec/*_spec.coffee"
   },

@@ -5,6 +5,8 @@ optimist = require 'optimist'
 config = require './config'
 require './db'
 
+mongoose = require 'mongoose'
+
 {Album} = require './models/album'
 siteService = require './services/site_service'
 albumService = require './services/album_service'
@@ -35,9 +37,11 @@ exports.main = ->
           args = optimist
             .usage('Usage: $0 album create --title "Album title"')
             .options('title', alias: 't', demand: true, describe: 'Album title')
+            .options('description', alias: 'd', default: '', describe: 'Album description')
+            .options('parent', alias: 'p', describe: 'Path of the parent album')            
             .parse(argv)
 
-          albumService.newAlbum(args.parentPath, _.pick(args, 'title', 'description')).then ->
+          albumService.newAlbum(args.parent, _.pick(args, 'title', 'description')).then ->
             process.exit()
 
         when 'delete'
@@ -74,20 +78,43 @@ exports.main = ->
           console.log('Subcommands: create, delete, list')
           process.exit(1)
 
-    when 'import'
+    when 'migrate'
       [importCommand] = argv.splice 0, 1
 
       switch importCommand
-        when 'filesystem'
-          # TODO
-          null
         when 'coppermine'
-          # TODO
-          null
-        else
-          console.log('Usage: edegal import <source> [options]')
-          console.log('Sources: filesystem, coppermine')
+          console.log('Usage: edegal migrate coppermine')
+          console.log('NOTE: You need to edit server/importers/coppermine to match your installation.')
           process.exit(1)
+        else
+          console.log('Usage: edegal migrate <source> [options]')
+          console.log('Sources: coppermine')
+          process.exit(1)
+
+    when 'import'          
+      args = require('optimist')
+        .usage('Usage: edegal import --move|--copy --path /foo file1.jpg ...')
+        .options('move', alias: 'm', boolean: true, describe: 'Move files into place')
+        .options('copy', alias: 'c', boolean: true, describe: 'Copy files into place')
+        .options('path', alias: 'p', demand: true, describe: 'The album into which to import')
+        .parse(argv)
+
+      mode =
+        if args.move and args.copy
+          throw new Error 'both --copy and --move specified'
+        else if args.move
+          'move'
+        else if args.copy
+          'copy'
+        else
+          throw new Error 'must specify either --copy or --move'
+
+      require('./importers/pictures').importPictures args._,
+        mode: mode
+        path: args.path
+      .then ->
+        process.exit()
+
 
     when 'previews'
       [previewsCommand] = argv.splice 0, 1
@@ -129,7 +156,7 @@ exports.main = ->
             .options('y', alias: 'really', demand: true)
             .parse(argv)
 
-          Album.dropReturningPromise().catch ->
+          mongoose.connection.collections.albums.dropAsync().catch ->
             null
           .then ->
             process.exit()
