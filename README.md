@@ -56,7 +56,7 @@ Development:
 
 Sorry, this is a bit technical at the moment. There will be a browser-based uploader. Some day. I think.
 
-At this moment you need to import album at a time. First, put the pictures somewhere under the document root. Let's assume `public/pictures/my-new-album`.
+At this moment you need to import album at a time.
 
     # (If you havent yet created the root album - do this only once)
     bin/edegal setup --title "My Photo Gallery"
