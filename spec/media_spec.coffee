@@ -70,10 +70,10 @@ describe 'Preview service', ->
 
         success()
 
-  describe 'createPreviews', ->
+  describe 'createPreviewsForAlbums', ->
     it 'should create previews for an album', (success) ->
       getAlbum('/').then (album) ->
-        mediaService.createPreviews(album)
+        mediaService.createPreviewsForAlbums(album)
       .then ->
         getAlbum('/')
       .then (album) ->

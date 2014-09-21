@@ -5,6 +5,7 @@ _ = require 'lodash'
 {
   makeBreadcrumb,
   slugify,
+  slugifyFilename,
   sanitizeFilename,
   removeExtension,
   stripLastComponent
@@ -117,12 +118,19 @@ describe 'Path helpers', ->
     it 'should remove extension', ->
       removeExtension('IMG_0645.jpg').should.equal 'IMG_0645'
 
+  describe 'slugifyFilename', ->
+    it 'should work for empty string', ->
+      slugifyFilename('').should.equal ''
+
+    it 'should slugify filename', ->
+      slugifyFilename('IMG_0635.jpg').should.equal 'img-0635'
+
   describe 'sanitizeFilename', ->
     it 'should work for empty string', ->
       sanitizeFilename('').should.equal ''
 
     it 'should sanitize filename', ->
-      sanitizeFilename('IMG_0635.jpg').should.equal 'img-0635'
+      sanitizeFilename('IMG_0635.jpg').should.equal 'img-0635.jpg'
 
   describe 'stripLastComponent', ->
     it 'should work for empty string', ->

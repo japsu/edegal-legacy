@@ -11,7 +11,7 @@ mongoose = require 'mongoose'
 siteService = require './services/site_service'
 albumService = require './services/album_service'
 mediaService = require './services/media_service'
-{walkAlbumsBreadthFirst} = require './helpers/tree_helper'
+{walkAlbumsBreadthFirst, sequentially} = require './helpers/tree_helper'
 
 exports.main = ->
   argv = process.argv[2..]
@@ -50,13 +50,11 @@ exports.main = ->
 
           args = opt.parse(argv)
 
-          console.log args
           if args._.length == 0
             opt.showHelp()
             process.exit(1)
 
           Promise.all(args._.map((path) ->
-            console.log 'delete', path
             albumService.deleteAlbum(path)
           )).then ->
             process.exit()
@@ -71,6 +69,18 @@ exports.main = ->
           printAlbums = (path) -> walkAlbumsBreadthFirst path, printAlbum, false
 
           printAlbums(args.path).then ->
+            process.exit()
+
+        when 'dump'
+          args = optimist
+            .usage('Usage: $0 album dump path [path ...]')
+            .parse(argv)
+
+          # TODO $in query
+          sequentially(args._.map (albumPath) -> ->
+            Album.findOneAsync(path: albumPath).then (album) ->
+              console.log album
+          ).then ->
             process.exit()
 
         else
@@ -93,28 +103,44 @@ exports.main = ->
 
     when 'import'          
       args = require('optimist')
-        .usage('Usage: edegal import --move|--copy --path /foo file1.jpg ...')
-        .options('move', alias: 'm', boolean: true, describe: 'Move files into place')
-        .options('copy', alias: 'c', boolean: true, describe: 'Copy files into place')
-        .options('path', alias: 'p', demand: true, describe: 'The album into which to import')
+        .usage('Usage: edegal import --move|--copy|--inplace --path /foo file1.jpg ...')
+        .options 'move',
+          alias: 'm'
+          boolean: true
+          describe: 'Move files into place'
+        .options 'copy',
+          alias: 'c'
+          boolean: true
+          describe: 'Copy files into place'
+        .options 'inplace',
+          alias: 'i'
+          boolean: true
+          describe: 'Use the files from wherever they are, assume they are under docroot (default)'
+        .options 'path',
+          alias: 'p'
+          demand: true
+          describe: 'The album into which to import'
         .parse(argv)
 
       mode =
-        if args.move and args.copy
-          throw new Error 'both --copy and --move specified'
+        if _.filter([args.move, args.copy, args.inplace]).length > 1
+          throw new Error 'specify at most one of --move, --copy and --inplace'
         else if args.move
           'move'
         else if args.copy
           'copy'
         else
-          throw new Error 'must specify either --copy or --move'
+          'inplace'
 
-      require('./importers/pictures').importPictures args._,
+      require('./importers/filesystem').importPictures args._,
         mode: mode
         path: args.path
+      .spread (album, pictures) ->
+        mediaService.createPreviewsForPictures(pictures)
+      .then ->
+        mediaService.rehashThumbnails(args.path)
       .then ->
         process.exit()
-
 
     when 'previews'
       [previewsCommand] = argv.splice 0, 1
@@ -127,7 +153,7 @@ exports.main = ->
             .parse(argv)
 
           albumService.getAlbumTree(args.path).then (albums) ->
-            mediaService.createPreviews(albums)
+            mediaService.createPreviewsForAlbums(albums)
           .then ->
             mediaService.rehashThumbnails(args.path)
           .then ->

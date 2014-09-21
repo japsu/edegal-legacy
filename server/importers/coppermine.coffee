@@ -6,7 +6,7 @@ path = require 'path'
 ent = require 'ent'
 
 {albums, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
-{slugify, makeBreadcrumb, sanitizeFilename} = require '../shared/helpers/path_helper'
+{slugify, makeBreadcrumb, slugifyFilename} = require '../shared/helpers/path_helper'
 {setThumbnail} = require '../shared/helpers/media_helper'
 
 connection = mysql.createConnection
@@ -141,7 +141,7 @@ convertPictures = (albumId, parent) ->
       decodeEntities copperminePicture, 'title', 'caption'
       title = copperminePicture.title or copperminePicture.filename
       parent.pictures.push
-        path: path.join(parent.path, sanitizeFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
+        path: path.join(parent.path, slugifyFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
         title: fixTitle(title ? '')
         description: copperminePicture.caption ? ''
         media: [ 

@@ -9,6 +9,14 @@ charMap =
   '_': '-'
   '.': '-'
 
+knownExtensions = [
+  'jp2'
+  'jpg'
+  'png'
+  'webp'
+]
+
+
 exports.slugify = (str) ->
   str = str.toLowerCase()
   str = _.map(str, (c) -> charMap[c] ? c).join('')
@@ -29,8 +37,16 @@ exports.makeBreadcrumb = (albumsOrPictures...) ->
 exports.removeExtension = (filename) ->
   filename.split('.', 1)[0]
 
-exports.sanitizeFilename = (filename) ->
+exports.slugifyFilename = (filename) ->
   exports.slugify exports.removeExtension filename
+
+exports.sanitizeFilename = (filename) ->
+  return "" unless filename
+  [filename, extension] = filename.split('.', 2)
+  filename = exports.slugify filename
+  extension = extension.toLowerCase()
+  throw new Error "Spooky extension: #{extension}" unless extension in knownExtensions
+  "#{filename}.#{extension}"
 
 exports.stripLastComponent = (path) ->
   components = path.split('/')

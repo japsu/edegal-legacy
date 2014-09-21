@@ -9,14 +9,22 @@ path = require 'path'
 {Album} = require '../models/album'
 {getOriginal} = require '../../shared/helpers/media_helper'
 {Semaphore} = require '../../shared/helpers/concurrency_helper'
+{stripLastComponent} = require '../../shared/helpers/path_helper'
 {setThumbnail} = require '../../shared/helpers/media_helper'
 {updateAlbum} = require './album_service'
 {walkAncestors, walkAlbumsDepthFirst} = require '../helpers/tree_helper'
 config = require '../config'
 
-exports.getImageInfo = Promise.promisify easyimg.info, easyimg
+exports.getImageInfo = (filename) -> Promise.resolve easyimg.info filename
 exports.makeDirectories = makeDirectories = Promise.promisify mkdirp
-exports.resizeImage = Promise.promisify easyimg.resize, easyimg
+exports.resizeImage = (opts) -> Promise.resolve easyimg.resize opts
+
+
+docRoot = path.resolve config.paths.root
+exports.stripDocRoot = stripDocRoot = (filePath) ->
+  throw new Error "#{filePath} is outside document root" unless filePath.indexOf(docRoot) == 0
+  filePath.replace docRoot, ''
+
 
 DEFAULT_QUALITY = 60
 
@@ -60,32 +68,35 @@ exports.createPreview = createPreview = (opts) ->
   {width, height, quality} = size
   {root, previews} = config.paths
 
-  albumPath = picture.albumPath()
-  dstPathOnServer = path.join '/', previews, picture.path, "max#{width}x#{height}Promise#{quality}.jpg"
+  albumPath = stripLastComponent picture.path
+  dstPathOnServer = path.join '/', previews, picture.path, "#{width}x#{height}q#{quality}.jpg"
+  console?.log 'dstPathOnServer', dstPathOnServer
 
   if _.find(picture.media, (med) -> med.src == dstPathOnServer)
     return Promise.resolve success: true, result: 'exists'
 
   resizeOpts = _.extend {}, size,
     src: mkPath root, getOriginal(picture).src
-    dst: mkPath root, dstPathOnServer
+    dst: dstPathOnServer
+
+  console?.log 'resizeOpts.dst', resizeOpts.dst
 
   result = null
   fileExists(resizeOpts.dst).then (exists) ->
     if exists
-      exports.getImageInfo(resizeOpts.dst).spread (existing) ->
+      exports.getImageInfo(resizeOpts.dst).then (existing) ->
         result = 'fileExists'
         existing
     else
       makeDirectories(path.dirname(resizeOpts.dst)).then ->
-        exports.resizeImage(resizeOpts).spread (resized) ->
+        exports.resizeImage(resizeOpts).then (resized) ->
           result = 'created'
           resized
   .then (imageInfo) ->
     media =
-      width: parseInt imageInfo.width
-      height: parseInt imageInfo.height
-      src: dstPathOnServer
+      width: imageInfo.width
+      height: imageInfo.height
+      src: stripDocRoot dstPathOnServer
 
     addMediaToPicture picture.path, media
   .then ->
@@ -98,7 +109,8 @@ exports.createPreview = createPreview = (opts) ->
     result: 'failed'
     reason: reason
 
-exports.createPreviews = createPreviews = (albums) ->
+
+exports.createPreviewsForAlbums = createPreviewsForAlbums = (albums) ->
   {concurrency, sizes} = config
 
   albums = [albums] unless _.isArray albums
@@ -108,13 +120,32 @@ exports.createPreviews = createPreviews = (albums) ->
   albums.forEach (album) ->
     album.pictures.forEach (picture) ->
      sizes.forEach (size) ->
-        do (album, picture, size) ->
+        do (picture, size) ->
           magickSemaphore.push ->
             createPreview
               picture: picture
               size: size
 
   magickSemaphore.finished()
+
+
+exports.createPreviewsForPictures = createPreviewsForPictures = (pictures) ->
+  {concurrency, sizes} = config
+
+  pictures = [pictures] unless _.isArray pictures
+
+  magickSemaphore = new Semaphore concurrency
+
+  pictures.forEach (picture) ->
+   sizes.forEach (size) ->
+      do (picture, size) ->
+        magickSemaphore.push ->
+          createPreview
+            picture: picture
+            size: size
+
+  magickSemaphore.finished()
+
 
 exports.rehashThumbnails = rehashThumbnails = (path='/') ->
   walkAlbumsDepthFirst path, (album) ->

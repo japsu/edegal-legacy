@@ -6,13 +6,13 @@ albumService = require '../services/album_service.coffee'
 
 unit = Promise.resolve null
 chain = (promise, fnReturningPromise) -> promise.then fnReturningPromise
-
+exports.sequentially = (fnsReturningPromise) -> fnsReturningPromise.reduce(chain, unit)
 
 exports.walkAlbumsDepthFirst = (path, visitor, save=true) ->
   processSubalbums = (album) ->
     subalbumVisits = album.subalbums.map (subalbum) -> ->
       exports.walkAlbumsDepthFirst subalbum.path, visitor, save
-    subalbumVisits.reduce(chain, unit).then ->
+    exports.sequentially(subalbumVisits).then ->
       Promise.resolve visitor(album)
 
   if save
@@ -24,7 +24,7 @@ exports.walkAlbumsBreadthFirst = (path, visitor, save=true) ->
   processSubalbums = (album) ->
     subalbumVisits = album.subalbums.map (subalbum) -> ->
       exports.walkAlbumsBreadthFirst subalbum.path, visitor, save
-    subalbumVisits.reduce(chain, unit)
+    exports.sequentially subalbumVisits
 
   if save
     albumService.updateAlbum(path, visitor).then processSubalbums
