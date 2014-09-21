@@ -36,7 +36,7 @@ Running a local server:
     npm start
 
     # enjoy
-    iexplore http://localhost:3000
+    open http://localhost:9001
 
 Development:
 
