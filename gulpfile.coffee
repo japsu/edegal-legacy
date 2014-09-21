@@ -1,19 +1,17 @@
+path       = require 'path'
+
 browserify = require 'browserify'
-coffeeify  = require 'coffeeify'
 CSSmin     = require 'gulp-minify-css'
-es         = require 'event-stream'
 gulp       = require 'gulp'
 gutil      = require 'gulp-util'
 jade       = require 'gulp-jade'
-path       = require 'path'
-plumber    = require 'gulp-plumber'
+nib        = require 'nib'
 prefix     = require 'gulp-autoprefixer'
 rename     = require 'gulp-rename'
 source     = require 'vinyl-source-stream'
 streamify  = require 'gulp-streamify'
 stylus     = require 'gulp-stylus'
 uglify     = require 'gulp-uglify'
-nib        = require 'nib'
 
 
 production = process.env.NODE_ENV is 'production'
@@ -21,20 +19,22 @@ production = process.env.NODE_ENV is 'production'
 
 paths =
   scripts:
-    source: './client/js/main.coffee'
     destination: './public/'
     filename: 'bundle.js'
+    source: './client/js/main.coffee'
+    watch: './client/js/**/*.coffee'
   index:
-    source: './client/index.jade'
     destination: './public/'
+    source: './client/index.jade'
+    watch: './client/**/*.jade'
   styles:
+    destination: './public/'
     source: './client/css/style.styl'
     watch: './client/css/*.styl'
-    destination: './public/'
   assets:
+    destination: './public/'
     source: './client/assets/**/*.*'
     watch: './client/assets/**/*.*'
-    destination: './public/'
 
 
 handleError = (err) ->
@@ -94,12 +94,11 @@ gulp.task 'server', ->
 
 
 gulp.task 'watch', ->
-  gulp.watch 'client/coffee/**/*.coffee', ['scripts']
-  gulp.watch 'client/jade/**/*.jade', ['scripts']
-  gulp.watch 'data/*.json', ['scripts']
-  gulp.watch 'client/stylus/*.styl', ['styles']
-  gulp.watch 'client/assets/**/*.*', ['assets']
+  gulp.watch paths.assets.watch, ['assets']
+  gulp.watch paths.index.source, ['index']
+  gulp.watch paths.scripts.watch, ['scripts']
+  gulp.watch paths.styles.watch, ['styles']
 
 
-gulp.task "build", ['scripts', 'index', 'styles', 'assets']
-gulp.task "default", ["build", "watch", "server"]
+gulp.task 'build', ['scripts', 'index', 'styles', 'assets']
+gulp.task 'default', ['build', 'watch', 'server']
