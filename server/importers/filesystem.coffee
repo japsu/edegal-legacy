@@ -44,8 +44,6 @@ exports.importPictures = (inputFiles, opts) ->
       newPictures = imageInfos.map (imageInfo) ->
         {name, path: filePath, width, height} = imageInfo
 
-        console?.log 'original', stripDocRoot filePath
-
         path: path.join album.path, slugifyFilename(name)
         title: removeExtension(name)
         media: [

@@ -46,7 +46,6 @@ router.get /^\/v2\/tags\/[a-zA-Z0-9-\/]+$/, (req, res) -> # TODO
 
 router.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
   path = req.params[0]
-  console.log 'album', path
   getAlbum(path).then (album) ->
     respondModel res, album
   .catch (e) ->

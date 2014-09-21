@@ -70,7 +70,6 @@ exports.createPreview = createPreview = (opts) ->
 
   albumPath = stripLastComponent picture.path
   dstPathOnServer = path.join '/', previews, picture.path, "#{width}x#{height}q#{quality}.jpg"
-  console?.log 'dstPathOnServer', dstPathOnServer
 
   if _.find(picture.media, (med) -> med.src == dstPathOnServer)
     return Promise.resolve success: true, result: 'exists'
@@ -78,8 +77,6 @@ exports.createPreview = createPreview = (opts) ->
   resizeOpts = _.extend {}, size,
     src: mkPath root, getOriginal(picture).src
     dst: dstPathOnServer
-
-  console?.log 'resizeOpts.dst', resizeOpts.dst
 
   result = null
   fileExists(resizeOpts.dst).then (exists) ->
