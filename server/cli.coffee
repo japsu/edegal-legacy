@@ -79,7 +79,7 @@ exports.main = ->
           # TODO $in query
           sequentially(args._.map (albumPath) -> ->
             Album.findOneAsync(path: albumPath).then (album) ->
-              console.log album
+              console.log JSON.stringify album, null, 2
           ).then ->
             process.exit()
 

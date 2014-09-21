@@ -145,7 +145,11 @@ exports.createPreviewsForPictures = createPreviewsForPictures = (pictures) ->
 
 
 exports.rehashThumbnails = rehashThumbnails = (path='/') ->
-  walkAlbumsDepthFirst path, (album) ->
-    Promise.all(album.subalbums.map((subalbum) -> getAlbum(subalbum.path))).then (subalbums) ->
+  rehashAlbum = (album) ->
+    Promise.all(album.subalbums.map((subalbum) -> Album.findOneAsync(path: subalbum.path))).then (subalbums) ->
       album.subalbums = _.map subalbums, (subalbum) -> _.pick subalbum, 'path', 'title', 'thumbnail'
       setThumbnail album
+
+  # TODO lazy: album is walked twice
+  walkAlbumsDepthFirst path, rehashAlbum
+  walkAncestors path, rehashAlbum
