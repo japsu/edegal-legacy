@@ -1,6 +1,9 @@
-_       = require 'lodash'
-Promise       = require 'bluebird'
 path    = require 'path'
+
+_       = require 'lodash'
+Promise = require 'bluebird'
+logger  = require 'winston'
+
 {makeBreadcrumb, slugify} = require '../../shared/helpers/path_helper.coffee'
 {Album} = require '../models/album.coffee'
 
@@ -59,25 +62,32 @@ exports.newAlbum = newAlbum = (parentPath, attrs) ->
         }
       ) if parentAlbum
 
+      logger.info "Album created:", album.path
+
       album
 
 exports.deleteAlbum = deleteAlbum = (path) ->
-  Promise.all [
-    Album.removeAsync(
-      $or: [
-        # Remove the album itself
-        { path: path },
+  Album.findOneAsync(path: path).then (album) ->
+    throw new ReferenceError "No such album: #{path}" unless album
 
-        # Remove all its descendants, too
-        { 'breadcrumb.path': path }
-      ]
-    )
+    Promise.all [
+      Album.removeAsync(
+        $or: [
+          # Remove the album itself
+          { path: path },
 
-    # Remove the album from parents' subalbums
-    Album.updateAsync(
-      { 'subalbums.path': path },
-      {
-        $pull: { subalbums: { path: path }}
-      }
-    )
-  ]
+          # Remove all its descendants, too
+          { 'breadcrumb.path': path }
+        ]
+      )
+
+      # Remove the album from parents' subalbums
+      Album.updateAsync(
+        { 'subalbums.path': path },
+        {
+          $pull: { subalbums: { path: path }}
+        }
+      )
+    ]
+  .then ->
+    logger.info 'Album removed:', path

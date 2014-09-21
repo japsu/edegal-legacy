@@ -3,6 +3,7 @@ path = require 'path'
 _ = require 'lodash'
 easyimg = require 'easyimage'
 Promise = require 'bluebird'
+logger = require 'winston'
 fse = require 'fs-extra'
 Promise.promisifyAll fse
 
@@ -23,6 +24,8 @@ exports.importPictures = (inputFiles, opts) ->
     Promise.all(inputFiles.map((basename) ->
       fullPath = path.resolve basename
       sem.push ->
+        logger.info 'Importing picture:', basename
+
         Promise.resolve(easyimg.info(fullPath)).then (imageInfo) ->
           newPath = path.resolve config.paths.pictures, album.path.slice(1), sanitizeFilename(imageInfo.name)
 
@@ -59,4 +62,6 @@ exports.importPictures = (inputFiles, opts) ->
 
       # not saved in parallel to prevent zombie album ending up in parent if saving album fails
       album.saveAsync().then ->
+        logger.info 'Saved new pictures into album:', album.path
+
         [album, newPictures]

@@ -6,6 +6,7 @@ config = require './config'
 require './db'
 
 mongoose = require 'mongoose'
+logger = require 'winston'
 
 {Album} = require './models/album'
 siteService = require './services/site_service'
@@ -54,9 +55,11 @@ exports.main = ->
             opt.showHelp()
             process.exit(1)
 
-          Promise.all(args._.map((path) ->
+          Promise.all args._.map (path) ->
             albumService.deleteAlbum(path)
-          )).then ->
+          .catch (error) ->
+            logger.error error.message
+          .then ->
             process.exit()
 
         when 'list'
@@ -182,9 +185,10 @@ exports.main = ->
             .options('y', alias: 'really', demand: true)
             .parse(argv)
 
-          mongoose.connection.collections.albums.dropAsync().catch ->
-            null
+          mongoose.connection.collections.albums.dropAsync().catch (error) ->
+            logger.error 'Failed to drop database:', error.message
           .then ->
+            logger.info 'Database dropped'
             process.exit()
         else
           console.log('Usage: edegal database <subcommand> [options]')

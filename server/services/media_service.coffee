@@ -1,10 +1,11 @@
+path = require 'path'
+fs = require 'fs'
+
 Promise = require 'bluebird'
 _ = require 'lodash'
-
 easyimg = require 'easyimage'
-fs = require 'fs'
 mkdirp = require 'mkdirp'
-path = require 'path'
+logger = require 'winston'
 
 {Album} = require '../models/album'
 {getOriginal} = require '../../shared/helpers/media_helper'
@@ -14,6 +15,7 @@ path = require 'path'
 {updateAlbum} = require './album_service'
 {walkAncestors, walkAlbumsDepthFirst} = require '../helpers/tree_helper'
 config = require '../config'
+
 
 exports.getImageInfo = (filename) -> Promise.resolve easyimg.info filename
 exports.makeDirectories = makeDirectories = Promise.promisify mkdirp
@@ -41,10 +43,12 @@ exports.addMediaToPicture = addMediaToPicture = (picturePath, media) ->
 
   Album.findOneAndUpdateAsync query, update, {'new': true}
 
+
 fileExists = (filename) ->
   deferred = Promise.defer()
   fs.exists filename, (exists) -> deferred.resolve exists
   deferred.promise
+
 
 parseSize = (size) ->
   size = /(\d+)x(\d+)(?:@(\d+))?/.exec size
@@ -54,6 +58,7 @@ parseSize = (size) ->
   height: parseInt size[2]
   quality: parseInt(size[3] ? DEFAULT_QUALITY)
 
+
 mkPath = (first, theRest...) ->
   theRest = theRest.map (pathFrag) ->
     if pathFrag[0] == '/'
@@ -62,6 +67,7 @@ mkPath = (first, theRest...) ->
       pathFrag
 
   path.resolve first, theRest...
+
 
 exports.createPreview = createPreview = (opts) ->
   {picture, size} = opts
@@ -97,6 +103,8 @@ exports.createPreview = createPreview = (opts) ->
 
     addMediaToPicture picture.path, media
   .then ->
+    logger.info 'Preview created:', picture.path, "#{width}x#{height}" if result == 'created'
+
     success: true
     result: result
   .catch (reason) ->
@@ -146,6 +154,7 @@ exports.createPreviewsForPictures = createPreviewsForPictures = (pictures) ->
 
 exports.rehashThumbnails = rehashThumbnails = (path='/') ->
   rehashAlbum = (album) ->
+    logger.info 'Updating thumbnail and subalbums for album:', album.path 
     Promise.all(album.subalbums.map((subalbum) -> Album.findOneAsync(path: subalbum.path))).then (subalbums) ->
       album.subalbums = _.map subalbums, (subalbum) -> _.pick subalbum, 'path', 'title', 'thumbnail'
       setThumbnail album
