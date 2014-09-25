@@ -96,9 +96,13 @@ exports.main = ->
 
       switch importCommand
         when 'coppermine'
-          console.log('Usage: edegal migrate coppermine')
-          console.log('NOTE: You need to edit server/importers/coppermine to match your installation.')
-          process.exit(1)
+          args = optimist
+            .usage('Usage: $0 migrate coppermine --really')
+            .options('y', alias: 'really', demand: true)
+            .parse(argv)
+
+          migraine = require './importers/coppermine'
+          migraine.convertCoppermine().then -> process.exit()
         else
           console.log('Usage: edegal migrate <source> [options]')
           console.log('Sources: coppermine')
@@ -151,7 +155,7 @@ exports.main = ->
       switch previewsCommand
         when 'create'
           args = require('optimist')
-            .usage('Usage: $0 [-p /foo]')
+            .usage('Usage: $0 previews create [-p /foo]')
             .options('path', alias: 'p', describe: 'Process only single album (default: all)')
             .parse(argv)
 
@@ -181,7 +185,7 @@ exports.main = ->
       switch databaseCommand
         when 'drop'
           args = optimist
-            .usage('Usage: $0 --really')
+            .usage('Usage: $0 database drop --really')
             .options('y', alias: 'really', demand: true)
             .parse(argv)
 

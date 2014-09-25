@@ -5,11 +5,13 @@ _ = require 'lodash'
 path = require 'path'
 ent = require 'ent'
 
-{albums, dropAlbums, getAlbum, saveAlbum} = require '../server/db'
-{slugify, makeBreadcrumb, slugifyFilename} = require '../shared/helpers/path_helper'
-{setThumbnail} = require '../shared/helpers/media_helper'
+require '../db'
+{Album} = require '../models/album'
+{slugify, makeBreadcrumb, slugifyFilename} = require '../../shared/helpers/path_helper'
+{setThumbnail} = require '../../shared/helpers/media_helper'
 
-connection = mysql.createConnection
+
+MYSQL_PARAMS =
   host: 'localhost'
   port: 10000
   user: 'b2_coppermine'
@@ -21,22 +23,26 @@ CATEGORY_BLACKLIST = [
   1 # User galleries
   107 # Animeunioni
 ]
-
 ROOT_CATEGORY_ID = 0
-
 LARGE_NUMBER = 9999999
 
-connection.connect()
 
-query = Promise.promisify connection.query, connection
+query = null
 
-convertCoppermine = ->
+
+exports.convertCoppermine = ->
+  connection = mysql.createConnection MYSQL_PARAMS
+  connection.connect()
+
+  query = Promise.promisify connection.query, connection
+
   Promise.all([
-    getAlbum('/')
+    Album.findOneAsync(path: '/')
     query("SET NAMES 'latin1';")
   ]).spread (root) ->
     convertSubcategories(ROOT_CATEGORY_ID, root).then ->
       finalizeAlbum root, categoryId: ROOT_CATEGORY_ID
+
 
 finalizeAlbum = (edegalAlbum, opts) ->
   {categoryId, parent} = opts
@@ -62,14 +68,17 @@ finalizeAlbum = (edegalAlbum, opts) ->
 
   delete edegalAlbum._pos
 
-  saveAlbum edegalAlbum
+  edegalAlbum.saveAsync()
+
 
 decodeEntities = (obj, fields...) ->
   for field in fields
     obj[field] = ent.decode(obj[field] ? '')
 
+
 fixTitle = (title) ->
-  title.replace ' - ', ' – '
+  title.replace ' - ', ' – ' # it's an en dash
+
 
 convertSubcategories = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
@@ -82,7 +91,7 @@ convertSubcategories = (categoryId, parent) ->
       decodeEntities coppermineCategory, 'name', 'description'
       slug = slugify(coppermineCategory.name) or "category-#{coppermineCategory.cid}"
 
-      edegalAlbum =
+      edegalAlbum = new Album
         path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
         title: coppermineCategory.name
@@ -93,6 +102,7 @@ convertSubcategories = (categoryId, parent) ->
 
       processAlbum edegalAlbum, parent: parent, categoryId: coppermineCategory.cid
 
+
 convertAlbums = (categoryId, parent) ->
   breadcrumb = makeBreadcrumb parent
 
@@ -101,7 +111,7 @@ convertAlbums = (categoryId, parent) ->
       decodeEntities coppermineAlbum, 'title', 'description'
       slug = slugify(coppermineAlbum.title) or "album-#{coppermineAlbum.aid}"
 
-      edegalAlbum =
+      edegalAlbum = new Album
         path: path.join(parent.path, slug)
         breadcrumb: breadcrumb
         title: fixTitle(coppermineAlbum.title ? '')
@@ -112,10 +122,11 @@ convertAlbums = (categoryId, parent) ->
 
       processAlbum edegalAlbum, parent: parent, albumId: coppermineAlbum.aid
 
+
 processAlbum = (edegalAlbum, opts) ->
   {albumId, categoryId, parent} = opts
 
-  getAlbum(edegalAlbum.path).then (existingAlbum) ->
+  album.findOneAsync(path: edegalAlbum.path).then (existingAlbum) ->
     if existingAlbum?
       process.stdout.write '-'
       edegalAlbum = existingAlbum
@@ -128,7 +139,7 @@ processAlbum = (edegalAlbum, opts) ->
     work.push convertPictures(albumId, edegalAlbum) if albumId? and not existingAlbum?
     return null if _.isEmpty work
 
-    Promise.all(work)
+    Promise.all work
   .then ->
     finalizeAlbum edegalAlbum, opts
   .then ->
@@ -137,7 +148,7 @@ processAlbum = (edegalAlbum, opts) ->
 
 convertPictures = (albumId, parent) ->
   query('SELECT pid, filename, filepath, title, caption FROM cpg11d_pictures WHERE aid = ? ORDER BY filename', [albumId]).spread (pictures) ->
-    pictures.map (copperminePicture) ->
+    pictures.forEach (copperminePicture) ->
       decodeEntities copperminePicture, 'title', 'caption'
       title = copperminePicture.title or copperminePicture.filename
       parent.pictures.push
