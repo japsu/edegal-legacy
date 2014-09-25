@@ -25,6 +25,8 @@ exports.main = ->
         .options('title', alias: 't', demand: true, describe: 'Site title')
         .parse(argv)
 
+      args.title = "" + args.title
+
       siteService.setup().then ->
         albumService.newAlbum(null, title: args.title)
       .then ->
@@ -41,6 +43,8 @@ exports.main = ->
             .options('description', alias: 'd', default: '', describe: 'Album description')
             .options('parent', alias: 'p', describe: 'Path of the parent album')            
             .parse(argv)
+
+          args.title = "" + args.title
 
           albumService.newAlbum(args.parent, _.pick(args, 'title', 'description')).then ->
             process.exit()
