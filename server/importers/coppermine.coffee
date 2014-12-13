@@ -8,7 +8,7 @@ ent = require 'ent'
 require '../db'
 {Album} = require '../models/album'
 {slugify, makeBreadcrumb, slugifyFilename} = require '../../shared/helpers/path_helper'
-{setThumbnail} = require '../../shared/helpers/media_helper'
+{setAlbumThumbnail} = require '../../shared/helpers/media_helper'
 
 
 MYSQL_PARAMS =
@@ -46,7 +46,7 @@ exports.convertCoppermine = ->
 
 finalizeAlbum = (edegalAlbum, opts) ->
   {categoryId, parent} = opts
-  setThumbnail edegalAlbum
+  setAlbumThumbnail edegalAlbum
 
   if parent? and not _.find(parent.subalbums, (subalbum) -> subalbum.path == edegalAlbum.path)
     parent.subalbums.push _.pick edegalAlbum, 'path', 'title', 'thumbnail', '_pos'
@@ -155,7 +155,7 @@ convertPictures = (albumId, parent) ->
         path: path.join(parent.path, slugifyFilename(copperminePicture.filename) or "picture-#{copperminePicture.pid}")
         title: fixTitle(title ? '')
         description: copperminePicture.caption ? ''
-        media: [ 
+        media: [
           {
             src: "/albums/#{copperminePicture.filepath}#{copperminePicture.filename}",
             width: 6000 # TODO

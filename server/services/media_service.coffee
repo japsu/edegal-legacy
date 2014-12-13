@@ -11,7 +11,7 @@ logger = require 'winston'
 {getOriginal} = require '../../shared/helpers/media_helper'
 {Semaphore} = require '../../shared/helpers/concurrency_helper'
 {stripLastComponent} = require '../../shared/helpers/path_helper'
-{setThumbnail} = require '../../shared/helpers/media_helper'
+{setAlbumThumbnail} = require '../../shared/helpers/media_helper'
 {updateAlbum} = require './album_service'
 {walkAncestors, walkAlbumsDepthFirst} = require '../helpers/tree_helper'
 config = require '../config'
@@ -154,10 +154,10 @@ exports.createPreviewsForPictures = createPreviewsForPictures = (pictures) ->
 
 exports.rehashThumbnails = rehashThumbnails = (path='/') ->
   rehashAlbum = (album) ->
-    logger.info 'Updating thumbnail and subalbums for album:', album.path 
+    logger.info 'Updating thumbnail and subalbums for album:', album.path
     Promise.all(album.subalbums.map((subalbum) -> Album.findOneAsync(path: subalbum.path))).then (subalbums) ->
       album.subalbums = _.map subalbums, (subalbum) -> _.pick subalbum, 'path', 'title', 'thumbnail'
-      setThumbnail album
+      setAlbumThumbnail album
 
   # TODO lazy: album is walked twice
   walkAlbumsDepthFirst path, rehashAlbum

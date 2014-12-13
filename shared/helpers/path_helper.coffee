@@ -24,12 +24,12 @@ exports.slugify = (str) ->
 
 exports.makeBreadcrumb = (albumsOrPictures...) ->
   parent = _.first albumsOrPictures
-  breadcrumb = parent.breadcrumb ? parent.get?('breadcrumb')
+  breadcrumb = parent.breadcrumb ? []
 
   for albumOrPicture in albumsOrPictures
     breadcrumb = breadcrumb.concat [
-      path: albumOrPicture.path ? albumOrPicture.get?('path') ? ''
-      title: albumOrPicture.title ? albumOrPicture.get?('title') ? ''
+      path: albumOrPicture.path ? ''
+      title: albumOrPicture.title ? ''
     ]
 
   breadcrumb

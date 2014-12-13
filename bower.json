@@ -1,12 +1,11 @@
 {
-  "name": "edegal-express",
+  "name": "edegal",
   "version": "0.0.0",
   "dependencies": {
     "jquery": "1.11.x",
-    "transparency": "0.9.x",
-    "backbone": "1.1.x",
-    "backbone-relational": "0.8.x",
     "hammerjs": "2.0.x",
-    "jquery-hammerjs": "2.0.x"
+    "jquery-hammerjs": "2.0.x",
+    "knockout": "~3.2.0",
+    "knockout-mapping": "~2.4.1"
   }
 }
