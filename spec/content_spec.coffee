@@ -1,10 +1,6 @@
 should = require 'should'
 
-{fakeBackboneAjax} = require './helpers/ajax_helper.coffee'
-
-{Album, albums} = require '../client/js/models/album.coffee'
-{pictures} = require '../client/js/models/picture.coffee'
-{getContent} = require '../client/js/models/helpers/content_helper.coffee'
+albumService = require '../client/js/services/album_service.coffee'
 
 describe 'getContent', ->
   beforeEach ->
@@ -22,7 +18,7 @@ describe 'getContent', ->
         should.exist album
         should.not.exist picture
 
-        album.get('path').should.equal '/album1'
+        album.path.should.equal '/album1'
 
         callback()
 
@@ -35,7 +31,7 @@ describe 'getContent', ->
 
       albums.add(album)
 
-      picture = album.get('pictures').at(0)
+      picture = album.pictures[0]
       pictures.add picture
 
       getContent('/album2/pic1').then (content) ->
@@ -44,8 +40,8 @@ describe 'getContent', ->
         should.exist album
         should.exist picture
 
-        album.get('path').should.equal '/album2'
-        picture.get('path').should.equal '/album2/pic1'
+        album.path.should.equal '/album2'
+        picture.path.should.equal '/album2/pic1'
 
         callback()
 
@@ -84,8 +80,8 @@ describe 'getContent', ->
         should.exist album
         should.not.exist picture
 
-        album.get('path').should.equal '/album3'
-        album.get('title').should.equal 'Album Three'
+        album.path.should.equal '/album3'
+        album.title.should.equal 'Album Three'
 
         fakeAjax.calledOnce.should.be.ok
         fakeAjax.calledWithMatch(url: '/v2/album3').should.be.ok
@@ -104,12 +100,12 @@ describe 'getContent', ->
         should.exist album
         should.exist picture
 
-        album.get('path').should.equal '/album4'
+        album.path.should.equal '/album4'
         album.get('title').should.equal 'Album Four'
 
-        picture.get('path').should.equal '/album4/pic1'
+        picture.path.should.equal '/album4/pic1'
         picture.get('title').should.equal 'DSCF0613'
-        picture.get('album').get('path').should.equal '/album4'
+        picture.get('album').path.should.equal '/album4'
 
         fakeAjax.calledOnce.should.be.ok
         fakeAjax.calledWithMatch(url: '/v2/album4/pic1').should.be.ok

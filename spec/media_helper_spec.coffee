@@ -2,13 +2,12 @@ should = require 'should'
 sinon = require 'sinon'
 proxyquire = require 'proxyquire'
 
-{Picture} = require '../client/js/models/picture.coffee'
+# XXX
+# {selectMedia} = mediaHelper = proxyquire '../client/js/views/helpers/media_helper.coffee',
+#   'jquery':
+#     '@noCallThru': true
 
-{selectMedia} = mediaHelper = proxyquire '../client/js/views/helpers/media_helper.coffee',
-  'jquery':
-    '@noCallThru': true
-
-picture = new Picture
+picture =
   path: '/selectmedia/picture'
   media: [
     {
@@ -38,7 +37,7 @@ picture = new Picture
     }
   ]
 
-pictureWithTooLargeMedia = new Picture
+pictureWithTooLargeMedia =
   path: '/selectmedia/picture-with-too-large-media'
   media: [
     {
@@ -76,11 +75,11 @@ describe 'Media helpers', ->
 describe 'Picture', ->
   describe 'original', ->
     it 'should return the original', ->
-      pictureWithTooLargeMedia.get('original').src.should.equal 'http://example.com/2048x1536.jpg'
+      pictureWithTooLargeMedia.original.src.should.equal 'http://example.com/2048x1536.jpg'
 
     it 'should return undefined when there is no original', ->
-      should.not.exist picture.get('original')
+      should.not.exist picture.original
 
   describe 'thumbnail', ->
     it 'should return the medium whose height is closest to 240px', ->
-      picture.get('thumbnail').src.should.equal 'http://example.com/320x240.jpg'
+      picture.thumbnail.src.should.equal 'http://example.com/320x240.jpg'

@@ -1,7 +1,6 @@
 should = require 'should'
 _ = require 'lodash'
 
-{Album} = require '../client/js/models/album'
 {
   makeBreadcrumb,
   slugify,
@@ -50,7 +49,6 @@ describe 'Path helpers', ->
       ]
 
     root = album.breadcrumb[0]
-    albumModel = new Album album
 
     it 'should work with a single album', ->
       breadcrumb = makeBreadcrumb album
@@ -92,21 +90,6 @@ describe 'Path helpers', ->
 
       breadcrumb[2].path.should.equal picture.path
       breadcrumb[2].title.should.equal picture.title
-
-    it 'should work with Backbone models', ->
-      pictureModel = albumModel.get('pictures').at(0)
-      breadcrumb = makeBreadcrumb albumModel, pictureModel
-
-      breadcrumb.length.should.equal 3
-
-      breadcrumb[0].path.should.equal root.path
-      breadcrumb[0].title.should.equal root.title
-
-      breadcrumb[1].path.should.equal albumModel.get('path')
-      breadcrumb[1].title.should.equal albumModel.get('title')
-
-      breadcrumb[2].path.should.equal pictureModel.get('path')
-      breadcrumb[2].title.should.equal pictureModel.get('title')
 
   describe 'removeExtension', ->
     it 'should work for empty string', ->
