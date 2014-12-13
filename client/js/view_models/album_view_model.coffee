@@ -6,5 +6,4 @@ module.exports = class AlbumViewModel
     @album = ko.mapping.fromJS {}
 
   setAlbum: (album) ->
-    console?.log 'AlbumViewModel', 'setAlbum', album
     ko.mapping.fromJS album, {}, @album
