@@ -41,7 +41,7 @@ exports.main = ->
             .usage('Usage: $0 album create --title "Album title"')
             .options('title', alias: 't', demand: true, describe: 'Album title')
             .options('description', alias: 'd', default: '', describe: 'Album description')
-            .options('parent', alias: 'p', describe: 'Path of the parent album')            
+            .options('parent', alias: 'p', describe: 'Path of the parent album')
             .parse(argv)
 
           args.title = "" + args.title
@@ -112,7 +112,7 @@ exports.main = ->
           console.log('Sources: coppermine')
           process.exit(1)
 
-    when 'import'          
+    when 'import'
       args = require('optimist')
         .usage('Usage: edegal import --move|--copy|--inplace --path /foo file1.jpg ...')
         .options 'move',
@@ -202,6 +202,11 @@ exports.main = ->
           console.log('Usage: edegal database <subcommand> [options]')
           console.log('Subcommands: drop')
           process.exit(1)
+
+    when 'server'
+      {app} = require './server'
+      app.listen config.port, config.host
+      console.log("Server listening on #{config.host}:#{config.port}")
 
     else
       console.log('Usage: edegal <subcommand> [options]')
