@@ -110,10 +110,11 @@ Changing any values in `client_config.json` requires recompilation (`NODE_ENV=pr
   * [MongoDB](https://github.com/mongodb/mongo)
   * [nginx](https://github.com/nginx/nginx)
 * Frontend
-  * [Backbone](https://github.com/documentcloud/backbone)
-  * [Backbone.Relational](https://github.com/PaulUithol/Backbone-relational)
-  * [Transparency](https://github.com/leonidas/transparency)
+  * [Knockout](https://github.com/knockout/knockout)
+  * [Knockout.Mapping](https://github.com/SteveSanderson/knockout.mapping)
+  * [Page.js](https://github.com/visionmedia/page.js)
   * [Hammer.js](https://github.com/EightMedia/hammer.js)
+  * [JQuery 1.11](https://github.com/jquery/jquery)
 
 ## Testimonials
 
