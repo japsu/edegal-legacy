@@ -57,3 +57,6 @@ module.exports = class PictureViewModel
 
     original = theOtherMediaHelper.getOriginal picture
     ko.mapping.fromJS original, {}, @original
+
+    mediaHelper.preloadMedia picture.next if picture.next
+    mediaHelper.preloadMedia picture.previous if picture.previous
