@@ -15,9 +15,9 @@ html
       #picture(data-bind='if: activeView() == "picture"')
         div(data-bind='with: pictureViewModel')
           .picture-wrap
-            a.prev-link &laquo;
-            a.next-link &raquo;
-            img.picture
+            a.prev-link(data-bind='attr: { href: picture.previous }') &laquo;
+            a.next-link(data-bind='attr: { href: picture.next }') &raquo;
+            img.picture(data-bind='attr: { src: medium.src, width: medium.width, alt: picture.title }')
           a.download-link(target='_blank', data-bind='text: $root.i("Picture view, original picture download link")')
 
       #album(data-bind='if: activeView() == "album"')
