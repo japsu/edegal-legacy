@@ -4,10 +4,22 @@ _ = require 'lodash'
 mediaHelper = require '../../../shared/helpers/media_helper.coffee'
 
 
+cache = {}
+
+
 exports.getContent = (path) ->
+  if cache[path]
+    album = cache[path]
+    picture = _.find album.pictures, path: path
+    return Promise.resolve {album, picture}
+
   Promise.resolve($.getJSON('/v2' + path)).then (album) ->
+    cache[path] = album
+
     previous = null
     for picture in album.pictures
+      cache[picture.path] = album
+
       mediaHelper.setPictureThumbnail picture
 
       if previous
