@@ -28,10 +28,9 @@ module.exports = class PictureViewModel
     @setupGestures()
 
   setupKeyBindings: ->
-    $(document).keydown (event) => @onKeyDown event
+    $(document).keydown @onKeyDown
 
-  onKeyDown: (event) ->
-    console?.log 'onKeyDown', event
+  onKeyDown: (event) =>
     return true if event.altKey or event.ctrlKey or event.metaKey
 
     if event.keyCode in NEXT_PICTURE_KEYCODES
@@ -45,9 +44,7 @@ module.exports = class PictureViewModel
     hammer.on 'swipeleft', => @goTo 'previous'
 
   goTo: (prevNext) ->
-    console?.log 'goTo', prevNext
     href = @picture[prevNext]()
-    console?.log 'href', href
     if href
       page href
       false
@@ -60,10 +57,3 @@ module.exports = class PictureViewModel
 
     original = theOtherMediaHelper.getOriginal picture
     ko.mapping.fromJS original, {}, @original
-
-$ ->
-  # TODO encapsulate this $('#picture .prev-link:visible').click hackery!
-  hammer = $('#picture').hammer()
-  hammer.on 'swiperight', -> $('#picture .prev-link:visible').click()
-  hammer.on 'swipeleft', -> $('#picture .next-link:visible').click()
-
