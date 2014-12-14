@@ -18,7 +18,7 @@ html
             a.prev-link(data-bind='attr: { href: picture.previous }') &laquo;
             a.next-link(data-bind='attr: { href: picture.next }') &raquo;
             img.picture(data-bind='attr: { src: medium.src, width: medium.width, alt: picture.title }')
-          a.download-link(target='_blank', data-bind='text: $root.i("Picture view, original picture download link")')
+          a.download-link(target='_blank', data-bind='text: $root.i("Picture view, original picture download link"), attr: { href: original.src }')
 
       #album(data-bind='if: activeView() == "album"')
         div(data-bind='with: albumViewModel')
