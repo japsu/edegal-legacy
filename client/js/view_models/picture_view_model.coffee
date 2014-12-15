@@ -1,7 +1,6 @@
 $ = require 'jquery'
 require 'jquery-hammerjs'
 ko = require 'knockout'
-require 'knockout-mapping'
 page = require 'page'
 
 mediaHelper = require '../helpers/media_helper.coffee'
@@ -20,9 +19,9 @@ NEXT_PICTURE_KEYCODES = [
 
 module.exports = class PictureViewModel
   constructor: ->
-    @picture = ko.mapping.fromJS {}
-    @medium = ko.mapping.fromJS {}
-    @original = ko.mapping.fromJS {}
+    @picture = ko.observable null
+    @medium = ko.observable null
+    @original = ko.observable null
 
     @setupKeyBindings()
     @setupGestures()
@@ -50,13 +49,13 @@ module.exports = class PictureViewModel
       false
 
   setPicture: (picture) ->
-    ko.mapping.fromJS picture, {}, @picture
+    @picture picture
 
     medium = mediaHelper.selectMedia picture
-    ko.mapping.fromJS medium, {}, @medium
+    @medium medium
 
     original = theOtherMediaHelper.getOriginal picture
-    ko.mapping.fromJS original, {}, @original
+    @original original
 
     mediaHelper.preloadMedia picture.next if picture.next
     mediaHelper.preloadMedia picture.previous if picture.previous

@@ -58,7 +58,6 @@
     "jquery": "./bower_components/jquery/dist/jquery.min.js",
     "jquery-hammerjs": "./bower_components/jquery-hammerjs/jquery.hammer.js",
     "knockout": "./bower_components/knockout/dist/knockout.js",
-    "knockout-mapping": "./bower_components/knockout-mapping/knockout.mapping.js",
     "underscore": "lodash"
   },
   "browserify-shim": {
@@ -70,13 +69,7 @@
         "hammerjs:Hammer"
       ]
     },
-    "knockout": "ko",
-    "knockout-mapping": {
-      "exports": "ko",
-      "depends": [
-        "knockout:ko"
-      ]
-    }
+    "knockout": "ko"
   },
   "browserify": {
     "transform": [
