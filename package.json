@@ -4,7 +4,7 @@
   "description": "Fast web picture gallery",
   "main": "index.js",
   "scripts": {
-    "prepublish": "bower install && gulp build",
+    "prepublish": "gulp build",
     "start": "coffee server/server.coffee",
     "test": "mocha --reporter spec --compilers coffee:coffee-script/register spec/*_spec.coffee"
   },
@@ -34,7 +34,6 @@
   "devDependencies": {
     "bower": "^1.3.12",
     "browserify": "^5.12.0",
-    "browserify-shim": "^3.7.0",
     "coffeeify": "^0.7.0",
     "gulp": "^3.8.8",
     "gulp-autoprefixer": "^1.0.0",
@@ -45,6 +44,10 @@
     "gulp-stylus": "^1.3.3",
     "gulp-uglify": "^1.0.1",
     "gulp-util": "^3.0.1",
+    "hammerjs": "^2.0.4",
+    "jquery": "^2.1.1",
+    "jquery-hammerjs": "^2.0.0",
+    "knockout": "^3.2.0",
     "mocha": "^1.21.4",
     "nib": "^1.0.3",
     "page": "^1.5.0",
@@ -53,28 +56,9 @@
     "sinon": "^1.10.3",
     "vinyl-source-stream": "^1.0.0"
   },
-  "browser": {
-    "hammerjs": "./bower_components/hammerjs/hammer.min.js",
-    "jquery": "./bower_components/jquery/dist/jquery.min.js",
-    "jquery-hammerjs": "./bower_components/jquery-hammerjs/jquery.hammer.js",
-    "knockout": "./bower_components/knockout/dist/knockout.js",
-    "underscore": "lodash"
-  },
-  "browserify-shim": {
-    "jquery": "jQuery",
-    "jquery-hammerjs": {
-      "exports": "jQuery",
-      "depends": [
-        "jquery:$",
-        "hammerjs:Hammer"
-      ]
-    },
-    "knockout": "ko"
-  },
   "browserify": {
     "transform": [
-      "coffeeify",
-      "browserify-shim"
+      "coffeeify"
     ]
   }
 }

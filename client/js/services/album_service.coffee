@@ -1,5 +1,6 @@
 Promise = require 'bluebird'
 _ = require 'lodash'
+$ = require 'jquery'
 
 mediaHelper = require '../../../shared/helpers/media_helper.coffee'
 

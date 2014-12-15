@@ -1,4 +1,5 @@
 page = require 'page'
+ko = require 'knockout'
 
 AlbumViewModel = require './album_view_model.coffee'
 PictureViewModel = require './picture_view_model.coffee'
