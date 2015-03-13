@@ -1,56 +1,66 @@
-_          = require 'lodash'
-path       = require 'path'
-express    = require 'express'
-config     = require './config'
-{getAlbum} = require './services/album_service.coffee'
-unusedConn = require './db'
+_ = require 'lodash'
+Hapi = require 'hapi'
+Joi = require 'joi'
+Boom = require 'boom'
 
-staticPath = config.paths.root
-indexHtml  = path.resolve staticPath, 'index.html'
+require './db'
+albumService = require './services/album_service'
+config = require './config'
 
-respondModel = (res, model) ->
-  return respond404 res unless model
-  respondJSON res, 200, _.omit(model.toObject(), '_id')
+module.exports = server = new Hapi.Server
 
-respondJSON = (res, code, data) ->
-  res.contentType 'application/json'
-  res.status(code).send JSON.stringify data
+server.connection
+  host: config.host
+  port: config.port
 
-respond404 = (res) ->
-  respondJSON res, 404,
-    error: 404
-    message: 'Not found'
+server.register
+  register: require('hapi-swagger')
+  options:
+    basePath: config.publicUrl
+    apiVersion: require('../package.json').version
+  , ->
 
-respond500 = (res) ->
-  respondJSON res, 500,
-    error: 500
-    message: 'Internal server error'
+server.route
+  method: 'GET'
+  path: '/v2/{path*}'
+  config:
+    tags: ['api']
+    description: 'Get album or picture metadata'
+    notes: 'This is the main endpoint of the metadata API. It will return you information about the album or picture at the given path.'
+    validate:
+      params:
+        path: Joi.string().regex(/^[a-zA-Z0-9-\/]*$/).description('Path of an album or an image')
+    handler: (request, reply) ->
+      path = request.params.path ? ''
+      path = "/#{path}"
+      console?.log 'path', path
+      albumService.getAlbum(path).then (album) ->
+        if album?
+          reply _.omit(album.toObject(), '_id')
+        else
+          reply Boom.notFound 'Album not found', path: path
+      .catch (e) ->
+        console?.error e
+        reply Boom.badImplementation 'An error occurred while accessing the metadata database', e
 
-indexHtmlAnyway = (req, res, next) ->
-  if req.accepts 'html'
-    res.sendFile indexHtml
-  else
-    next()
+[
+  'assets'
+  'pictures'
+  'previews'
+].forEach (staticDir) ->
+  server.route
+    method: 'GET'
+    path: "/#{staticDir}/{param*}"
+    handler:
+      directory:
+        path: "public/#{staticDir}"
 
-exports.app = app = express()
-exports.router = router = express.Router()
-
-app.use router
-app.use express.static(staticPath, maxAge: 24*60*60*1000)
-app.use indexHtmlAnyway
-app.use respond404
-
-router.get /^\/v2\/tags$/, (req, res) -> # TODO
-
-router.get /^\/v2\/tags\/[a-zA-Z0-9-\/]+$/, (req, res) -> # TODO
-
-router.get /^\/v2(\/[a-zA-Z0-9-\/]*)$/, (req, res) ->
-  path = req.params[0]
-  getAlbum(path).then (album) ->
-    respondModel res, album
-  .catch (e) ->
-    console?.error e
-    respond500 res
+server.route
+  method: 'GET'
+  path: '/{param*}',
+  handler:
+    file:
+      path: 'public/index.html'
 
 if require.main is module
-  app.listen config.port, config.host
+  server.start -> console.log "Edegal running at #{config.host}:#{config.port}"

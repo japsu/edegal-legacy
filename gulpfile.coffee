@@ -19,20 +19,20 @@ production = process.env.NODE_ENV is 'production'
 
 paths =
   scripts:
-    destination: './public/'
+    destination: './public/assets'
     filename: 'bundle.js'
     source: './client/js/main.coffee'
     watch: './client/js/**/*.coffee'
   index:
-    destination: './public/'
+    destination: './public'
     source: './client/index.jade'
     watch: './client/**/*.jade'
   styles:
-    destination: './public/'
+    destination: './public/assets'
     source: './client/css/style.styl'
     watch: './client/css/*.styl'
   assets:
-    destination: './public/'
+    destination: './public/assets'
     source: './client/assets/**/*.*'
     watch: './client/assets/**/*.*'
 
@@ -55,7 +55,7 @@ gulp.task 'index', ->
 gulp.task 'scripts', ->
   bundle = browserify
     entries: [paths.scripts.source]
-    debug: not production    
+    debug: not production
     extensions: ['.coffee']
 
   build = bundle.bundle()
@@ -90,7 +90,8 @@ gulp.task 'server', ->
   config = require './server_config.json'
   server = require './server/server'
   console?.log "server in #{config.host}:#{config.port}"
-  server.app.listen config.port, config.host
+
+  server.start -> console.log "Edegal running at #{config.host}:#{config.port}"
 
 
 gulp.task 'watch', ->
