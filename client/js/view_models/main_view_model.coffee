@@ -25,4 +25,10 @@ module.exports = class MainViewModel
           @albumViewModel.setAlbum album
           @activeView 'album'
 
+        document.title =
+          if album.path == '/'
+            album.title
+          else
+            "#{album.title} – #{album.breadcrumb[0].title}"
+
   i: (key) -> i18nHelper.translate key
