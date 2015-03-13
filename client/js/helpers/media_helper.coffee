@@ -5,8 +5,7 @@ _ = require 'lodash'
 WRAP_VERTICAL_UNUSABLE_PX = 50 # account for footer (45px) and add a small epsilon for borders etc.
 
 exports.getPictureAreaDimensions = ->
-  wrap = document.getElementById 'wrap'
-  [wrap.offsetWidth, wrap.offsetHeight - WRAP_VERTICAL_UNUSABLE_PX]
+  [window.innerWidth, window.innerHeight - WRAP_VERTICAL_UNUSABLE_PX]
 
 exports.selectMedia = (picture) ->
   [maxWidth, maxHeight] = exports.getPictureAreaDimensions()
