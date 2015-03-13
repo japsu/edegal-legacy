@@ -1,5 +1,5 @@
 $ = require 'jquery'
-require 'jquery-hammerjs'
+Hammer = require 'hammerjs'
 ko = require 'knockout'
 page = require 'page'
 
@@ -38,7 +38,8 @@ module.exports = class PictureViewModel
       @goTo 'previous'
 
   setupGestures: ->
-    hammer = $('#picture').hammer()
+    picture = document.getElementById 'picture'
+    hammer = new Hammer picture
     hammer.on 'swiperight', => @goTo 'next'
     hammer.on 'swipeleft', => @goTo 'previous'
 

@@ -1,14 +1,22 @@
 Promise = require 'bluebird'
 _ = require 'lodash'
-$ = require 'jquery'
 
 mediaHelper = require '../../../shared/helpers/media_helper.coffee'
 
 
 cache = {}
 
-# for testability
-exports.getJSON = (path) -> Promise.resolve $.getJSON(path)
+exports.getAsync = (path) ->
+  new Promise (resolve, reject) ->
+    xhr = new XMLHttpRequest;
+    xhr.addEventListener "error", reject
+    xhr.addEventListener "load", resolve
+    xhr.open "GET", path
+    xhr.send null
+
+exports.getJSON = (path) ->
+  exports.getAsync(path).then (event) ->
+    JSON.parse event.target.responseText
 
 exports.getContent = (path) ->
   if cache[path]
