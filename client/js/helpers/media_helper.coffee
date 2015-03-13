@@ -19,7 +19,7 @@ exports.selectMedia = (picture) ->
   return _.max mediaThatFit, byWidth unless _.isEmpty mediaThatFit
 
   # fall back to the smallest
-  _.min media, byWidth
+  _.min picture.media, byWidth
 
 exports.preloadMedia = (path) ->
   getContent(path).then (content) ->
