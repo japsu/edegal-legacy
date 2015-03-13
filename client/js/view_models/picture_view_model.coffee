@@ -43,7 +43,7 @@ module.exports = class PictureViewModel
     hammer.on 'swipeleft', => @goTo 'previous'
 
   goTo: (prevNext) ->
-    href = @picture[prevNext]()
+    href = @picture()[prevNext]
     if href
       page href
       false
