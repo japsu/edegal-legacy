@@ -1,4 +1,3 @@
-$ = require 'jquery'
 Hammer = require 'hammerjs'
 ko = require 'knockout'
 page = require 'page'
@@ -27,7 +26,7 @@ module.exports = class PictureViewModel
     @setupGestures()
 
   setupKeyBindings: ->
-    $(document).keydown @onKeyDown
+    document.addEventListener 'keydown', @onKeyDown, false
 
   onKeyDown: (event) =>
     return true if event.altKey or event.ctrlKey or event.metaKey
