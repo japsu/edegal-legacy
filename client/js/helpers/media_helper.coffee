@@ -1,4 +1,3 @@
-$ = require 'jquery'
 _ = require 'lodash'
 
 {getContent} = require '../services/album_service.coffee'
@@ -6,8 +5,8 @@ _ = require 'lodash'
 WRAP_VERTICAL_UNUSABLE_PX = 50 # account for footer (45px) and add a small epsilon for borders etc.
 
 exports.getPictureAreaDimensions = ->
-  $wrap = $('#wrap')
-  [$wrap.width(), $wrap.height() - WRAP_VERTICAL_UNUSABLE_PX]
+  wrap = document.getElementById 'wrap'
+  [wrap.offsetWidth, wrap.offsetHeight - WRAP_VERTICAL_UNUSABLE_PX]
 
 exports.selectMedia = (picture) ->
   [maxWidth, maxHeight] = exports.getPictureAreaDimensions()
@@ -25,6 +24,7 @@ exports.preloadMedia = (path) ->
   getContent(path).then (content) ->
     {album, picture} = content
     selectedMedia = exports.selectMedia picture
-    $('<img/>').attr 'src', selectedMedia.src
+    img = document.createElement 'img'
+    img.src = selectedMedia.src
 
 window.edegalViewHelperMedia = exports if window?
