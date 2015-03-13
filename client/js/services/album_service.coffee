@@ -7,6 +7,8 @@ mediaHelper = require '../../../shared/helpers/media_helper.coffee'
 
 cache = {}
 
+# for testability
+exports.getJSON = (path) -> Promise.resolve $.getJSON(path)
 
 exports.getContent = (path) ->
   if cache[path]
@@ -14,7 +16,7 @@ exports.getContent = (path) ->
     picture = _.find album.pictures, path: path
     return Promise.resolve {album, picture}
 
-  Promise.resolve($.getJSON('/v2' + path)).then (album) ->
+  exports.getJSON('/v2' + path).then (album) ->
     cache[path] = album
 
     previous = null
