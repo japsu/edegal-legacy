@@ -6,6 +6,7 @@ PictureViewModel = require './picture_view_model.coffee'
 i18nHelper = require '../helpers/i18n_helper.coffee'
 albumService = require '../services/album_service.coffee'
 pathHelper = require '../../../shared/helpers/path_helper.coffee'
+packageJson = require '../../../package.json'
 
 module.exports = class MainViewModel
   constructor: ->
@@ -13,6 +14,7 @@ module.exports = class MainViewModel
     @pictureViewModel = new PictureViewModel
     @breadcrumb = ko.observable null
     @activeView = ko.observable null
+    @copyrightFooter = @i("Edegal copyright footer").replace('VERSION', packageJson.version)
 
     page /^([\/a-zA-Z0-9-\/]*)$/, (ctx, next) =>
       albumService.getContent(ctx.params[0]).then ({album, picture}) =>
