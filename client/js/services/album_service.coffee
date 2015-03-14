@@ -8,7 +8,7 @@ cache = {}
 
 exports.getAsync = (path) ->
   new Promise (resolve, reject) ->
-    xhr = new XMLHttpRequest;
+    xhr = new XMLHttpRequest
     xhr.addEventListener "error", reject
     xhr.addEventListener "load", resolve
     xhr.open "GET", path
