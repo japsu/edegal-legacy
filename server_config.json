@@ -29,5 +29,6 @@
       "height": 1200,
       "quality": 85
     }
-  ]
+  ],
+  "maxUploadSizeBytes": 209715200
 }
