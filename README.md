@@ -1,6 +1,6 @@
 # Archived for historic purposes
 
-The current branch of development can be found at [conikuvat/edegal](/conikuvat/edegal).
+The current branch of development can be found at [conikuvat/edegal](https://github.com/conikuvat/edegal).
 
 # Edegal - A web picture gallery
 
