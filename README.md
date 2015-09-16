@@ -1,6 +1,8 @@
-# Edegal - A web picture gallery
+# Archived for historic purposes
 
-[![Build Status](https://travis-ci.org/japsu/edegal.png)](https://travis-ci.org/japsu/edegal)
+The current branch of development can be found at [conikuvat/edegal](/conikuvat/edegal).
+
+# Edegal - A web picture gallery
 
 Edegal is a web picture gallery written in Node.js and designed with performance and scalability in mind.
 
